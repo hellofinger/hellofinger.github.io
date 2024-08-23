@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>InfluxDB 基础知识 - Finger&#39;s Blog</title><meta name="author" content="Finger">
+<meta name="author-link" content="">
+<meta name="description" content="简介
+  
+    
+  
+InfluxDB 是一个开源的时间序列数据库，专门设计用于处理时间相关数据。它被广泛用于监控、分析和存储大规模的时序数据，如应用程序指标、传感器数据、日志数据等。InfluxDB 使用一种称为 InfluxQL 的SQL-like 查询语言来查询和操作数据。它具有高性能、可扩展性和易用性的特点，适用于需要高速写入和查询时间序列数据的场景。
+InfluxDB 提供了多种客户端库和集成，使其可以轻松与各种编程语言和数据处理工具集成。此外，InfluxDB 还支持数据的持续查询和连续写入，可以实时监控和分析数据。由于其设计的时序数据库特性，InfluxDB 在处理时间序列数据方面表现出色，并被广泛应用于监控系统、IoT（物联网）应用、日志分析等领域。
+安装
+  
+    
+  
+
+
+ 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+
+
+# Ubuntu &amp; Debian
+wget https://dl.influxdata.com/influxdb/releases/influxdb_1.7.9_amd64.deb
+sudo dpkg -i influxdb_1.7.9_amd64.deb
+
+# or
+
+wget -qO- https://repos.influxdata.com/influxdb.key | sudo apt-key add -
+source /etc/lsb-release
+echo &#34;deb https://repos.influxdata.com/${DISTRIB_ID,,} ${DISTRIB_CODENAME} stable&#34; | sudo tee /etc/apt/
+
+sudo apt-get update &amp;&amp; sudo apt-get install influxdb
+sudo service influxdb start
+
+卸载
+  
+    
+  
+
+
+1
+2
+3
+
+
+# Ubuntu &amp; Debian
+sudo dpkg -l | grep influxdb
+sudo apt-get autoremove influxdb
+
+认证管理
+  
+    
+  
+修改配置文件
+  
+    
+  
+
+
+ 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+
+
+# /etc/influxdb/influxdb.conf
+
+[http]
+  enabled = true
+  bind-address = &#34;:8086&#34;
+  auth-enabled = true
+  log-enabled = true
+  write-tracing = false
+  pprof-enabled = true
+  pprof-auth-enabled = true
+  debug-pprof-enabled = false
+  ping-auth-enabled = true
+
+
+
+ 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+
+
+# 重启
+sudo systemctl restart influxdb 
+# or
+sudo service influxdb restart
+
+# 客户端认证登录
+influx -username devops -password xxx
+
+# 测试
+curl -G http://localhost:8086/query -u username:password --data-urlencode &#34;q=SHOW DATABASES&#34;
+
+与关系型数据库比较
+  
+    
+  
+
+
+
+Relational database
+Influx DB
+
+
+
+
+database
+database
+
+
+table
+measurement
+
+
+column
+points
+
+
+
+特殊名词
+  
+    
+  
+Point由时间戳（time）、数据（field）、标签（tags）组成。
+
+
+
+Point属性
+传统数据库中的概念
+
+
+
+
+time
+每个数据记录时间，是数据库中的主索引(会自动生成)
+
+
+fields
+各种记录值（没有索引的属性）也就是记录的值：温度， 湿度
+
+
+tags
+各种有索引的属性：地区，海拔
+
+
+
+用户管理
+  
+    
+  
+创建管理员账号
+  
+    
+  
+
+
+1
+2
+3
+4
+5
+
+
+// 新用户
+CREATE USER &lt;username&gt; WITH PASSWORD &#39;&lt;password&gt;&#39; WITH ALL PRIVILEGES
+
+// 老用户
+GRANT ALL PRIVILEGES TO &lt;username&gt;
+
+创建普通用户
+  
+    
+  
+
+
+1
+2
+3
+4
+5
+6
+7
+8
+
+
+CREATE USER &lt;username&gt; WITH PASSWORD &#39;&lt;password&gt;&#39;
+
+// 授权数据库权限
+GRANT [READ,WRITE,ALL] ON &lt;database_name&gt; TO &lt;username&gt;
+
+GRANT READ ON test TO &#34;grafana&#34;
+
+GRANT ALL ON test TO &#34;devops&#34;
+
+数据保存策略（Retention Policies）
+  
+    
+  
+
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+
+
+
+# 创建策略
+CREATE RETENTION POLICY aws_elb_log_retention_policy ON DevOpsBigScreen DURATION 3d REPLICATION 3 DEFAULT
+
+# 查看策略
+SHOW RETENTION POLICIES ON &lt;database_name&gt;
+
+# 删除策略
+DROP RETENTION POLICY &lt;retention_policy_name&gt; ON &lt;database_name&gt;
+
+参考
+  
+    
+  
+
+https://docs.influxdata.com/influxdb/v1.7/introduction/installation/
+https://www.influxdata.com/blog/getting-started-python-influxdb/
+https://xtutu.gitbooks.io/influxdb-handbook/content/shu_ju_ku_yu_biao_de_cao_zuo.html
+" /><meta name="keywords" content='InfluxDB' />
+  <meta itemprop="name" content="InfluxDB 基础知识">
+  <meta itemprop="description" content="简介InfluxDB 是一个开源的时间序列数据库，专门设计用于处理时间相关数据。它被广泛用于监控、分析和存储大规模的时序数据，如应用程序指标、传感器数据、日志数据等。InfluxDB 使用一种称为 InfluxQL 的SQL-like 查询语言来查询和操作数据。它具有高性能、可扩展性和易用性的特点，适用于需要高速写入和查询时间序列数据的场景。
+InfluxDB 提供了多种客户端库和集成，使其可以轻松与各种编程语言和数据处理工具集成。此外，InfluxDB 还支持数据的持续查询和连续写入，可以实时监控和分析数据。由于其设计的时序数据库特性，InfluxDB 在处理时间序列数据方面表现出色，并被广泛应用于监控系统、IoT（物联网）应用、日志分析等领域。
+安装1 2 3 4 5 6 7 8 9 10 11 12 # Ubuntu &amp; Debian wget https://dl.influxdata.com/influxdb/releases/influxdb_1.7.9_amd64.deb sudo dpkg -i influxdb_1.7.9_amd64.deb # or wget -qO- https://repos.influxdata.com/influxdb.key | sudo apt-key add - source /etc/lsb-release echo &#34;deb https://repos.influxdata.com/${DISTRIB_ID,,} ${DISTRIB_CODENAME} stable&#34; | sudo tee /etc/apt/ sudo apt-get update &amp;&amp; sudo apt-get install influxdb sudo service influxdb start 卸载1 2 3 # Ubuntu &amp; Debian sudo dpkg -l | grep influxdb sudo apt-get autoremove influxdb 认证管理修改配置文件1 2 3 4 5 6 7 8 9 10 11 12 # /etc/influxdb/influxdb.conf [http] enabled = true bind-address = &#34;:8086&#34; auth-enabled = true log-enabled = true write-tracing = false pprof-enabled = true pprof-auth-enabled = true debug-pprof-enabled = false ping-auth-enabled = true 1 2 3 4 5 6 7 8 9 10 # 重启 sudo systemctl restart influxdb # or sudo service influxdb restart # 客户端认证登录 influx -username devops -password xxx # 测试 curl -G http://localhost:8086/query -u username:password --data-urlencode &#34;q=SHOW DATABASES&#34; 与关系型数据库比较Relational database Influx DB database database table measurement column points 特殊名词Point由时间戳（time）、数据（field）、标签（tags）组成。
+Point属性 传统数据库中的概念 time 每个数据记录时间，是数据库中的主索引(会自动生成) fields 各种记录值（没有索引的属性）也就是记录的值：温度， 湿度 tags 各种有索引的属性：地区，海拔 用户管理创建管理员账号1 2 3 4 5 // 新用户 CREATE USER &lt;username&gt; WITH PASSWORD &#39;&lt;password&gt;&#39; WITH ALL PRIVILEGES // 老用户 GRANT ALL PRIVILEGES TO &lt;username&gt; 创建普通用户1 2 3 4 5 6 7 8 CREATE USER &lt;username&gt; WITH PASSWORD &#39;&lt;password&gt;&#39; // 授权数据库权限 GRANT [READ,WRITE,ALL] ON &lt;database_name&gt; TO &lt;username&gt; GRANT READ ON test TO &#34;grafana&#34; GRANT ALL ON test TO &#34;devops&#34; 数据保存策略（Retention Policies）1 2 3 4 5 6 7 8 9 # 创建策略 CREATE RETENTION POLICY aws_elb_log_retention_policy ON DevOpsBigScreen DURATION 3d REPLICATION 3 DEFAULT # 查看策略 SHOW RETENTION POLICIES ON &lt;database_name&gt; # 删除策略 DROP RETENTION POLICY &lt;retention_policy_name&gt; ON &lt;database_name&gt; 参考https://docs.influxdata.com/influxdb/v1.7/introduction/installation/ https://www.influxdata.com/blog/getting-started-python-influxdb/ https://xtutu.gitbooks.io/influxdb-handbook/content/shu_ju_ku_yu_biao_de_cao_zuo.html ">
+  <meta itemprop="datePublished" content="2019-11-15T11:51:52+08:00">
+  <meta itemprop="dateModified" content="2019-11-15T11:51:52+08:00">
+  <meta itemprop="wordCount" content="293">
+  <meta itemprop="keywords" content="InfluxDB"><meta property="og:url" content="https://hellofinger.tech/2019/11/influxdb-basic/">
+  <meta property="og:site_name" content="Finger&#39;s Blog">
+  <meta property="og:title" content="InfluxDB 基础知识">
+  <meta property="og:description" content="简介InfluxDB 是一个开源的时间序列数据库，专门设计用于处理时间相关数据。它被广泛用于监控、分析和存储大规模的时序数据，如应用程序指标、传感器数据、日志数据等。InfluxDB 使用一种称为 InfluxQL 的SQL-like 查询语言来查询和操作数据。它具有高性能、可扩展性和易用性的特点，适用于需要高速写入和查询时间序列数据的场景。
+InfluxDB 提供了多种客户端库和集成，使其可以轻松与各种编程语言和数据处理工具集成。此外，InfluxDB 还支持数据的持续查询和连续写入，可以实时监控和分析数据。由于其设计的时序数据库特性，InfluxDB 在处理时间序列数据方面表现出色，并被广泛应用于监控系统、IoT（物联网）应用、日志分析等领域。
+安装1 2 3 4 5 6 7 8 9 10 11 12 # Ubuntu &amp; Debian wget https://dl.influxdata.com/influxdb/releases/influxdb_1.7.9_amd64.deb sudo dpkg -i influxdb_1.7.9_amd64.deb # or wget -qO- https://repos.influxdata.com/influxdb.key | sudo apt-key add - source /etc/lsb-release echo &#34;deb https://repos.influxdata.com/${DISTRIB_ID,,} ${DISTRIB_CODENAME} stable&#34; | sudo tee /etc/apt/ sudo apt-get update &amp;&amp; sudo apt-get install influxdb sudo service influxdb start 卸载1 2 3 # Ubuntu &amp; Debian sudo dpkg -l | grep influxdb sudo apt-get autoremove influxdb 认证管理修改配置文件1 2 3 4 5 6 7 8 9 10 11 12 # /etc/influxdb/influxdb.conf [http] enabled = true bind-address = &#34;:8086&#34; auth-enabled = true log-enabled = true write-tracing = false pprof-enabled = true pprof-auth-enabled = true debug-pprof-enabled = false ping-auth-enabled = true 1 2 3 4 5 6 7 8 9 10 # 重启 sudo systemctl restart influxdb # or sudo service influxdb restart # 客户端认证登录 influx -username devops -password xxx # 测试 curl -G http://localhost:8086/query -u username:password --data-urlencode &#34;q=SHOW DATABASES&#34; 与关系型数据库比较Relational database Influx DB database database table measurement column points 特殊名词Point由时间戳（time）、数据（field）、标签（tags）组成。
+Point属性 传统数据库中的概念 time 每个数据记录时间，是数据库中的主索引(会自动生成) fields 各种记录值（没有索引的属性）也就是记录的值：温度， 湿度 tags 各种有索引的属性：地区，海拔 用户管理创建管理员账号1 2 3 4 5 // 新用户 CREATE USER &lt;username&gt; WITH PASSWORD &#39;&lt;password&gt;&#39; WITH ALL PRIVILEGES // 老用户 GRANT ALL PRIVILEGES TO &lt;username&gt; 创建普通用户1 2 3 4 5 6 7 8 CREATE USER &lt;username&gt; WITH PASSWORD &#39;&lt;password&gt;&#39; // 授权数据库权限 GRANT [READ,WRITE,ALL] ON &lt;database_name&gt; TO &lt;username&gt; GRANT READ ON test TO &#34;grafana&#34; GRANT ALL ON test TO &#34;devops&#34; 数据保存策略（Retention Policies）1 2 3 4 5 6 7 8 9 # 创建策略 CREATE RETENTION POLICY aws_elb_log_retention_policy ON DevOpsBigScreen DURATION 3d REPLICATION 3 DEFAULT # 查看策略 SHOW RETENTION POLICIES ON &lt;database_name&gt; # 删除策略 DROP RETENTION POLICY &lt;retention_policy_name&gt; ON &lt;database_name&gt; 参考https://docs.influxdata.com/influxdb/v1.7/introduction/installation/ https://www.influxdata.com/blog/getting-started-python-influxdb/ https://xtutu.gitbooks.io/influxdb-handbook/content/shu_ju_ku_yu_biao_de_cao_zuo.html ">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2019-11-15T11:51:52+08:00">
+    <meta property="article:modified_time" content="2019-11-15T11:51:52+08:00">
+    <meta property="article:tag" content="InfluxDB">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="InfluxDB 基础知识">
+  <meta name="twitter:description" content="简介InfluxDB 是一个开源的时间序列数据库，专门设计用于处理时间相关数据。它被广泛用于监控、分析和存储大规模的时序数据，如应用程序指标、传感器数据、日志数据等。InfluxDB 使用一种称为 InfluxQL 的SQL-like 查询语言来查询和操作数据。它具有高性能、可扩展性和易用性的特点，适用于需要高速写入和查询时间序列数据的场景。
+InfluxDB 提供了多种客户端库和集成，使其可以轻松与各种编程语言和数据处理工具集成。此外，InfluxDB 还支持数据的持续查询和连续写入，可以实时监控和分析数据。由于其设计的时序数据库特性，InfluxDB 在处理时间序列数据方面表现出色，并被广泛应用于监控系统、IoT（物联网）应用、日志分析等领域。
+安装1 2 3 4 5 6 7 8 9 10 11 12 # Ubuntu &amp; Debian wget https://dl.influxdata.com/influxdb/releases/influxdb_1.7.9_amd64.deb sudo dpkg -i influxdb_1.7.9_amd64.deb # or wget -qO- https://repos.influxdata.com/influxdb.key | sudo apt-key add - source /etc/lsb-release echo &#34;deb https://repos.influxdata.com/${DISTRIB_ID,,} ${DISTRIB_CODENAME} stable&#34; | sudo tee /etc/apt/ sudo apt-get update &amp;&amp; sudo apt-get install influxdb sudo service influxdb start 卸载1 2 3 # Ubuntu &amp; Debian sudo dpkg -l | grep influxdb sudo apt-get autoremove influxdb 认证管理修改配置文件1 2 3 4 5 6 7 8 9 10 11 12 # /etc/influxdb/influxdb.conf [http] enabled = true bind-address = &#34;:8086&#34; auth-enabled = true log-enabled = true write-tracing = false pprof-enabled = true pprof-auth-enabled = true debug-pprof-enabled = false ping-auth-enabled = true 1 2 3 4 5 6 7 8 9 10 # 重启 sudo systemctl restart influxdb # or sudo service influxdb restart # 客户端认证登录 influx -username devops -password xxx # 测试 curl -G http://localhost:8086/query -u username:password --data-urlencode &#34;q=SHOW DATABASES&#34; 与关系型数据库比较Relational database Influx DB database database table measurement column points 特殊名词Point由时间戳（time）、数据（field）、标签（tags）组成。
+Point属性 传统数据库中的概念 time 每个数据记录时间，是数据库中的主索引(会自动生成) fields 各种记录值（没有索引的属性）也就是记录的值：温度， 湿度 tags 各种有索引的属性：地区，海拔 用户管理创建管理员账号1 2 3 4 5 // 新用户 CREATE USER &lt;username&gt; WITH PASSWORD &#39;&lt;password&gt;&#39; WITH ALL PRIVILEGES // 老用户 GRANT ALL PRIVILEGES TO &lt;username&gt; 创建普通用户1 2 3 4 5 6 7 8 CREATE USER &lt;username&gt; WITH PASSWORD &#39;&lt;password&gt;&#39; // 授权数据库权限 GRANT [READ,WRITE,ALL] ON &lt;database_name&gt; TO &lt;username&gt; GRANT READ ON test TO &#34;grafana&#34; GRANT ALL ON test TO &#34;devops&#34; 数据保存策略（Retention Policies）1 2 3 4 5 6 7 8 9 # 创建策略 CREATE RETENTION POLICY aws_elb_log_retention_policy ON DevOpsBigScreen DURATION 3d REPLICATION 3 DEFAULT # 查看策略 SHOW RETENTION POLICIES ON &lt;database_name&gt; # 删除策略 DROP RETENTION POLICY &lt;retention_policy_name&gt; ON &lt;database_name&gt; 参考https://docs.influxdata.com/influxdb/v1.7/introduction/installation/ https://www.influxdata.com/blog/getting-started-python-influxdb/ https://xtutu.gitbooks.io/influxdb-handbook/content/shu_ju_ku_yu_biao_de_cao_zuo.html ">
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://hellofinger.tech/2019/11/influxdb-basic/" /><link rel="prev" href="https://hellofinger.tech/2019/07/about-the-cache/" /><link rel="next" href="https://hellofinger.tech/2020/01/terraform-first-example/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "InfluxDB 基础知识",
+    "inLanguage": "zh-CN",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/hellofinger.tech\/2019\/11\/influxdb-basic\/"
+    },"genre": "posts","keywords": "InfluxDB","wordcount":  293 ,
+    "url": "https:\/\/hellofinger.tech\/2019\/11\/influxdb-basic\/","datePublished": "2019-11-15T11:51:52+08:00","dateModified": "2019-11-15T11:51:52+08:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Finger"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/about/"
+                
+                
+              ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item delimiter"></li><li class="menu-item search" id="search-desktop">
+            <input type="text" placeholder="搜索文章标题或内容……" id="search-input-desktop">
+            <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+              <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+            </a>
+            <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+              <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+            </a>
+            <span class="search-button search-loading" id="search-loading-desktop">
+              <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+            </span>
+          </li><li class="menu-item theme-switch" title="切换主题">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li class="search-wrapper">
+            <div class="search mobile" id="search-mobile">
+              <input type="text" placeholder="搜索文章标题或内容……" id="search-input-mobile">
+              <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+              </a>
+              <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+              </a>
+              <span class="search-button search-loading" id="search-loading-mobile">
+                <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+              </span>
+            </div>
+            <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+              取消
+            </a>
+          </li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/about/"
+                  
+                  
+                ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="切换主题"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+  </div>
+  <div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+  </div><main class="container"><aside class="aside-collection animate__animated animate__fadeIn animate__faster" aria-label="合集"></aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>InfluxDB 基础知识</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><span class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+      Finger</span></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/database/" class="post-category" title="分类 - Database"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Database</a>&ensp;<a href="/categories/storage/" class="post-category" title="分类 - Storage"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a></span></div><div class="post-meta-line"><span title="发布于 2019-11-15 11:51:52"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2019-11-15">2019-11-15</time></span>&nbsp;<span title="293 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 300 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 2 分钟</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>目录</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#安装">安装</a></li>
+    <li><a href="#卸载">卸载</a></li>
+    <li><a href="#认证管理">认证管理</a>
+      <ul>
+        <li><a href="#修改配置文件">修改配置文件</a></li>
+      </ul>
+    </li>
+    <li><a href="#与关系型数据库比较">与关系型数据库比较</a></li>
+    <li><a href="#特殊名词">特殊名词</a></li>
+    <li><a href="#用户管理">用户管理</a>
+      <ul>
+        <li><a href="#创建管理员账号">创建管理员账号</a></li>
+        <li><a href="#创建普通用户">创建普通用户</a></li>
+      </ul>
+    </li>
+    <li><a href="#数据保存策略retention-policies">数据保存策略（Retention Policies）</a></li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><h2 id="简介" class="heading-element"><span>简介</span>
+  <a href="#%e7%ae%80%e4%bb%8b" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>InfluxDB 是一个开源的时间序列数据库，专门设计用于处理时间相关数据。它被广泛用于监控、分析和存储大规模的时序数据，如应用程序指标、传感器数据、日志数据等。InfluxDB 使用一种称为 InfluxQL 的SQL-like 查询语言来查询和操作数据。它具有高性能、可扩展性和易用性的特点，适用于需要高速写入和查询时间序列数据的场景。</p>
+<p>InfluxDB 提供了多种客户端库和集成，使其可以轻松与各种编程语言和数据处理工具集成。此外，InfluxDB 还支持数据的持续查询和连续写入，可以实时监控和分析数据。由于其设计的时序数据库特性，InfluxDB 在处理时间序列数据方面表现出色，并被广泛应用于监控系统、IoT（物联网）应用、日志分析等领域。</p>
+<h2 id="安装" class="heading-element"><span>安装</span>
+  <a href="#%e5%ae%89%e8%a3%85" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># Ubuntu &amp; Debian
+</span></span><span class="line"><span class="cl">wget https://dl.influxdata.com/influxdb/releases/influxdb_1.7.9_amd64.deb
+</span></span><span class="line"><span class="cl">sudo dpkg -i influxdb_1.7.9_amd64.deb
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># or
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">wget -qO- https://repos.influxdata.com/influxdb.key | sudo apt-key add -
+</span></span><span class="line"><span class="cl">source /etc/lsb-release
+</span></span><span class="line"><span class="cl">echo &#34;deb https://repos.influxdata.com/${DISTRIB_ID,,} ${DISTRIB_CODENAME} stable&#34; | sudo tee /etc/apt/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">sudo apt-get update &amp;&amp; sudo apt-get install influxdb
+</span></span><span class="line"><span class="cl">sudo service influxdb start</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="卸载" class="heading-element"><span>卸载</span>
+  <a href="#%e5%8d%b8%e8%bd%bd" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># Ubuntu &amp; Debian</span>
+</span></span><span class="line"><span class="cl">sudo dpkg -l <span class="p">|</span> grep influxdb
+</span></span><span class="line"><span class="cl">sudo apt-get autoremove influxdb</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="认证管理" class="heading-element"><span>认证管理</span>
+  <a href="#%e8%ae%a4%e8%af%81%e7%ae%a1%e7%90%86" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><h3 id="修改配置文件" class="heading-element"><span>修改配置文件</span>
+  <a href="#%e4%bf%ae%e6%94%b9%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># /etc/influxdb/influxdb.conf</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>http<span class="o">]</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">enabled</span> <span class="o">=</span> <span class="nb">true</span>
+</span></span><span class="line"><span class="cl">  bind-address <span class="o">=</span> <span class="s2">&#34;:8086&#34;</span>
+</span></span><span class="line"><span class="cl">  auth-enabled <span class="o">=</span> <span class="nb">true</span>
+</span></span><span class="line"><span class="cl">  log-enabled <span class="o">=</span> <span class="nb">true</span>
+</span></span><span class="line"><span class="cl">  write-tracing <span class="o">=</span> <span class="nb">false</span>
+</span></span><span class="line"><span class="cl">  pprof-enabled <span class="o">=</span> <span class="nb">true</span>
+</span></span><span class="line"><span class="cl">  pprof-auth-enabled <span class="o">=</span> <span class="nb">true</span>
+</span></span><span class="line"><span class="cl">  debug-pprof-enabled <span class="o">=</span> <span class="nb">false</span>
+</span></span><span class="line"><span class="cl">  ping-auth-enabled <span class="o">=</span> true</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># 重启</span>
+</span></span><span class="line"><span class="cl">sudo systemctl restart influxdb 
+</span></span><span class="line"><span class="cl"><span class="c1"># or</span>
+</span></span><span class="line"><span class="cl">sudo service influxdb restart
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 客户端认证登录</span>
+</span></span><span class="line"><span class="cl">influx -username devops -password xxx
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 测试</span>
+</span></span><span class="line"><span class="cl">curl -G http://localhost:8086/query -u username:password --data-urlencode <span class="s2">&#34;q=SHOW DATABASES&#34;</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="与关系型数据库比较" class="heading-element"><span>与关系型数据库比较</span>
+  <a href="#%e4%b8%8e%e5%85%b3%e7%b3%bb%e5%9e%8b%e6%95%b0%e6%8d%ae%e5%ba%93%e6%af%94%e8%be%83" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><table>
+<thead>
+<tr>
+<th>Relational database</th>
+<th>Influx DB</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>database</td>
+<td>database</td>
+</tr>
+<tr>
+<td>table</td>
+<td>measurement</td>
+</tr>
+<tr>
+<td>column</td>
+<td>points</td>
+</tr>
+</tbody>
+</table>
+<h2 id="特殊名词" class="heading-element"><span>特殊名词</span>
+  <a href="#%e7%89%b9%e6%ae%8a%e5%90%8d%e8%af%8d" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>Point由时间戳（time）、数据（field）、标签（tags）组成。</p>
+<table>
+<thead>
+<tr>
+<th>Point属性</th>
+<th>传统数据库中的概念</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>time</td>
+<td>每个数据记录时间，是数据库中的主索引(会自动生成)</td>
+</tr>
+<tr>
+<td>fields</td>
+<td>各种记录值（没有索引的属性）也就是记录的值：温度， 湿度</td>
+</tr>
+<tr>
+<td>tags</td>
+<td>各种有索引的属性：地区，海拔</td>
+</tr>
+</tbody>
+</table>
+<h2 id="用户管理" class="heading-element"><span>用户管理</span>
+  <a href="#%e7%94%a8%e6%88%b7%e7%ae%a1%e7%90%86" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><h3 id="创建管理员账号" class="heading-element"><span>创建管理员账号</span>
+  <a href="#%e5%88%9b%e5%bb%ba%e7%ae%a1%e7%90%86%e5%91%98%e8%b4%a6%e5%8f%b7" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="o">//</span><span class="w"> </span><span class="err">新用户</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">CREATE</span><span class="w"> </span><span class="k">USER</span><span class="w"> </span><span class="o">&lt;</span><span class="n">username</span><span class="o">&gt;</span><span class="w"> </span><span class="k">WITH</span><span class="w"> </span><span class="n">PASSWORD</span><span class="w"> </span><span class="s1">&#39;&lt;password&gt;&#39;</span><span class="w"> </span><span class="k">WITH</span><span class="w"> </span><span class="k">ALL</span><span class="w"> </span><span class="k">PRIVILEGES</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="w"> </span><span class="err">老用户</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">GRANT</span><span class="w"> </span><span class="k">ALL</span><span class="w"> </span><span class="k">PRIVILEGES</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="o">&lt;</span><span class="n">username</span><span class="o">&gt;</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="创建普通用户" class="heading-element"><span>创建普通用户</span>
+  <a href="#%e5%88%9b%e5%bb%ba%e6%99%ae%e9%80%9a%e7%94%a8%e6%88%b7" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="k">USER</span><span class="w"> </span><span class="o">&lt;</span><span class="n">username</span><span class="o">&gt;</span><span class="w"> </span><span class="k">WITH</span><span class="w"> </span><span class="n">PASSWORD</span><span class="w"> </span><span class="s1">&#39;&lt;password&gt;&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="w"> </span><span class="err">授权数据库权限</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">GRANT</span><span class="w"> </span><span class="p">[</span><span class="k">READ</span><span class="p">,</span><span class="k">WRITE</span><span class="p">,</span><span class="k">ALL</span><span class="p">]</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="o">&lt;</span><span class="n">database_name</span><span class="o">&gt;</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="o">&lt;</span><span class="n">username</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">GRANT</span><span class="w"> </span><span class="k">READ</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="s2">&#34;grafana&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">GRANT</span><span class="w"> </span><span class="k">ALL</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="s2">&#34;devops&#34;</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="数据保存策略retention-policies" class="heading-element"><span>数据保存策略（Retention Policies）</span>
+  <a href="#%e6%95%b0%e6%8d%ae%e4%bf%9d%e5%ad%98%e7%ad%96%e7%95%a5retention-policies" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">#</span><span class="w"> </span><span class="err">创建策略</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">CREATE</span><span class="w"> </span><span class="n">RETENTION</span><span class="w"> </span><span class="n">POLICY</span><span class="w"> </span><span class="n">aws_elb_log_retention_policy</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">DevOpsBigScreen</span><span class="w"> </span><span class="n">DURATION</span><span class="w"> </span><span class="mi">3</span><span class="n">d</span><span class="w"> </span><span class="n">REPLICATION</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">#</span><span class="w"> </span><span class="err">查看策略</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">SHOW</span><span class="w"> </span><span class="n">RETENTION</span><span class="w"> </span><span class="n">POLICIES</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="o">&lt;</span><span class="n">database_name</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">#</span><span class="w"> </span><span class="err">删除策略</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">DROP</span><span class="w"> </span><span class="n">RETENTION</span><span class="w"> </span><span class="n">POLICY</span><span class="w"> </span><span class="o">&lt;</span><span class="n">retention_policy_name</span><span class="o">&gt;</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="o">&lt;</span><span class="n">database_name</span><span class="o">&gt;</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="参考" class="heading-element"><span>参考</span>
+  <a href="#%e5%8f%82%e8%80%83" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><ul>
+<li><a href="https://docs.influxdata.com/influxdb/v1.7/introduction/installation/"target="_blank" rel="external nofollow noopener noreferrer">https://docs.influxdata.com/influxdb/v1.7/introduction/installation/</a></li>
+<li><a href="https://www.influxdata.com/blog/getting-started-python-influxdb/"target="_blank" rel="external nofollow noopener noreferrer">https://www.influxdata.com/blog/getting-started-python-influxdb/</a></li>
+<li><a href="https://xtutu.gitbooks.io/influxdb-handbook/content/shu_ju_ku_yu_biao_de_cao_zuo.html"target="_blank" rel="external nofollow noopener noreferrer">https://xtutu.gitbooks.io/influxdb-handbook/content/shu_ju_ku_yu_biao_de_cao_zuo.html</a></li>
+</ul></div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="更新于 2019-11-15 11:51:52">更新于 2019-11-15&nbsp;</span>
+      </div><div class="post-info-license">
+            <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
+          </div></div><div class="post-info-line">
+        <div class="post-info-md"><span><a href="https://github.com/hugo-fixit/docs/blob/main/main/posts%5cstorage%5cinfluxdb-basic.md?plain=1" title="查看源码"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-source">查看源码</a></span><span><a href="https://github.com/hugo-fixit/docs/edit/main/main/posts%5cstorage%5cinfluxdb-basic.md" title="编辑此页"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-edit">编辑此页</a></span><span><a href="https://github.com/hugo-fixit/docs/issues/new?title=[BUG]%20InfluxDB&#43;%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86&amp;body=%7cField%7cValue%7c%0A%7c-%7c-%7c%0A%7cTitle%7cInfluxDB&#43;%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%7c%0A%7cURL%7chttps://hellofinger.tech/2019/11/influxdb-basic/%7c%0A%7cFilename%7chttps://github.com/hugo-fixit/docs/blob/main/main/posts%5cstorage%5cinfluxdb-basic.md?plain=1%7c" title="报告问题"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-report">报告问题</a></span></div>
+        <div class="post-info-share">
+          <span><a href="javascript:void(0);" title="分享到 X" data-sharer="twitter" data-url="https://hellofinger.tech/2019/11/influxdb-basic/" data-title="InfluxDB 基础知识" data-hashtags="InfluxDB"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://hellofinger.tech/2019/11/influxdb-basic/" data-hashtag="InfluxDB"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://hellofinger.tech/2019/11/influxdb-basic/" data-title="InfluxDB 基础知识"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+        </div>
+      </div></div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href="/tags/influxdb/" class="post-tag" title="标签 - InfluxDB">InfluxDB</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+    </section>
+  </div><div class="post-nav"><a href="/2019/07/about-the-cache/" class="post-nav-item" rel="prev" title="关于缓存"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>关于缓存</a>
+      <a href="/2020/01/terraform-first-example/" class="post-nav-item" rel="next" title="Terraform，从一个简单的例子开始">Terraform，从一个简单的例子开始<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article>
+
+  <aside class="toc" id="toc-auto" aria-label="目录"><h2 class="toc-title">目录&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2017 - 2024</span><span class="author" itemprop="copyrightHolder">
+              <a href="/">Finger</a></span><span class="license footer-divider"><a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="回到顶部"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">该网站在启用 JavaScript 的情况下效果最佳。</div>
+  </noscript>
+</div><link rel="preload" href="/lib/katex/katex.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/katex/katex.min.css"></noscript><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script src="/lib/autocomplete/autocomplete.min.js" defer></script><script src="/lib/fuse/fuse.min.js" defer></script><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/copy-tex.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="/js/flyfish.js" defer></script><script>window.config={"code":{"copyTitle":"复制到剪贴板","editLockTitle":"锁定可编辑代码块","editUnLockTitle":"解锁可编辑代码块","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"同意","link":"了解更多","message":"本网站使用 Cookies 来改善您的浏览体验。"},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"distance":100,"findAllMatches":false,"highlightTag":"em","ignoreFieldNorm":false,"ignoreLocation":false,"isCaseSensitive":false,"location":0,"maxResultLength":10,"minMatchCharLength":2,"noResultsFound":"没有找到结果","snippetLength":30,"threshold":0.3,"useExtendedSearch":false},"version":"v0.3.10-c936e541"};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

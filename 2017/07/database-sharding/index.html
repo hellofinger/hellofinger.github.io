@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>数据库分库分表 - Finger&#39;s Blog</title><meta name="author" content="Finger">
+<meta name="author-link" content="">
+<meta name="description" content="一、背景大量的并发读/写操作，导致单库出现难以承受的负载压力 单表存储数据量过大，导致索引效率低下 二、读写分离将数据库设置为读写分离状态，由Master（主）负责写数据，Salve（从）只负责读数据。主从之间保持数据同步。根据二八法则，80%的数据库操作是读，20%则为写。读写分离后，可以大大提升单库负载压力。
+但是，当Master存在TPS（系统吞吐量）较高的情况，Master和Slave数据库之间数据同步是会存在一定延迟，因此在写入Master之前最好还是要将同一份数据放入缓存中，以避免高并发情况下，从Slave中获取不到指定数据的情况
+三、分库分表随着用户规模的不断上升，仅仅只是依靠数据库的读写分离并不能解决系统瓶颈。因此需要考虑分库分表的解决方案。
+分表 就是将原来冗余在单库中的单个业务表拆分为N个“逻辑相关”的业务子表（如tab_0000, tab_0001, tab_0002&hellip;），不同的业务字表各自负责存储不同区间数据，对外形成一个整体
+分库 就是将分表后的业务子表按照特定的算法和规则分散到N个“逻辑相关”的业务子库中（如db_0000, db_0001, db_0002&hellip;）
+分库分表策略主要原理：分区，取模，数据路由表
+1、按时间区间一定时间区间内产生的数据放到一张表里面，多个时间区间的表放到一个库里面
+比如，
+a、单库多表结构，按月分表可以这样：user_201701, user_201702&hellip;user_201712；按年分表可以这样，user_2016, user_2017&hellip;
+b、多库多表，比如按天分表，每天一张表，当单库超过100张表的时候，进行分库到下一张表。那么假如第一张表在库db0，表名是user_20160201。从db0.user_20160201 - db0.user_20160511就是100张表了，接下来就是分库，进入20160512，就是db1.user_20160512，这个算法就是上线的时候定一个上线日期，具体算法如下：
+1 2 库ID = （当前日期 - 上线日期）/ 100 表ID = user_yyyyMMdd 注：好处是可以直接根据时间经过简单计算定位到哪个库和哪个表
+还有一种算法：
+1 2 表ID = (当前日期 - 上线日期) % 100 表名如下： DB0.user_0001，user_0002 .... user_01000 注：表名和库名都要经过计算，比较麻烦
+c、按月分表，每个月一张表。这种情况，一般就不用分库了，一年12张表说明量也不会特别大，如果量特别大，或者是热点数据，可以一年分一个库，具体算法和上面差不多。
+d、按季度分表，按年度分表（基本不用分库）
+2、按主键ID区间对于自增的主键ID，可以按照ID区间进行分表，以1000万数据量为分界线，对线性的ID进行切割分表，每涨到1000万数据，分到下一张表，超过一定数目的表，进行分库。
+1 2 库ID = 主键ID / 1000万 / 100 表ID = 主键ID / 1000万 % 100 如：" /><meta name="keywords" content='MySql, Shard' />
+  <meta itemprop="name" content="数据库分库分表">
+  <meta itemprop="description" content="一、背景大量的并发读/写操作，导致单库出现难以承受的负载压力 单表存储数据量过大，导致索引效率低下 二、读写分离将数据库设置为读写分离状态，由Master（主）负责写数据，Salve（从）只负责读数据。主从之间保持数据同步。根据二八法则，80%的数据库操作是读，20%则为写。读写分离后，可以大大提升单库负载压力。
+但是，当Master存在TPS（系统吞吐量）较高的情况，Master和Slave数据库之间数据同步是会存在一定延迟，因此在写入Master之前最好还是要将同一份数据放入缓存中，以避免高并发情况下，从Slave中获取不到指定数据的情况
+三、分库分表随着用户规模的不断上升，仅仅只是依靠数据库的读写分离并不能解决系统瓶颈。因此需要考虑分库分表的解决方案。
+分表 就是将原来冗余在单库中的单个业务表拆分为N个“逻辑相关”的业务子表（如tab_0000, tab_0001, tab_0002…），不同的业务字表各自负责存储不同区间数据，对外形成一个整体
+分库 就是将分表后的业务子表按照特定的算法和规则分散到N个“逻辑相关”的业务子库中（如db_0000, db_0001, db_0002…）
+分库分表策略主要原理：分区，取模，数据路由表
+1、按时间区间一定时间区间内产生的数据放到一张表里面，多个时间区间的表放到一个库里面
+比如，
+a、单库多表结构，按月分表可以这样：user_201701, user_201702…user_201712；按年分表可以这样，user_2016, user_2017…
+b、多库多表，比如按天分表，每天一张表，当单库超过100张表的时候，进行分库到下一张表。那么假如第一张表在库db0，表名是user_20160201。从db0.user_20160201 - db0.user_20160511就是100张表了，接下来就是分库，进入20160512，就是db1.user_20160512，这个算法就是上线的时候定一个上线日期，具体算法如下：
+1 2 库ID = （当前日期 - 上线日期）/ 100 表ID = user_yyyyMMdd 注：好处是可以直接根据时间经过简单计算定位到哪个库和哪个表
+还有一种算法：
+1 2 表ID = (当前日期 - 上线日期) % 100 表名如下： DB0.user_0001，user_0002 .... user_01000 注：表名和库名都要经过计算，比较麻烦
+c、按月分表，每个月一张表。这种情况，一般就不用分库了，一年12张表说明量也不会特别大，如果量特别大，或者是热点数据，可以一年分一个库，具体算法和上面差不多。
+d、按季度分表，按年度分表（基本不用分库）
+2、按主键ID区间对于自增的主键ID，可以按照ID区间进行分表，以1000万数据量为分界线，对线性的ID进行切割分表，每涨到1000万数据，分到下一张表，超过一定数目的表，进行分库。
+1 2 库ID = 主键ID / 1000万 / 100 表ID = 主键ID / 1000万 % 100 如：">
+  <meta itemprop="datePublished" content="2017-07-29T13:44:00+00:00">
+  <meta itemprop="dateModified" content="2017-07-29T13:44:00+00:00">
+  <meta itemprop="wordCount" content="135">
+  <meta itemprop="keywords" content="Mysql,Shard"><meta property="og:url" content="https://hellofinger.tech/2017/07/database-sharding/">
+  <meta property="og:site_name" content="Finger&#39;s Blog">
+  <meta property="og:title" content="数据库分库分表">
+  <meta property="og:description" content="一、背景大量的并发读/写操作，导致单库出现难以承受的负载压力 单表存储数据量过大，导致索引效率低下 二、读写分离将数据库设置为读写分离状态，由Master（主）负责写数据，Salve（从）只负责读数据。主从之间保持数据同步。根据二八法则，80%的数据库操作是读，20%则为写。读写分离后，可以大大提升单库负载压力。
+但是，当Master存在TPS（系统吞吐量）较高的情况，Master和Slave数据库之间数据同步是会存在一定延迟，因此在写入Master之前最好还是要将同一份数据放入缓存中，以避免高并发情况下，从Slave中获取不到指定数据的情况
+三、分库分表随着用户规模的不断上升，仅仅只是依靠数据库的读写分离并不能解决系统瓶颈。因此需要考虑分库分表的解决方案。
+分表 就是将原来冗余在单库中的单个业务表拆分为N个“逻辑相关”的业务子表（如tab_0000, tab_0001, tab_0002…），不同的业务字表各自负责存储不同区间数据，对外形成一个整体
+分库 就是将分表后的业务子表按照特定的算法和规则分散到N个“逻辑相关”的业务子库中（如db_0000, db_0001, db_0002…）
+分库分表策略主要原理：分区，取模，数据路由表
+1、按时间区间一定时间区间内产生的数据放到一张表里面，多个时间区间的表放到一个库里面
+比如，
+a、单库多表结构，按月分表可以这样：user_201701, user_201702…user_201712；按年分表可以这样，user_2016, user_2017…
+b、多库多表，比如按天分表，每天一张表，当单库超过100张表的时候，进行分库到下一张表。那么假如第一张表在库db0，表名是user_20160201。从db0.user_20160201 - db0.user_20160511就是100张表了，接下来就是分库，进入20160512，就是db1.user_20160512，这个算法就是上线的时候定一个上线日期，具体算法如下：
+1 2 库ID = （当前日期 - 上线日期）/ 100 表ID = user_yyyyMMdd 注：好处是可以直接根据时间经过简单计算定位到哪个库和哪个表
+还有一种算法：
+1 2 表ID = (当前日期 - 上线日期) % 100 表名如下： DB0.user_0001，user_0002 .... user_01000 注：表名和库名都要经过计算，比较麻烦
+c、按月分表，每个月一张表。这种情况，一般就不用分库了，一年12张表说明量也不会特别大，如果量特别大，或者是热点数据，可以一年分一个库，具体算法和上面差不多。
+d、按季度分表，按年度分表（基本不用分库）
+2、按主键ID区间对于自增的主键ID，可以按照ID区间进行分表，以1000万数据量为分界线，对线性的ID进行切割分表，每涨到1000万数据，分到下一张表，超过一定数目的表，进行分库。
+1 2 库ID = 主键ID / 1000万 / 100 表ID = 主键ID / 1000万 % 100 如：">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2017-07-29T13:44:00+00:00">
+    <meta property="article:modified_time" content="2017-07-29T13:44:00+00:00">
+    <meta property="article:tag" content="Mysql">
+    <meta property="article:tag" content="Shard">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="数据库分库分表">
+  <meta name="twitter:description" content="一、背景大量的并发读/写操作，导致单库出现难以承受的负载压力 单表存储数据量过大，导致索引效率低下 二、读写分离将数据库设置为读写分离状态，由Master（主）负责写数据，Salve（从）只负责读数据。主从之间保持数据同步。根据二八法则，80%的数据库操作是读，20%则为写。读写分离后，可以大大提升单库负载压力。
+但是，当Master存在TPS（系统吞吐量）较高的情况，Master和Slave数据库之间数据同步是会存在一定延迟，因此在写入Master之前最好还是要将同一份数据放入缓存中，以避免高并发情况下，从Slave中获取不到指定数据的情况
+三、分库分表随着用户规模的不断上升，仅仅只是依靠数据库的读写分离并不能解决系统瓶颈。因此需要考虑分库分表的解决方案。
+分表 就是将原来冗余在单库中的单个业务表拆分为N个“逻辑相关”的业务子表（如tab_0000, tab_0001, tab_0002…），不同的业务字表各自负责存储不同区间数据，对外形成一个整体
+分库 就是将分表后的业务子表按照特定的算法和规则分散到N个“逻辑相关”的业务子库中（如db_0000, db_0001, db_0002…）
+分库分表策略主要原理：分区，取模，数据路由表
+1、按时间区间一定时间区间内产生的数据放到一张表里面，多个时间区间的表放到一个库里面
+比如，
+a、单库多表结构，按月分表可以这样：user_201701, user_201702…user_201712；按年分表可以这样，user_2016, user_2017…
+b、多库多表，比如按天分表，每天一张表，当单库超过100张表的时候，进行分库到下一张表。那么假如第一张表在库db0，表名是user_20160201。从db0.user_20160201 - db0.user_20160511就是100张表了，接下来就是分库，进入20160512，就是db1.user_20160512，这个算法就是上线的时候定一个上线日期，具体算法如下：
+1 2 库ID = （当前日期 - 上线日期）/ 100 表ID = user_yyyyMMdd 注：好处是可以直接根据时间经过简单计算定位到哪个库和哪个表
+还有一种算法：
+1 2 表ID = (当前日期 - 上线日期) % 100 表名如下： DB0.user_0001，user_0002 .... user_01000 注：表名和库名都要经过计算，比较麻烦
+c、按月分表，每个月一张表。这种情况，一般就不用分库了，一年12张表说明量也不会特别大，如果量特别大，或者是热点数据，可以一年分一个库，具体算法和上面差不多。
+d、按季度分表，按年度分表（基本不用分库）
+2、按主键ID区间对于自增的主键ID，可以按照ID区间进行分表，以1000万数据量为分界线，对线性的ID进行切割分表，每涨到1000万数据，分到下一张表，超过一定数目的表，进行分库。
+1 2 库ID = 主键ID / 1000万 / 100 表ID = 主键ID / 1000万 % 100 如：">
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://hellofinger.tech/2017/07/database-sharding/" /><link rel="prev" href="https://hellofinger.tech/2017/07/scrapy-deploy-usage/" /><link rel="next" href="https://hellofinger.tech/2017/07/python-face-recognition/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "数据库分库分表",
+    "inLanguage": "zh-CN",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/hellofinger.tech\/2017\/07\/database-sharding\/"
+    },"genre": "posts","keywords": "MySql, Shard","wordcount":  135 ,
+    "url": "https:\/\/hellofinger.tech\/2017\/07\/database-sharding\/","datePublished": "2017-07-29T13:44:00+00:00","dateModified": "2017-07-29T13:44:00+00:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Finger"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/about/"
+                
+                
+              ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item delimiter"></li><li class="menu-item search" id="search-desktop">
+            <input type="text" placeholder="搜索文章标题或内容……" id="search-input-desktop">
+            <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+              <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+            </a>
+            <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+              <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+            </a>
+            <span class="search-button search-loading" id="search-loading-desktop">
+              <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+            </span>
+          </li><li class="menu-item theme-switch" title="切换主题">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li class="search-wrapper">
+            <div class="search mobile" id="search-mobile">
+              <input type="text" placeholder="搜索文章标题或内容……" id="search-input-mobile">
+              <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+              </a>
+              <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+              </a>
+              <span class="search-button search-loading" id="search-loading-mobile">
+                <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+              </span>
+            </div>
+            <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+              取消
+            </a>
+          </li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/about/"
+                  
+                  
+                ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="切换主题"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+  </div>
+  <div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+  </div><main class="container"><aside class="aside-collection animate__animated animate__fadeIn animate__faster" aria-label="合集"></aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>数据库分库分表</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><span class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+      Finger</span></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/database/" class="post-category" title="分类 - Database"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Database</a>&ensp;<a href="/categories/storage/" class="post-category" title="分类 - Storage"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a></span></div><div class="post-meta-line"><span title="发布于 2017-07-29 13:44:00"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2017-07-29">2017-07-29</time></span>&nbsp;<span title="135 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 200 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 1 分钟</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>目录</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#一背景">一、背景</a></li>
+        <li><a href="#二读写分离">二、读写分离</a></li>
+        <li><a href="#三分库分表">三、分库分表</a></li>
+        <li><a href="#四第三方中间件">四、第三方中间件</a></li>
+        <li><a href="#五需要考虑的问题">五、需要考虑的问题</a></li>
+        <li><a href="#参考文献">参考文献</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><h3 id="一背景" class="heading-element"><span>一、背景</span>
+  <a href="#%e4%b8%80%e8%83%8c%e6%99%af" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><ul>
+<li>大量的并发读/写操作，导致单库出现难以承受的负载压力</li>
+<li>单表存储数据量过大，导致索引效率低下</li>
+</ul>
+<h3 id="二读写分离" class="heading-element"><span>二、读写分离</span>
+  <a href="#%e4%ba%8c%e8%af%bb%e5%86%99%e5%88%86%e7%a6%bb" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>将数据库设置为读写分离状态，由Master（主）负责写数据，Salve（从）只负责读数据。主从之间保持数据同步。根据二八法则，80%的数据库操作是读，20%则为写。读写分离后，可以大大提升单库负载压力。</p>
+<p><strong>但是，当Master存在TPS（系统吞吐量）较高的情况，Master和Slave数据库之间数据同步是会存在一定延迟，因此在写入Master之前最好还是要将同一份数据放入缓存中，以避免高并发情况下，从Slave中获取不到指定数据的情况</strong></p>
+<h3 id="三分库分表" class="heading-element"><span>三、分库分表</span>
+  <a href="#%e4%b8%89%e5%88%86%e5%ba%93%e5%88%86%e8%a1%a8" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>随着用户规模的不断上升，仅仅只是依靠数据库的读写分离并不能解决系统瓶颈。因此需要考虑分库分表的解决方案。</p>
+<p><strong>分表</strong> 就是将原来冗余在单库中的单个业务表拆分为N个“逻辑相关”的业务子表（如tab_0000, tab_0001, tab_0002&hellip;），不同的业务字表各自负责存储不同区间数据，对外形成一个整体</p>
+<p><strong>分库</strong> 就是将分表后的业务子表按照特定的算法和规则分散到N个“逻辑相关”的业务子库中（如db_0000, db_0001, db_0002&hellip;）</p>
+<h4 id="分库分表策略" class="heading-element"><span>分库分表策略</span>
+  <a href="#%e5%88%86%e5%ba%93%e5%88%86%e8%a1%a8%e7%ad%96%e7%95%a5" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p>主要原理：<strong>分区，取模，数据路由表</strong></p>
+<h4 id="1按时间区间" class="heading-element"><span>1、按时间区间</span>
+  <a href="#1%e6%8c%89%e6%97%b6%e9%97%b4%e5%8c%ba%e9%97%b4" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p>一定时间区间内产生的数据放到一张表里面，多个时间区间的表放到一个库里面</p>
+<p>比如，</p>
+<p>a、单库多表结构，按月分表可以这样：user_201701, user_201702&hellip;user_201712；按年分表可以这样，user_2016, user_2017&hellip;</p>
+<p>b、多库多表，比如按天分表，每天一张表，当单库超过100张表的时候，进行分库到下一张表。那么假如第一张表在库db0，表名是user_20160201。从db0.user_20160201 - db0.user_20160511就是100张表了，接下来就是分库，进入20160512，就是db1.user_20160512，这个算法就是上线的时候定一个上线日期，具体算法如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">库ID = （当前日期 - 上线日期）/ 100
+</span></span><span class="line"><span class="cl">表ID = user_yyyyMMdd</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>注：好处是可以直接根据时间经过简单计算定位到哪个库和哪个表</strong></p>
+<p>还有一种算法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">表ID = (当前日期 - 上线日期) % 100
+</span></span><span class="line"><span class="cl">表名如下： DB0.user_0001，user_0002 .... user_01000</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>注：表名和库名都要经过计算，比较麻烦</strong></p>
+<p>c、按月分表，每个月一张表。这种情况，一般就不用分库了，一年12张表说明量也不会特别大，如果量特别大，或者是热点数据，可以一年分一个库，具体算法和上面差不多。</p>
+<p>d、按季度分表，按年度分表（基本不用分库）</p>
+<h4 id="2按主键id区间" class="heading-element"><span>2、按主键ID区间</span>
+  <a href="#2%e6%8c%89%e4%b8%bb%e9%94%aeid%e5%8c%ba%e9%97%b4" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p>对于自增的主键ID，可以按照ID区间进行分表，以1000万数据量为分界线，对线性的ID进行切割分表，每涨到1000万数据，分到下一张表，超过一定数目的表，进行分库。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">库ID = 主键ID / 1000万 / 100
+</span></span><span class="line"><span class="cl">表ID = 主键ID / 1000万 % 100</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">db0.user_0000 ... db0.user_0099 
+</span></span><span class="line"><span class="cl">db1.user_0000 ... db1.user_0099</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="3按照用户id取模" class="heading-element"><span>3、按照用户ID取模</span>
+  <a href="#3%e6%8c%89%e7%85%a7%e7%94%a8%e6%88%b7id%e5%8f%96%e6%a8%a1" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p>这里把按照用户ID取模单独拎出来，因为就使用而言，是使用场景最多的情况，很多时候都是用户相关数据量最大，需要分库分表，查询维度更多也是按照用户来查询，所以对用户取模，让同一个用户的数据落到一张表里面，再好不过了。</p>
+<p>这里模式用户ID是整数型的。假设库数量要分4库，每个库表数量8表，一共32张表。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">库ID = userId % 库数量4
+</span></span><span class="line"><span class="cl">表ID = userId / 库数量4 % 表数量8
+</span></span><span class="line"><span class="cl">或者
+</span></span><span class="line"><span class="cl">库ID = userId / 表数量4 % 库数量4
+</span></span><span class="line"><span class="cl">表ID = userId % 表数量8</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="4按照指定字段hash后再取模" class="heading-element"><span>4、按照指定字段hash后再取模</span>
+  <a href="#4%e6%8c%89%e7%85%a7%e6%8c%87%e5%ae%9a%e5%ad%97%e6%ae%b5hash%e5%90%8e%e5%86%8d%e5%8f%96%e6%a8%a1" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p>如果要取模的字段不是整数型，要先hash后，再通过取模算法，算出在哪个库和那个表。具体算法，参照上面的按用户ID取模。</p>
+<h4 id="5数据路由表" class="heading-element"><span>5、数据路由表</span>
+  <a href="#5%e6%95%b0%e6%8d%ae%e8%b7%af%e7%94%b1%e8%a1%a8" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p>如果分库分表的算法很复杂，可以通过路由表+程序算法，来存储和计算分库分表规则，不过一般不建议，分库分表搞得太复杂，不便于维护和查询问题</p>
+<h3 id="四第三方中间件" class="heading-element"><span>四、第三方中间件</span>
+  <a href="#%e5%9b%9b%e7%ac%ac%e4%b8%89%e6%96%b9%e4%b8%ad%e9%97%b4%e4%bb%b6" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>1、Cobar</p>
+<p>开源地址：https://github.com/alibaba/cobar</p>
+<p>2、Shark</p>
+<p>开源地址：https://github.com/gaoxianglong/shark</p>
+<h3 id="五需要考虑的问题" class="heading-element"><span>五、需要考虑的问题</span>
+  <a href="#%e4%ba%94%e9%9c%80%e8%a6%81%e8%80%83%e8%99%91%e7%9a%84%e9%97%ae%e9%a2%98" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>一旦数据库实施分库分表后，便会对开发造成一定的影响。具体问题如下：</p>
+<ul>
+<li>数据的原子性，一致性，隔离性，持久性如何保证</li>
+<li>多表之间的关联查询如何进行</li>
+<li>无法继续使用外键约束</li>
+<li>无法继续使用Oracle提供的Sequence或MySQL提供的AUTO_INCREMENT生成全局唯一和连续性ID。</li>
+</ul>
+<h3 id="参考文献" class="heading-element"><span>参考文献</span>
+  <a href="#%e5%8f%82%e8%80%83%e6%96%87%e7%8c%ae" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><ul>
+<li><a href="https://baijiahao.baidu.com/s?id=1564548884823698&amp;wfr=spider&amp;for=pc"target="_blank" rel="external nofollow noopener noreferrer">https://baijiahao.baidu.com/s?id=1564548884823698&wfr=spider&for=pc</a></li>
+<li><a href="http://blog.csdn.net/xlgen157387/article/details/53976153"target="_blank" rel="external nofollow noopener noreferrer">http://blog.csdn.net/xlgen157387/article/details/53976153</a></li>
+<li><a href="http://blog.csdn.net/dinglang_2009/article/details/53195871"target="_blank" rel="external nofollow noopener noreferrer">http://blog.csdn.net/dinglang_2009/article/details/53195871</a></li>
+</ul>
+</div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="更新于 2017-07-29 13:44:00">更新于 2017-07-29&nbsp;</span>
+      </div><div class="post-info-license">
+            <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
+          </div></div><div class="post-info-line">
+        <div class="post-info-md"><span><a href="https://github.com/hugo-fixit/docs/blob/main/main/posts%5cstorage%5cdatabase-sharding.md?plain=1" title="查看源码"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-source">查看源码</a></span><span><a href="https://github.com/hugo-fixit/docs/edit/main/main/posts%5cstorage%5cdatabase-sharding.md" title="编辑此页"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-edit">编辑此页</a></span><span><a href="https://github.com/hugo-fixit/docs/issues/new?title=[BUG]%20%E6%95%B0%E6%8D%AE%E5%BA%93%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8&amp;body=%7cField%7cValue%7c%0A%7c-%7c-%7c%0A%7cTitle%7c%E6%95%B0%E6%8D%AE%E5%BA%93%E5%88%86%E5%BA%93%E5%88%86%E8%A1%A8%7c%0A%7cURL%7chttps://hellofinger.tech/2017/07/database-sharding/%7c%0A%7cFilename%7chttps://github.com/hugo-fixit/docs/blob/main/main/posts%5cstorage%5cdatabase-sharding.md?plain=1%7c" title="报告问题"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-report">报告问题</a></span></div>
+        <div class="post-info-share">
+          <span><a href="javascript:void(0);" title="分享到 X" data-sharer="twitter" data-url="https://hellofinger.tech/2017/07/database-sharding/" data-title="数据库分库分表" data-hashtags="MySql,Shard"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://hellofinger.tech/2017/07/database-sharding/" data-hashtag="MySql"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://hellofinger.tech/2017/07/database-sharding/" data-title="数据库分库分表"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+        </div>
+      </div></div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href="/tags/mysql/" class="post-tag" title="标签 - Mysql">Mysql</a><a href="/tags/shard/" class="post-tag" title="标签 - Shard">Shard</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+    </section>
+  </div><div class="post-nav"><a href="/2017/07/scrapy-deploy-usage/" class="post-nav-item" rel="prev" title="Scrapy 部署笔记"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>Scrapy 部署笔记</a>
+      <a href="/2017/07/python-face-recognition/" class="post-nav-item" rel="next" title="基于 Python 的开源人脸识别库">基于 Python 的开源人脸识别库<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article>
+
+  <aside class="toc" id="toc-auto" aria-label="目录"><h2 class="toc-title">目录&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2017 - 2024</span><span class="author" itemprop="copyrightHolder">
+              <a href="/">Finger</a></span><span class="license footer-divider"><a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="回到顶部"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">该网站在启用 JavaScript 的情况下效果最佳。</div>
+  </noscript>
+</div><link rel="preload" href="/lib/katex/katex.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/katex/katex.min.css"></noscript><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script src="/lib/autocomplete/autocomplete.min.js" defer></script><script src="/lib/fuse/fuse.min.js" defer></script><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/copy-tex.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="/js/flyfish.js" defer></script><script>window.config={"code":{"copyTitle":"复制到剪贴板","editLockTitle":"锁定可编辑代码块","editUnLockTitle":"解锁可编辑代码块","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"同意","link":"了解更多","message":"本网站使用 Cookies 来改善您的浏览体验。"},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"distance":100,"findAllMatches":false,"highlightTag":"em","ignoreFieldNorm":false,"ignoreLocation":false,"isCaseSensitive":false,"location":0,"maxResultLength":10,"minMatchCharLength":2,"noResultsFound":"没有找到结果","snippetLength":30,"threshold":0.3,"useExtendedSearch":false},"version":"v0.3.10-c936e541"};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

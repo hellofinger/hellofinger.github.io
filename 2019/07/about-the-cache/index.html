@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>关于缓存 - Finger&#39;s Blog</title><meta name="author" content="Finger">
+<meta name="author-link" content="">
+<meta name="description" content="缓存模式（Cache Aside Pattern）什么是&quot;Cache Aside Pattern&quot;?答： 旁路缓存方案的经验实践，这个实践又分读实践，写实践。
+对于读请求先读cache，再读db 如果，cache hit，则直接返回数据 如果，cache miss，则访问db，并将数据set回缓存 如上图：
+先从cache中尝试get数据，结果miss了 再从db中读取数据，从库，读写分离 最后把数据set回cache，方便下次读命中 对于写请求淘汰缓存，而不是更新缓存 先操作数据库，再淘汰缓存 如上图：
+第一步要操作数据库，第二步操作缓存 缓存，采用delete淘汰，而不是set更新 Cache Aside Pattern为什么建议淘汰缓存，而不是更新缓存？答： 如果更新缓存，在并发写时，可能出现数据不一致。
+如上图所示，如果采用set缓存。
+在1和2两个并发写发生时，由于无法保证时序，此时不管先操作缓存还是先操作数据库，都可能出现：
+请求1先操作数据库，请求2后操作数据库 请求2先set了缓存，请求1后set了缓存 导致，数据库与缓存之间的数据不一致。
+所以，Cache Aside Pattern建议，delete缓存，而不是set缓存。
+Cache Aside Pattern为什么建议先操作数据库，再操作缓存？答： 如果先操作缓存，在读写并发时，可能出现数据不一致。
+如上图所示，如果先操作缓存。
+在1和2并发读写发生时，由于无法保证时序，可能出现：
+写请求淘汰了缓存 写请求操作了数据库（主从同步没有完成） 读请求读了缓存（cache miss） 读请求读了从库（读了一个旧数据） 读请求set回缓存（set了一个旧数据） 数据库主从同步完成 导致，数据库与缓存的数据不一致。 所以，Cache Aside Pattern建议，先操作数据库，再操作缓存。
+Cache Aside Pattern方案存在什么问题？答： 如果先操作数据库，再淘汰缓存，在原子性被破坏时：
+修改数据库成功了 淘汰缓存失败了 导致，数据库与缓存的数据不一致。
+原文来自58沈剑: https://cloud.tencent.com/info/5e258c6f840423de68eda937db3e1c90.html
+缓存问题用一张脑图总结如下：" /><meta name="keywords" content='Cache' />
+  <meta itemprop="name" content="关于缓存">
+  <meta itemprop="description" content="缓存模式（Cache Aside Pattern）什么是&#34;Cache Aside Pattern&#34;?答： 旁路缓存方案的经验实践，这个实践又分读实践，写实践。
+对于读请求先读cache，再读db 如果，cache hit，则直接返回数据 如果，cache miss，则访问db，并将数据set回缓存 如上图：
+先从cache中尝试get数据，结果miss了 再从db中读取数据，从库，读写分离 最后把数据set回cache，方便下次读命中 对于写请求淘汰缓存，而不是更新缓存 先操作数据库，再淘汰缓存 如上图：
+第一步要操作数据库，第二步操作缓存 缓存，采用delete淘汰，而不是set更新 Cache Aside Pattern为什么建议淘汰缓存，而不是更新缓存？答： 如果更新缓存，在并发写时，可能出现数据不一致。
+如上图所示，如果采用set缓存。
+在1和2两个并发写发生时，由于无法保证时序，此时不管先操作缓存还是先操作数据库，都可能出现：
+请求1先操作数据库，请求2后操作数据库 请求2先set了缓存，请求1后set了缓存 导致，数据库与缓存之间的数据不一致。
+所以，Cache Aside Pattern建议，delete缓存，而不是set缓存。
+Cache Aside Pattern为什么建议先操作数据库，再操作缓存？答： 如果先操作缓存，在读写并发时，可能出现数据不一致。
+如上图所示，如果先操作缓存。
+在1和2并发读写发生时，由于无法保证时序，可能出现：
+写请求淘汰了缓存 写请求操作了数据库（主从同步没有完成） 读请求读了缓存（cache miss） 读请求读了从库（读了一个旧数据） 读请求set回缓存（set了一个旧数据） 数据库主从同步完成 导致，数据库与缓存的数据不一致。 所以，Cache Aside Pattern建议，先操作数据库，再操作缓存。
+Cache Aside Pattern方案存在什么问题？答： 如果先操作数据库，再淘汰缓存，在原子性被破坏时：
+修改数据库成功了 淘汰缓存失败了 导致，数据库与缓存的数据不一致。
+原文来自58沈剑: https://cloud.tencent.com/info/5e258c6f840423de68eda937db3e1c90.html
+缓存问题用一张脑图总结如下：">
+  <meta itemprop="datePublished" content="2019-07-13T18:23:00+00:00">
+  <meta itemprop="dateModified" content="2019-07-13T18:23:00+00:00">
+  <meta itemprop="wordCount" content="67">
+  <meta itemprop="keywords" content="Cache"><meta property="og:url" content="https://hellofinger.tech/2019/07/about-the-cache/">
+  <meta property="og:site_name" content="Finger&#39;s Blog">
+  <meta property="og:title" content="关于缓存">
+  <meta property="og:description" content="缓存模式（Cache Aside Pattern）什么是&#34;Cache Aside Pattern&#34;?答： 旁路缓存方案的经验实践，这个实践又分读实践，写实践。
+对于读请求先读cache，再读db 如果，cache hit，则直接返回数据 如果，cache miss，则访问db，并将数据set回缓存 如上图：
+先从cache中尝试get数据，结果miss了 再从db中读取数据，从库，读写分离 最后把数据set回cache，方便下次读命中 对于写请求淘汰缓存，而不是更新缓存 先操作数据库，再淘汰缓存 如上图：
+第一步要操作数据库，第二步操作缓存 缓存，采用delete淘汰，而不是set更新 Cache Aside Pattern为什么建议淘汰缓存，而不是更新缓存？答： 如果更新缓存，在并发写时，可能出现数据不一致。
+如上图所示，如果采用set缓存。
+在1和2两个并发写发生时，由于无法保证时序，此时不管先操作缓存还是先操作数据库，都可能出现：
+请求1先操作数据库，请求2后操作数据库 请求2先set了缓存，请求1后set了缓存 导致，数据库与缓存之间的数据不一致。
+所以，Cache Aside Pattern建议，delete缓存，而不是set缓存。
+Cache Aside Pattern为什么建议先操作数据库，再操作缓存？答： 如果先操作缓存，在读写并发时，可能出现数据不一致。
+如上图所示，如果先操作缓存。
+在1和2并发读写发生时，由于无法保证时序，可能出现：
+写请求淘汰了缓存 写请求操作了数据库（主从同步没有完成） 读请求读了缓存（cache miss） 读请求读了从库（读了一个旧数据） 读请求set回缓存（set了一个旧数据） 数据库主从同步完成 导致，数据库与缓存的数据不一致。 所以，Cache Aside Pattern建议，先操作数据库，再操作缓存。
+Cache Aside Pattern方案存在什么问题？答： 如果先操作数据库，再淘汰缓存，在原子性被破坏时：
+修改数据库成功了 淘汰缓存失败了 导致，数据库与缓存的数据不一致。
+原文来自58沈剑: https://cloud.tencent.com/info/5e258c6f840423de68eda937db3e1c90.html
+缓存问题用一张脑图总结如下：">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2019-07-13T18:23:00+00:00">
+    <meta property="article:modified_time" content="2019-07-13T18:23:00+00:00">
+    <meta property="article:tag" content="Cache">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="关于缓存">
+  <meta name="twitter:description" content="缓存模式（Cache Aside Pattern）什么是&#34;Cache Aside Pattern&#34;?答： 旁路缓存方案的经验实践，这个实践又分读实践，写实践。
+对于读请求先读cache，再读db 如果，cache hit，则直接返回数据 如果，cache miss，则访问db，并将数据set回缓存 如上图：
+先从cache中尝试get数据，结果miss了 再从db中读取数据，从库，读写分离 最后把数据set回cache，方便下次读命中 对于写请求淘汰缓存，而不是更新缓存 先操作数据库，再淘汰缓存 如上图：
+第一步要操作数据库，第二步操作缓存 缓存，采用delete淘汰，而不是set更新 Cache Aside Pattern为什么建议淘汰缓存，而不是更新缓存？答： 如果更新缓存，在并发写时，可能出现数据不一致。
+如上图所示，如果采用set缓存。
+在1和2两个并发写发生时，由于无法保证时序，此时不管先操作缓存还是先操作数据库，都可能出现：
+请求1先操作数据库，请求2后操作数据库 请求2先set了缓存，请求1后set了缓存 导致，数据库与缓存之间的数据不一致。
+所以，Cache Aside Pattern建议，delete缓存，而不是set缓存。
+Cache Aside Pattern为什么建议先操作数据库，再操作缓存？答： 如果先操作缓存，在读写并发时，可能出现数据不一致。
+如上图所示，如果先操作缓存。
+在1和2并发读写发生时，由于无法保证时序，可能出现：
+写请求淘汰了缓存 写请求操作了数据库（主从同步没有完成） 读请求读了缓存（cache miss） 读请求读了从库（读了一个旧数据） 读请求set回缓存（set了一个旧数据） 数据库主从同步完成 导致，数据库与缓存的数据不一致。 所以，Cache Aside Pattern建议，先操作数据库，再操作缓存。
+Cache Aside Pattern方案存在什么问题？答： 如果先操作数据库，再淘汰缓存，在原子性被破坏时：
+修改数据库成功了 淘汰缓存失败了 导致，数据库与缓存的数据不一致。
+原文来自58沈剑: https://cloud.tencent.com/info/5e258c6f840423de68eda937db3e1c90.html
+缓存问题用一张脑图总结如下：">
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://hellofinger.tech/2019/07/about-the-cache/" /><link rel="prev" href="https://hellofinger.tech/2019/07/python-notes-1/" /><link rel="next" href="https://hellofinger.tech/2019/11/influxdb-basic/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "关于缓存",
+    "inLanguage": "zh-CN",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/hellofinger.tech\/2019\/07\/about-the-cache\/"
+    },"genre": "posts","keywords": "Cache","wordcount":  67 ,
+    "url": "https:\/\/hellofinger.tech\/2019\/07\/about-the-cache\/","datePublished": "2019-07-13T18:23:00+00:00","dateModified": "2019-07-13T18:23:00+00:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Finger"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/about/"
+                
+                
+              ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item delimiter"></li><li class="menu-item search" id="search-desktop">
+            <input type="text" placeholder="搜索文章标题或内容……" id="search-input-desktop">
+            <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+              <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+            </a>
+            <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+              <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+            </a>
+            <span class="search-button search-loading" id="search-loading-desktop">
+              <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+            </span>
+          </li><li class="menu-item theme-switch" title="切换主题">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li class="search-wrapper">
+            <div class="search mobile" id="search-mobile">
+              <input type="text" placeholder="搜索文章标题或内容……" id="search-input-mobile">
+              <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+              </a>
+              <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+              </a>
+              <span class="search-button search-loading" id="search-loading-mobile">
+                <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+              </span>
+            </div>
+            <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+              取消
+            </a>
+          </li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/about/"
+                  
+                  
+                ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="切换主题"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+  </div>
+  <div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+  </div><main class="container"><aside class="aside-collection animate__animated animate__fadeIn animate__faster" aria-label="合集"></aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>关于缓存</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><span class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+      Finger</span></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/storage/" class="post-category" title="分类 - Storage"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a></span></div><div class="post-meta-line"><span title="发布于 2019-07-13 18:23:00"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2019-07-13">2019-07-13</time></span>&nbsp;<span title="67 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 100 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 1 分钟</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>目录</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#缓存模式cache-aside-pattern">缓存模式（Cache Aside Pattern）</a></li>
+        <li><a href="#缓存问题">缓存问题</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><h3 id="缓存模式cache-aside-pattern" class="heading-element"><span>缓存模式（Cache Aside Pattern）</span>
+  <a href="#%e7%bc%93%e5%ad%98%e6%a8%a1%e5%bc%8fcache-aside-pattern" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><h4 id="什么是cache-aside-pattern" class="heading-element"><span>什么是&quot;Cache Aside Pattern&quot;?</span>
+  <a href="#%e4%bb%80%e4%b9%88%e6%98%afcache-aside-pattern" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p><strong>答：</strong> <strong>旁路缓存</strong>方案的经验实践，这个实践又分<strong>读实践，写实践</strong>。</p>
+<h5 id="对于读请求" class="heading-element"><span>对于读请求</span>
+  <a href="#%e5%af%b9%e4%ba%8e%e8%af%bb%e8%af%b7%e6%b1%82" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h5><ul>
+<li>先读cache，再读db</li>
+<li>如果，cache hit，则直接返回数据</li>
+<li>如果，cache miss，则访问db，并将数据set回缓存</li>
+</ul>
+<p><img loading="lazy" src="/imgs/20190713/1.jpg" alt="/imgs/20190713/1.jpg" srcset="/imgs/20190713/1.jpg?size=small, /imgs/20190713/1.jpg?size=medium 1.5x, /imgs/20190713/1.jpg?size=large 2x" data-title="/imgs/20190713/1.jpg" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p>如上图：</p>
+<ol>
+<li>先从cache中尝试get数据，结果miss了</li>
+<li>再从db中读取数据，从库，读写分离</li>
+<li>最后把数据set回cache，方便下次读命中</li>
+</ol>
+<h5 id="对于写请求" class="heading-element"><span>对于写请求</span>
+  <a href="#%e5%af%b9%e4%ba%8e%e5%86%99%e8%af%b7%e6%b1%82" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h5><ul>
+<li>淘汰缓存，而不是更新缓存</li>
+<li>先操作数据库，再淘汰缓存</li>
+</ul>
+<p><img loading="lazy" src="/imgs/20190713/2.jpg" alt="/imgs/20190713/2.jpg" srcset="/imgs/20190713/2.jpg?size=small, /imgs/20190713/2.jpg?size=medium 1.5x, /imgs/20190713/2.jpg?size=large 2x" data-title="/imgs/20190713/2.jpg" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p>如上图：</p>
+<ol>
+<li>第一步要操作数据库，第二步操作缓存</li>
+<li>缓存，采用delete淘汰，而不是set更新</li>
+</ol>
+<h4 id="cache-aside-pattern为什么建议淘汰缓存而不是更新缓存" class="heading-element"><span>Cache Aside Pattern为什么建议淘汰缓存，而不是更新缓存？</span>
+  <a href="#cache-aside-pattern%e4%b8%ba%e4%bb%80%e4%b9%88%e5%bb%ba%e8%ae%ae%e6%b7%98%e6%b1%b0%e7%bc%93%e5%ad%98%e8%80%8c%e4%b8%8d%e6%98%af%e6%9b%b4%e6%96%b0%e7%bc%93%e5%ad%98" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p><strong>答：</strong> 如果更新缓存，在并发写时，可能出现数据不一致。</p>
+<p><img loading="lazy" src="/imgs/20190713/3.jpg" alt="/imgs/20190713/3.jpg" srcset="/imgs/20190713/3.jpg?size=small, /imgs/20190713/3.jpg?size=medium 1.5x, /imgs/20190713/3.jpg?size=large 2x" data-title="/imgs/20190713/3.jpg" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p>如上图所示，如果采用set缓存。</p>
+<p>在1和2两个并发写发生时，由于无法保证时序，此时不管先操作缓存还是先操作数据库，都可能出现：</p>
+<ol>
+<li>请求1先操作数据库，请求2后操作数据库</li>
+<li>请求2先set了缓存，请求1后set了缓存</li>
+</ol>
+<p>导致，<strong>数据库与缓存之间的数据不一致。</strong></p>
+<p>所以，Cache Aside Pattern建议，<strong>delete缓存，而不是set缓存。</strong></p>
+<h4 id="cache-aside-pattern为什么建议先操作数据库再操作缓存" class="heading-element"><span>Cache Aside Pattern为什么建议先操作数据库，再操作缓存？</span>
+  <a href="#cache-aside-pattern%e4%b8%ba%e4%bb%80%e4%b9%88%e5%bb%ba%e8%ae%ae%e5%85%88%e6%93%8d%e4%bd%9c%e6%95%b0%e6%8d%ae%e5%ba%93%e5%86%8d%e6%93%8d%e4%bd%9c%e7%bc%93%e5%ad%98" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p><strong>答：</strong> 如果先操作缓存，在读写并发时，可能出现数据不一致。</p>
+<p><img loading="lazy" src="/imgs/20190713/4.jpg" alt="/imgs/20190713/4.jpg" srcset="/imgs/20190713/4.jpg?size=small, /imgs/20190713/4.jpg?size=medium 1.5x, /imgs/20190713/4.jpg?size=large 2x" data-title="/imgs/20190713/4.jpg" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p>如上图所示，如果先操作缓存。</p>
+<p>在1和2并发读写发生时，由于无法保证时序，可能出现：</p>
+<ol>
+<li>写请求淘汰了缓存</li>
+<li>写请求操作了数据库（主从同步没有完成）</li>
+<li>读请求读了缓存（cache miss）</li>
+<li>读请求读了从库（读了一个旧数据）</li>
+<li>读请求set回缓存（set了一个旧数据）</li>
+<li>数据库主从同步完成
+导致，数据库与缓存的数据不一致。</li>
+</ol>
+<p>所以，Cache Aside Pattern建议，<strong>先操作数据库，再操作缓存。</strong></p>
+<h4 id="cache-aside-pattern方案存在什么问题" class="heading-element"><span>Cache Aside Pattern方案存在什么问题？</span>
+  <a href="#cache-aside-pattern%e6%96%b9%e6%a1%88%e5%ad%98%e5%9c%a8%e4%bb%80%e4%b9%88%e9%97%ae%e9%a2%98" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p><strong>答：</strong> 如果先操作数据库，再淘汰缓存，在原子性被破坏时：</p>
+<ol>
+<li>修改数据库成功了</li>
+<li>淘汰缓存失败了</li>
+</ol>
+<p>导致，数据库与缓存的数据不一致。</p>
+<p>原文来自58沈剑:
+<a href="https://cloud.tencent.com/info/5e258c6f840423de68eda937db3e1c90.html"target="_blank" rel="external nofollow noopener noreferrer">https://cloud.tencent.com/info/5e258c6f840423de68eda937db3e1c90.html</a></p>
+<h3 id="缓存问题" class="heading-element"><span>缓存问题</span>
+  <a href="#%e7%bc%93%e5%ad%98%e9%97%ae%e9%a2%98" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>用一张脑图总结如下：</p>
+<p><img loading="lazy" src="/imgs/20190713/the-cache-problem.png" alt="/imgs/20190713/the-cache-problem.png" srcset="/imgs/20190713/the-cache-problem.png?size=small, /imgs/20190713/the-cache-problem.png?size=medium 1.5x, /imgs/20190713/the-cache-problem.png?size=large 2x" data-title="/imgs/20190713/the-cache-problem.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+</div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="更新于 2019-07-13 18:23:00">更新于 2019-07-13&nbsp;</span>
+      </div><div class="post-info-license">
+            <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
+          </div></div><div class="post-info-line">
+        <div class="post-info-md"><span><a href="https://github.com/hugo-fixit/docs/blob/main/main/posts%5cstorage%5cabout-the-cache%5cindex.md?plain=1" title="查看源码"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-source">查看源码</a></span><span><a href="https://github.com/hugo-fixit/docs/edit/main/main/posts%5cstorage%5cabout-the-cache%5cindex.md" title="编辑此页"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-edit">编辑此页</a></span><span><a href="https://github.com/hugo-fixit/docs/issues/new?title=[BUG]%20%E5%85%B3%E4%BA%8E%E7%BC%93%E5%AD%98&amp;body=%7cField%7cValue%7c%0A%7c-%7c-%7c%0A%7cTitle%7c%E5%85%B3%E4%BA%8E%E7%BC%93%E5%AD%98%7c%0A%7cURL%7chttps://hellofinger.tech/2019/07/about-the-cache/%7c%0A%7cFilename%7chttps://github.com/hugo-fixit/docs/blob/main/main/posts%5cstorage%5cabout-the-cache%5cindex.md?plain=1%7c" title="报告问题"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-report">报告问题</a></span></div>
+        <div class="post-info-share">
+          <span><a href="javascript:void(0);" title="分享到 X" data-sharer="twitter" data-url="https://hellofinger.tech/2019/07/about-the-cache/" data-title="关于缓存" data-hashtags="Cache"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://hellofinger.tech/2019/07/about-the-cache/" data-hashtag="Cache"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://hellofinger.tech/2019/07/about-the-cache/" data-title="关于缓存"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+        </div>
+      </div></div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href="/tags/cache/" class="post-tag" title="标签 - Cache">Cache</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+    </section>
+  </div><div class="post-nav"><a href="/2019/07/python-notes-1/" class="post-nav-item" rel="prev" title="Python 杂记(一)"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>Python 杂记(一)</a>
+      <a href="/2019/11/influxdb-basic/" class="post-nav-item" rel="next" title="InfluxDB 基础知识">InfluxDB 基础知识<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article>
+
+  <aside class="toc" id="toc-auto" aria-label="目录"><h2 class="toc-title">目录&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2017 - 2024</span><span class="author" itemprop="copyrightHolder">
+              <a href="/">Finger</a></span><span class="license footer-divider"><a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="回到顶部"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">该网站在启用 JavaScript 的情况下效果最佳。</div>
+  </noscript>
+</div><link rel="preload" href="/lib/katex/katex.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/katex/katex.min.css"></noscript><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script src="/lib/autocomplete/autocomplete.min.js" defer></script><script src="/lib/fuse/fuse.min.js" defer></script><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/copy-tex.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="/js/flyfish.js" defer></script><script>window.config={"code":{"copyTitle":"复制到剪贴板","editLockTitle":"锁定可编辑代码块","editUnLockTitle":"解锁可编辑代码块","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"同意","link":"了解更多","message":"本网站使用 Cookies 来改善您的浏览体验。"},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"distance":100,"findAllMatches":false,"highlightTag":"em","ignoreFieldNorm":false,"ignoreLocation":false,"isCaseSensitive":false,"location":0,"maxResultLength":10,"minMatchCharLength":2,"noResultsFound":"没有找到结果","snippetLength":30,"threshold":0.3,"useExtendedSearch":false},"version":"v0.3.10-c936e541"};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

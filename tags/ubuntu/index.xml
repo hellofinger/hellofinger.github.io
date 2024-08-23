@@ -1,0 +1,29 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>Ubuntu - 标签 - Finger&#39;s Blog</title>
+    <link>https://hellofinger.tech/tags/ubuntu/</link>
+    <description>Ubuntu - 标签 | Finger&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Thu, 22 Jun 2017 23:45:00 &#43;0000</lastBuildDate><atom:link href="https://hellofinger.tech/tags/ubuntu/" rel="self" type="application/rss+xml" /><item>
+  <title>Docker 构建第一个App</title>
+  <link>https://hellofinger.tech/2017/06/docker-build-and-run-your-first-app/</link>
+  <pubDate>Thu, 22 Jun 2017 23:45:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2017/06/docker-build-and-run-your-first-app/</guid>
+  <description><![CDATA[测试环境：阿里云 ubuntu14.04
+一、新建Dockerfile文件1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 # Use an official Python runtime as a base image FROM python:2.7-slim # Set the working directory to /app WORKDIR /app # Copy the current directory contents into the container at /app ADD . /app # Install any needed packages specified in requirements.txt RUN pip install -r requirements.]]></description>
+</item>
+<item>
+  <title>Ubuntu 安装svn服务</title>
+  <link>https://hellofinger.tech/2017/01/ubuntu-install-svn-simple-server/</link>
+  <pubDate>Fri, 27 Jan 2017 20:56:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2017/01/ubuntu-install-svn-simple-server/</guid>
+  <description><![CDATA[一、安装Subversion Server1 apt-get install subversion 二、创建SVN版本库1 2 mkdir /srv/svn # 创建SVN根目录 svnadmin create test # 创建测试项目库 三、SVN配置主要包含以下三个配置文件：
+1. svnserve.conf服务配置：
+1 2 3 4 5 6 [general] anon-access = none # 匿名用户不可读 auth-access = write # 权限用户可写 password-db = passwd # 启用密码文件 authz-db = authz # 启用权限文件 realm = repos # 认证域名称 2. passwd账号配置：
+1 2 [user] finger = 123456 3. authz权限配置：
+1 2 3 4 5 6 [groups] admin = finger [/] @admin = rw # admin组拥有所有读写权限 * = r # 其他只有读权限 四、启动和停止1 2 3 4 5 6 7 启动： svnserve -d -r /srv/svn # -d 表示后台运行 -r 表示根目录 停止： ps -ef | grep svn # 查看svn进程ID kill -9 进程ID 五、测试1 svn co svn://127.]]></description>
+</item>
+</channel>
+</rss>

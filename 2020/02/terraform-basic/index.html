@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>Terraform的基本语法 - Finger&#39;s Blog</title><meta name="author" content="Finger">
+<meta name="author-link" content="">
+<meta name="description" content="语法Terraform语言也就是HCL(HashiCorp Configuration Language)，是一种丰富的语言。他的语法结构类似于JSON语法。主要由参数和块构成。
+参数1 2 ami = &#34;ami-061eb2b23f9f8839c&#34; instance_type = &#34;t2.micro&#34; 等号前的标识符是参数名称，等号后的表达式是参数的值。
+代码块1 2 3 4 5 6 7 8 resource &#34;aws_instance&#34; &#34;example-instance&#34; { ami = &#34;ami-061eb2b23f9f8839c&#34; instance_type = &#34;t2.micro&#34; tags = { Name = &#34;Example by ChangSha Union&#34; } } 块具有类型(resource)，每一个块类型定义后需要定义多个标签，上述例子定义了 aws_instance和 example-instance 两个标签。特定的块类型可以具有任意数量的标签或者不需要标签名。aws_instance为第三方云资源的关键字，example-instance为自定义资源变量名。
+块主体由 { 和 } 字符(大括号)分隔。在块里面可以嵌套其他变量和块。从而创建块及其相关变量的层次结构。
+块可以出现在其他外部的terraform文件中。例如：a.tf 定义了某个变量块可以被b.tf引用。
+标识符参数名，块类型名以及大多数特定于Terraform的结构(如资源，输入变量)的名称都是标识符。
+标识符可以包含字母，数字，下划线（_）和连字符（-）。标识符的第一个字符不能为数字，这和编程语言规则相同。
+注释# 单行或者结尾注释 // 单行注释，以替代# /* */ 多行注释 Terraform VS 传统函数将Terraform与传统函数(以JavaScript语法为例)比较。input variable相当于函数参数，local value类似于局部变量。而output类似于返回值。" /><meta name="keywords" content='Terraform, IAC' />
+  <meta itemprop="name" content="Terraform的基本语法">
+  <meta itemprop="description" content="语法Terraform语言也就是HCL(HashiCorp Configuration Language)，是一种丰富的语言。他的语法结构类似于JSON语法。主要由参数和块构成。
+参数1 2 ami = &#34;ami-061eb2b23f9f8839c&#34; instance_type = &#34;t2.micro&#34; 等号前的标识符是参数名称，等号后的表达式是参数的值。
+代码块1 2 3 4 5 6 7 8 resource &#34;aws_instance&#34; &#34;example-instance&#34; { ami = &#34;ami-061eb2b23f9f8839c&#34; instance_type = &#34;t2.micro&#34; tags = { Name = &#34;Example by ChangSha Union&#34; } } 块具有类型(resource)，每一个块类型定义后需要定义多个标签，上述例子定义了 aws_instance和 example-instance 两个标签。特定的块类型可以具有任意数量的标签或者不需要标签名。aws_instance为第三方云资源的关键字，example-instance为自定义资源变量名。
+块主体由 { 和 } 字符(大括号)分隔。在块里面可以嵌套其他变量和块。从而创建块及其相关变量的层次结构。
+块可以出现在其他外部的terraform文件中。例如：a.tf 定义了某个变量块可以被b.tf引用。
+标识符参数名，块类型名以及大多数特定于Terraform的结构(如资源，输入变量)的名称都是标识符。
+标识符可以包含字母，数字，下划线（_）和连字符（-）。标识符的第一个字符不能为数字，这和编程语言规则相同。
+注释# 单行或者结尾注释 // 单行注释，以替代# /* */ 多行注释 Terraform VS 传统函数将Terraform与传统函数(以JavaScript语法为例)比较。input variable相当于函数参数，local value类似于局部变量。而output类似于返回值。">
+  <meta itemprop="datePublished" content="2020-02-01T11:17:52+08:00">
+  <meta itemprop="dateModified" content="2020-02-01T11:17:52+08:00">
+  <meta itemprop="wordCount" content="72">
+  <meta itemprop="keywords" content="Terraform,IAC"><meta property="og:url" content="https://hellofinger.tech/2020/02/terraform-basic/">
+  <meta property="og:site_name" content="Finger&#39;s Blog">
+  <meta property="og:title" content="Terraform的基本语法">
+  <meta property="og:description" content="语法Terraform语言也就是HCL(HashiCorp Configuration Language)，是一种丰富的语言。他的语法结构类似于JSON语法。主要由参数和块构成。
+参数1 2 ami = &#34;ami-061eb2b23f9f8839c&#34; instance_type = &#34;t2.micro&#34; 等号前的标识符是参数名称，等号后的表达式是参数的值。
+代码块1 2 3 4 5 6 7 8 resource &#34;aws_instance&#34; &#34;example-instance&#34; { ami = &#34;ami-061eb2b23f9f8839c&#34; instance_type = &#34;t2.micro&#34; tags = { Name = &#34;Example by ChangSha Union&#34; } } 块具有类型(resource)，每一个块类型定义后需要定义多个标签，上述例子定义了 aws_instance和 example-instance 两个标签。特定的块类型可以具有任意数量的标签或者不需要标签名。aws_instance为第三方云资源的关键字，example-instance为自定义资源变量名。
+块主体由 { 和 } 字符(大括号)分隔。在块里面可以嵌套其他变量和块。从而创建块及其相关变量的层次结构。
+块可以出现在其他外部的terraform文件中。例如：a.tf 定义了某个变量块可以被b.tf引用。
+标识符参数名，块类型名以及大多数特定于Terraform的结构(如资源，输入变量)的名称都是标识符。
+标识符可以包含字母，数字，下划线（_）和连字符（-）。标识符的第一个字符不能为数字，这和编程语言规则相同。
+注释# 单行或者结尾注释 // 单行注释，以替代# /* */ 多行注释 Terraform VS 传统函数将Terraform与传统函数(以JavaScript语法为例)比较。input variable相当于函数参数，local value类似于局部变量。而output类似于返回值。">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2020-02-01T11:17:52+08:00">
+    <meta property="article:modified_time" content="2020-02-01T11:17:52+08:00">
+    <meta property="article:tag" content="Terraform">
+    <meta property="article:tag" content="IAC">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Terraform的基本语法">
+  <meta name="twitter:description" content="语法Terraform语言也就是HCL(HashiCorp Configuration Language)，是一种丰富的语言。他的语法结构类似于JSON语法。主要由参数和块构成。
+参数1 2 ami = &#34;ami-061eb2b23f9f8839c&#34; instance_type = &#34;t2.micro&#34; 等号前的标识符是参数名称，等号后的表达式是参数的值。
+代码块1 2 3 4 5 6 7 8 resource &#34;aws_instance&#34; &#34;example-instance&#34; { ami = &#34;ami-061eb2b23f9f8839c&#34; instance_type = &#34;t2.micro&#34; tags = { Name = &#34;Example by ChangSha Union&#34; } } 块具有类型(resource)，每一个块类型定义后需要定义多个标签，上述例子定义了 aws_instance和 example-instance 两个标签。特定的块类型可以具有任意数量的标签或者不需要标签名。aws_instance为第三方云资源的关键字，example-instance为自定义资源变量名。
+块主体由 { 和 } 字符(大括号)分隔。在块里面可以嵌套其他变量和块。从而创建块及其相关变量的层次结构。
+块可以出现在其他外部的terraform文件中。例如：a.tf 定义了某个变量块可以被b.tf引用。
+标识符参数名，块类型名以及大多数特定于Terraform的结构(如资源，输入变量)的名称都是标识符。
+标识符可以包含字母，数字，下划线（_）和连字符（-）。标识符的第一个字符不能为数字，这和编程语言规则相同。
+注释# 单行或者结尾注释 // 单行注释，以替代# /* */ 多行注释 Terraform VS 传统函数将Terraform与传统函数(以JavaScript语法为例)比较。input variable相当于函数参数，local value类似于局部变量。而output类似于返回值。">
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://hellofinger.tech/2020/02/terraform-basic/" /><link rel="prev" href="https://hellofinger.tech/2020/01/what-is-terraform/" /><link rel="next" href="https://hellofinger.tech/2020/02/terraform-variables/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Terraform的基本语法",
+    "inLanguage": "zh-CN",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/hellofinger.tech\/2020\/02\/terraform-basic\/"
+    },"genre": "posts","keywords": "Terraform, IAC","wordcount":  72 ,
+    "url": "https:\/\/hellofinger.tech\/2020\/02\/terraform-basic\/","datePublished": "2020-02-01T11:17:52+08:00","dateModified": "2020-02-01T11:17:52+08:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Finger"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/about/"
+                
+                
+              ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item delimiter"></li><li class="menu-item search" id="search-desktop">
+            <input type="text" placeholder="搜索文章标题或内容……" id="search-input-desktop">
+            <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+              <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+            </a>
+            <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+              <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+            </a>
+            <span class="search-button search-loading" id="search-loading-desktop">
+              <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+            </span>
+          </li><li class="menu-item theme-switch" title="切换主题">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li class="search-wrapper">
+            <div class="search mobile" id="search-mobile">
+              <input type="text" placeholder="搜索文章标题或内容……" id="search-input-mobile">
+              <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+              </a>
+              <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+              </a>
+              <span class="search-button search-loading" id="search-loading-mobile">
+                <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+              </span>
+            </div>
+            <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+              取消
+            </a>
+          </li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/about/"
+                  
+                  
+                ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="切换主题"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+  </div>
+  <div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+  </div><main class="container"><aside class="aside-collection animate__animated animate__fadeIn animate__faster" aria-label="合集"></aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>Terraform的基本语法</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><span class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+      Finger</span></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/iac/" class="post-category" title="分类 - IAC"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> IAC</a></span></div><div class="post-meta-line"><span title="发布于 2020-02-01 11:17:52"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2020-02-01">2020-02-01</time></span>&nbsp;<span title="72 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 100 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 1 分钟</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>目录</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#语法">语法</a>
+      <ul>
+        <li><a href="#参数">参数</a></li>
+        <li><a href="#代码块">代码块</a></li>
+        <li><a href="#标识符">标识符</a></li>
+        <li><a href="#注释">注释</a></li>
+        <li><a href="#terraform-vs-传统函数">Terraform VS 传统函数</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><h2 id="语法" class="heading-element"><span>语法</span>
+  <a href="#%e8%af%ad%e6%b3%95" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>Terraform语言也就是HCL(HashiCorp Configuration Language)，是一种丰富的语言。他的语法结构类似于JSON语法。主要由参数和块构成。</p>
+<h3 id="参数" class="heading-element"><span>参数</span>
+  <a href="#%e5%8f%82%e6%95%b0" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-terraform" data-lang="terraform"><span class="line"><span class="cl"><span class="na">ami</span>           = <span class="s2">&#34;ami-061eb2b23f9f8839c&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="na">instance_type</span> = <span class="s2">&#34;t2.micro&#34;</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>等号前的标识符是参数名称，等号后的表达式是参数的值。</p>
+<h3 id="代码块" class="heading-element"><span>代码块</span>
+  <a href="#%e4%bb%a3%e7%a0%81%e5%9d%97" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-terraform" data-lang="terraform"><span class="line"><span class="cl"><span class="kr">resource</span> <span class="s2">&#34;aws_instance&#34;</span> <span class="s2">&#34;example-instance&#34;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="na">ami</span>           = <span class="s2">&#34;ami-061eb2b23f9f8839c&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="na">instance_type</span> = <span class="s2">&#34;t2.micro&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="na">tags</span> = <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="na">Name</span> = <span class="s2">&#34;Example by ChangSha Union&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>块具有类型(resource)，每一个块类型定义后需要定义多个标签，上述例子定义了 aws_instance和 example-instance 两个标签。特定的块类型可以具有任意数量的标签或者不需要标签名。aws_instance为第三方云资源的关键字，example-instance为自定义资源变量名。</p>
+<p>块主体由 { 和 } 字符(大括号)分隔。在块里面可以嵌套其他变量和块。从而创建块及其相关变量的层次结构。</p>
+<p>块可以出现在其他外部的terraform文件中。例如：a.tf 定义了某个变量块可以被b.tf引用。</p>
+<h3 id="标识符" class="heading-element"><span>标识符</span>
+  <a href="#%e6%a0%87%e8%af%86%e7%ac%a6" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>参数名，块类型名以及大多数特定于Terraform的结构(如资源，输入变量)的名称都是标识符。</p>
+<p>标识符可以包含字母，数字，下划线（_）和连字符（-）。标识符的第一个字符不能为数字，这和编程语言规则相同。</p>
+<h3 id="注释" class="heading-element"><span>注释</span>
+  <a href="#%e6%b3%a8%e9%87%8a" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><ul>
+<li><code>#</code> 单行或者结尾注释</li>
+<li><code>//</code> 单行注释，以替代<code>#</code></li>
+<li><code>/* */</code> 多行注释</li>
+</ul>
+<h3 id="terraform-vs-传统函数" class="heading-element"><span>Terraform VS 传统函数</span>
+  <a href="#terraform-vs-%e4%bc%a0%e7%bb%9f%e5%87%bd%e6%95%b0" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p><img loading="lazy" src="imgs/terraform-syntax.png" alt="terraform syntax" srcset="imgs/terraform-syntax.png?size=small, imgs/terraform-syntax.png?size=medium 1.5x, imgs/terraform-syntax.png?size=large 2x" data-title="terraform syntax" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p><img loading="lazy" src="imgs/terraform-vs-javascript.png" alt="terraform vs javascript" srcset="imgs/terraform-vs-javascript.png?size=small, imgs/terraform-vs-javascript.png?size=medium 1.5x, imgs/terraform-vs-javascript.png?size=large 2x" data-title="terraform vs javascript" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p>将Terraform与传统函数(以JavaScript语法为例)比较。input variable相当于函数参数，local value类似于局部变量。而output类似于返回值。</p>
+</div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="更新于 2020-02-01 11:17:52">更新于 2020-02-01&nbsp;</span>
+      </div><div class="post-info-license">
+            <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
+          </div></div><div class="post-info-line">
+        <div class="post-info-md"><span><a href="https://github.com/hugo-fixit/docs/blob/main/main/posts%5cterraform%5c04%20Terraform%e7%9a%84%e5%9f%ba%e6%9c%ac%e8%af%ad%e6%b3%95%5cindex.md?plain=1" title="查看源码"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-source">查看源码</a></span><span><a href="https://github.com/hugo-fixit/docs/edit/main/main/posts%5cterraform%5c04%20Terraform%e7%9a%84%e5%9f%ba%e6%9c%ac%e8%af%ad%e6%b3%95%5cindex.md" title="编辑此页"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-edit">编辑此页</a></span><span><a href="https://github.com/hugo-fixit/docs/issues/new?title=[BUG]%20Terraform%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95&amp;body=%7cField%7cValue%7c%0A%7c-%7c-%7c%0A%7cTitle%7cTerraform%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95%7c%0A%7cURL%7chttps://hellofinger.tech/2020/02/terraform-basic/%7c%0A%7cFilename%7chttps://github.com/hugo-fixit/docs/blob/main/main/posts%5cterraform%5c04%20Terraform%e7%9a%84%e5%9f%ba%e6%9c%ac%e8%af%ad%e6%b3%95%5cindex.md?plain=1%7c" title="报告问题"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-report">报告问题</a></span></div>
+        <div class="post-info-share">
+          <span><a href="javascript:void(0);" title="分享到 X" data-sharer="twitter" data-url="https://hellofinger.tech/2020/02/terraform-basic/" data-title="Terraform的基本语法" data-hashtags="Terraform,IAC"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://hellofinger.tech/2020/02/terraform-basic/" data-hashtag="Terraform"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://hellofinger.tech/2020/02/terraform-basic/" data-title="Terraform的基本语法"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+        </div>
+      </div></div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href="/tags/terraform/" class="post-tag" title="标签 - Terraform">Terraform</a><a href="/tags/iac/" class="post-tag" title="标签 - IAC">IAC</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+    </section>
+  </div><div class="post-nav"><a href="/2020/01/what-is-terraform/" class="post-nav-item" rel="prev" title="Terraform 是什么？"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>Terraform 是什么？</a>
+      <a href="/2020/02/terraform-variables/" class="post-nav-item" rel="next" title="Terraform的变量详解">Terraform的变量详解<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article>
+
+  <aside class="toc" id="toc-auto" aria-label="目录"><h2 class="toc-title">目录&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2017 - 2024</span><span class="author" itemprop="copyrightHolder">
+              <a href="/">Finger</a></span><span class="license footer-divider"><a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="回到顶部"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">该网站在启用 JavaScript 的情况下效果最佳。</div>
+  </noscript>
+</div><link rel="preload" href="/lib/katex/katex.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/katex/katex.min.css"></noscript><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script src="/lib/autocomplete/autocomplete.min.js" defer></script><script src="/lib/fuse/fuse.min.js" defer></script><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/copy-tex.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="/js/flyfish.js" defer></script><script>window.config={"code":{"copyTitle":"复制到剪贴板","editLockTitle":"锁定可编辑代码块","editUnLockTitle":"解锁可编辑代码块","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"同意","link":"了解更多","message":"本网站使用 Cookies 来改善您的浏览体验。"},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"distance":100,"findAllMatches":false,"highlightTag":"em","ignoreFieldNorm":false,"ignoreLocation":false,"isCaseSensitive":false,"location":0,"maxResultLength":10,"minMatchCharLength":2,"noResultsFound":"没有找到结果","snippetLength":30,"threshold":0.3,"useExtendedSearch":false},"version":"v0.3.10-c936e541"};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

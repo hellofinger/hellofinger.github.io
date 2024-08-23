@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>Neo4j 基础知识 - Finger&#39;s Blog</title><meta name="author" content="Finger">
+<meta name="author-link" content="">
+<meta name="description" content="简介
+  
+    
+  
+图形数据库： 存储 查询/遍历 多个连接数据
+Neo4j是一个嵌入式的、基于磁盘的、具备完全的事务特性的Java持久化引擎，但是它将结构化数据存储在网络(从数学角度叫做图)上而不是表中。Neo4j也可以被看作是一个高性能的图引擎，该引擎具有成熟数据库的所有特性。
+节点/关系 用自增id来唯一标识， 容量35亿； 关系应该是方向性的。
+
+
+
+关系数据库
+图形数据库
+
+
+
+
+表
+图
+
+
+行
+节点
+
+
+列和数据
+属性和值(KV)
+
+
+Join
+边
+
+
+
+下载
+  
+    
+  
+https://neo4j.com/download-center/#community
+Python 驱动
+  
+    
+  
+https://github.com/neo4j/neo4j-python-driver
+Cypher Query Language (CQL)
+  
+    
+  
+https://neo4j.com/developer/cypher-query-language/
+创建节点
+  
+    
+  
+语法：CREATE (节点名: 标签 {节点属性})
+
+
+ 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+
+
+# 一个标签的节点
+CREATE (node:label)
+
+# 多个标签的节点
+CREATE (node:label_1:label_2:label_3...label_N)
+
+# 创建节点属性
+CREATE (node:label { property_1: value_1, property_2: value_2...})
+
+CREATE (p:Person {name: &#34;Finger&#34;, city: &#34;HengYang&#34;}) RETURN p
+
+MERGE
+  
+    
+  
+合并节点或者关系，属于先读后写操作，相当于MATCH &#43; CREATE，先检查数据库中节点/关系是否存在，如果存在的话就不再创建，反之执行CREATE。
+
+
+1
+2
+
+
+// 给节点a, b建立关系，如果a,b已经存在，就无需新建。 
+MATCH (a:Person {name:&#34;Finger&#34;}), (b:Person{name:&#34;Jack Ma&#34;}) MERGE (a)-[:KNOWS]-&gt;(b)
+
+
+
+ 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+
+
+[
+    {
+    &#34;id&#34;:1, &#34;friends&#34;:[2,3], &#34;name&#34;: &#34;Bob&#34;, &#34;age&#34;: 27,
+    &#34;book&#34;:[{&#34;name&#34;:&#34;book1&#34;, &#34;year&#34;:2000}, {&#34;name&#34;:&#34;book3&#34;, &#34;year&#34;:1990}]
+    },
+    {
+    &#34;id&#34;:2, &#34;friends&#34;:[1], &#34;name&#34;: &#34;Alice&#34;, &#34;age&#34;: 29,
+    &#34;book&#34;:[{&#34;name&#34;:&#34;book1&#34;, &#34;year&#34;:2000}, {&#34;name&#34;:&#34;book2&#34;, &#34;year&#34;:1999}]
+    },
+    {
+    &#34;id&#34;:3, &#34;friends&#34;:[2], &#34;name&#34;: &#34;John&#34;, &#34;age&#34;: 20,
+    &#34;book&#34;:[{&#34;name&#34;:&#34;book3&#34;, &#34;year&#34;:1990}]
+    }
+]
+
+删除节点
+  
+    
+  
+语法：MATCH (节点名：标签) DELETE 节点名
+
+
+1
+
+
+MATCH (p:Persion) WHERE p.name = &#34;Finger&#34; DELETE p
+
+查找节点
+  
+    
+  
+语法：MATCH (变量名：匹配的标签) WHERE 过滤结果 RETURN 返回特定结果
+
+
+1
+
+
+MATCH (p:Persion) WHERE p.name = &#34;Finger&#34; RETURN p.name
+
+更新节点
+  
+    
+  
+语法：MATCH (变量名: 匹配的标签) WHERE 过滤结果 SET 变量名.属性名=值 RETURN 变量名
+
+
+1
+
+
+MATCH (p:Persion) WHERE p.name = &#34;Finger&#34; SET p.city = &#34;ChangSha&#34; RETURN p
+
+LIMIT
+  
+    
+  
+
+
+1
+
+
+MATCH (p:Persion) RETURN p LIMIT 10
+
+参考
+  
+    
+  
+
+http://neo4j.com.cn/public/docs/index.html
+" /><meta name="keywords" content='Neo4j' />
+  <meta itemprop="name" content="Neo4j 基础知识">
+  <meta itemprop="description" content="简介图形数据库： 存储 查询/遍历 多个连接数据
+Neo4j是一个嵌入式的、基于磁盘的、具备完全的事务特性的Java持久化引擎，但是它将结构化数据存储在网络(从数学角度叫做图)上而不是表中。Neo4j也可以被看作是一个高性能的图引擎，该引擎具有成熟数据库的所有特性。
+节点/关系 用自增id来唯一标识， 容量35亿； 关系应该是方向性的。
+关系数据库 图形数据库 表 图 行 节点 列和数据 属性和值(KV) Join 边 下载https://neo4j.com/download-center/#community
+Python 驱动https://github.com/neo4j/neo4j-python-driver
+Cypher Query Language (CQL)https://neo4j.com/developer/cypher-query-language/
+创建节点语法：CREATE (节点名: 标签 {节点属性})
+1 2 3 4 5 6 7 8 9 10 # 一个标签的节点 CREATE (node:label) # 多个标签的节点 CREATE (node:label_1:label_2:label_3...label_N) # 创建节点属性 CREATE (node:label { property_1: value_1, property_2: value_2...}) CREATE (p:Person {name: &#34;Finger&#34;, city: &#34;HengYang&#34;}) RETURN p MERGE合并节点或者关系，属于先读后写操作，相当于MATCH &#43; CREATE，先检查数据库中节点/关系是否存在，如果存在的话就不再创建，反之执行CREATE。
+1 2 // 给节点a, b建立关系，如果a,b已经存在，就无需新建。 MATCH (a:Person {name:&#34;Finger&#34;}), (b:Person{name:&#34;Jack Ma&#34;}) MERGE (a)-[:KNOWS]-&gt;(b) 1 2 3 4 5 6 7 8 9 10 11 12 13 14 [ { &#34;id&#34;:1, &#34;friends&#34;:[2,3], &#34;name&#34;: &#34;Bob&#34;, &#34;age&#34;: 27, &#34;book&#34;:[{&#34;name&#34;:&#34;book1&#34;, &#34;year&#34;:2000}, {&#34;name&#34;:&#34;book3&#34;, &#34;year&#34;:1990}] }, { &#34;id&#34;:2, &#34;friends&#34;:[1], &#34;name&#34;: &#34;Alice&#34;, &#34;age&#34;: 29, &#34;book&#34;:[{&#34;name&#34;:&#34;book1&#34;, &#34;year&#34;:2000}, {&#34;name&#34;:&#34;book2&#34;, &#34;year&#34;:1999}] }, { &#34;id&#34;:3, &#34;friends&#34;:[2], &#34;name&#34;: &#34;John&#34;, &#34;age&#34;: 20, &#34;book&#34;:[{&#34;name&#34;:&#34;book3&#34;, &#34;year&#34;:1990}] } ] 删除节点语法：MATCH (节点名：标签) DELETE 节点名
+1 MATCH (p:Persion) WHERE p.name = &#34;Finger&#34; DELETE p 查找节点语法：MATCH (变量名：匹配的标签) WHERE 过滤结果 RETURN 返回特定结果
+1 MATCH (p:Persion) WHERE p.name = &#34;Finger&#34; RETURN p.name 更新节点语法：MATCH (变量名: 匹配的标签) WHERE 过滤结果 SET 变量名.属性名=值 RETURN 变量名
+1 MATCH (p:Persion) WHERE p.name = &#34;Finger&#34; SET p.city = &#34;ChangSha&#34; RETURN p LIMIT1 MATCH (p:Persion) RETURN p LIMIT 10 参考http://neo4j.com.cn/public/docs/index.html ">
+  <meta itemprop="datePublished" content="2020-06-16T15:02:52+08:00">
+  <meta itemprop="dateModified" content="2020-06-16T15:02:52+08:00">
+  <meta itemprop="wordCount" content="199">
+  <meta itemprop="keywords" content="Neo4j"><meta property="og:url" content="https://hellofinger.tech/2020/06/neo4j-basic/">
+  <meta property="og:site_name" content="Finger&#39;s Blog">
+  <meta property="og:title" content="Neo4j 基础知识">
+  <meta property="og:description" content="简介图形数据库： 存储 查询/遍历 多个连接数据
+Neo4j是一个嵌入式的、基于磁盘的、具备完全的事务特性的Java持久化引擎，但是它将结构化数据存储在网络(从数学角度叫做图)上而不是表中。Neo4j也可以被看作是一个高性能的图引擎，该引擎具有成熟数据库的所有特性。
+节点/关系 用自增id来唯一标识， 容量35亿； 关系应该是方向性的。
+关系数据库 图形数据库 表 图 行 节点 列和数据 属性和值(KV) Join 边 下载https://neo4j.com/download-center/#community
+Python 驱动https://github.com/neo4j/neo4j-python-driver
+Cypher Query Language (CQL)https://neo4j.com/developer/cypher-query-language/
+创建节点语法：CREATE (节点名: 标签 {节点属性})
+1 2 3 4 5 6 7 8 9 10 # 一个标签的节点 CREATE (node:label) # 多个标签的节点 CREATE (node:label_1:label_2:label_3...label_N) # 创建节点属性 CREATE (node:label { property_1: value_1, property_2: value_2...}) CREATE (p:Person {name: &#34;Finger&#34;, city: &#34;HengYang&#34;}) RETURN p MERGE合并节点或者关系，属于先读后写操作，相当于MATCH &#43; CREATE，先检查数据库中节点/关系是否存在，如果存在的话就不再创建，反之执行CREATE。
+1 2 // 给节点a, b建立关系，如果a,b已经存在，就无需新建。 MATCH (a:Person {name:&#34;Finger&#34;}), (b:Person{name:&#34;Jack Ma&#34;}) MERGE (a)-[:KNOWS]-&gt;(b) 1 2 3 4 5 6 7 8 9 10 11 12 13 14 [ { &#34;id&#34;:1, &#34;friends&#34;:[2,3], &#34;name&#34;: &#34;Bob&#34;, &#34;age&#34;: 27, &#34;book&#34;:[{&#34;name&#34;:&#34;book1&#34;, &#34;year&#34;:2000}, {&#34;name&#34;:&#34;book3&#34;, &#34;year&#34;:1990}] }, { &#34;id&#34;:2, &#34;friends&#34;:[1], &#34;name&#34;: &#34;Alice&#34;, &#34;age&#34;: 29, &#34;book&#34;:[{&#34;name&#34;:&#34;book1&#34;, &#34;year&#34;:2000}, {&#34;name&#34;:&#34;book2&#34;, &#34;year&#34;:1999}] }, { &#34;id&#34;:3, &#34;friends&#34;:[2], &#34;name&#34;: &#34;John&#34;, &#34;age&#34;: 20, &#34;book&#34;:[{&#34;name&#34;:&#34;book3&#34;, &#34;year&#34;:1990}] } ] 删除节点语法：MATCH (节点名：标签) DELETE 节点名
+1 MATCH (p:Persion) WHERE p.name = &#34;Finger&#34; DELETE p 查找节点语法：MATCH (变量名：匹配的标签) WHERE 过滤结果 RETURN 返回特定结果
+1 MATCH (p:Persion) WHERE p.name = &#34;Finger&#34; RETURN p.name 更新节点语法：MATCH (变量名: 匹配的标签) WHERE 过滤结果 SET 变量名.属性名=值 RETURN 变量名
+1 MATCH (p:Persion) WHERE p.name = &#34;Finger&#34; SET p.city = &#34;ChangSha&#34; RETURN p LIMIT1 MATCH (p:Persion) RETURN p LIMIT 10 参考http://neo4j.com.cn/public/docs/index.html ">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2020-06-16T15:02:52+08:00">
+    <meta property="article:modified_time" content="2020-06-16T15:02:52+08:00">
+    <meta property="article:tag" content="Neo4j">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Neo4j 基础知识">
+  <meta name="twitter:description" content="简介图形数据库： 存储 查询/遍历 多个连接数据
+Neo4j是一个嵌入式的、基于磁盘的、具备完全的事务特性的Java持久化引擎，但是它将结构化数据存储在网络(从数学角度叫做图)上而不是表中。Neo4j也可以被看作是一个高性能的图引擎，该引擎具有成熟数据库的所有特性。
+节点/关系 用自增id来唯一标识， 容量35亿； 关系应该是方向性的。
+关系数据库 图形数据库 表 图 行 节点 列和数据 属性和值(KV) Join 边 下载https://neo4j.com/download-center/#community
+Python 驱动https://github.com/neo4j/neo4j-python-driver
+Cypher Query Language (CQL)https://neo4j.com/developer/cypher-query-language/
+创建节点语法：CREATE (节点名: 标签 {节点属性})
+1 2 3 4 5 6 7 8 9 10 # 一个标签的节点 CREATE (node:label) # 多个标签的节点 CREATE (node:label_1:label_2:label_3...label_N) # 创建节点属性 CREATE (node:label { property_1: value_1, property_2: value_2...}) CREATE (p:Person {name: &#34;Finger&#34;, city: &#34;HengYang&#34;}) RETURN p MERGE合并节点或者关系，属于先读后写操作，相当于MATCH &#43; CREATE，先检查数据库中节点/关系是否存在，如果存在的话就不再创建，反之执行CREATE。
+1 2 // 给节点a, b建立关系，如果a,b已经存在，就无需新建。 MATCH (a:Person {name:&#34;Finger&#34;}), (b:Person{name:&#34;Jack Ma&#34;}) MERGE (a)-[:KNOWS]-&gt;(b) 1 2 3 4 5 6 7 8 9 10 11 12 13 14 [ { &#34;id&#34;:1, &#34;friends&#34;:[2,3], &#34;name&#34;: &#34;Bob&#34;, &#34;age&#34;: 27, &#34;book&#34;:[{&#34;name&#34;:&#34;book1&#34;, &#34;year&#34;:2000}, {&#34;name&#34;:&#34;book3&#34;, &#34;year&#34;:1990}] }, { &#34;id&#34;:2, &#34;friends&#34;:[1], &#34;name&#34;: &#34;Alice&#34;, &#34;age&#34;: 29, &#34;book&#34;:[{&#34;name&#34;:&#34;book1&#34;, &#34;year&#34;:2000}, {&#34;name&#34;:&#34;book2&#34;, &#34;year&#34;:1999}] }, { &#34;id&#34;:3, &#34;friends&#34;:[2], &#34;name&#34;: &#34;John&#34;, &#34;age&#34;: 20, &#34;book&#34;:[{&#34;name&#34;:&#34;book3&#34;, &#34;year&#34;:1990}] } ] 删除节点语法：MATCH (节点名：标签) DELETE 节点名
+1 MATCH (p:Persion) WHERE p.name = &#34;Finger&#34; DELETE p 查找节点语法：MATCH (变量名：匹配的标签) WHERE 过滤结果 RETURN 返回特定结果
+1 MATCH (p:Persion) WHERE p.name = &#34;Finger&#34; RETURN p.name 更新节点语法：MATCH (变量名: 匹配的标签) WHERE 过滤结果 SET 变量名.属性名=值 RETURN 变量名
+1 MATCH (p:Persion) WHERE p.name = &#34;Finger&#34; SET p.city = &#34;ChangSha&#34; RETURN p LIMIT1 MATCH (p:Persion) RETURN p LIMIT 10 参考http://neo4j.com.cn/public/docs/index.html ">
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://hellofinger.tech/2020/06/neo4j-basic/" /><link rel="prev" href="https://hellofinger.tech/2020/02/terraform-modules/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Neo4j 基础知识",
+    "inLanguage": "zh-CN",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/hellofinger.tech\/2020\/06\/neo4j-basic\/"
+    },"genre": "posts","keywords": "Neo4j","wordcount":  199 ,
+    "url": "https:\/\/hellofinger.tech\/2020\/06\/neo4j-basic\/","datePublished": "2020-06-16T15:02:52+08:00","dateModified": "2020-06-16T15:02:52+08:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Finger"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/about/"
+                
+                
+              ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item delimiter"></li><li class="menu-item search" id="search-desktop">
+            <input type="text" placeholder="搜索文章标题或内容……" id="search-input-desktop">
+            <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+              <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+            </a>
+            <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+              <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+            </a>
+            <span class="search-button search-loading" id="search-loading-desktop">
+              <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+            </span>
+          </li><li class="menu-item theme-switch" title="切换主题">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li class="search-wrapper">
+            <div class="search mobile" id="search-mobile">
+              <input type="text" placeholder="搜索文章标题或内容……" id="search-input-mobile">
+              <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+              </a>
+              <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+              </a>
+              <span class="search-button search-loading" id="search-loading-mobile">
+                <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+              </span>
+            </div>
+            <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+              取消
+            </a>
+          </li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/about/"
+                  
+                  
+                ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="切换主题"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+  </div>
+  <div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+  </div><main class="container"><aside class="aside-collection animate__animated animate__fadeIn animate__faster" aria-label="合集"></aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>Neo4j 基础知识</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><span class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+      Finger</span></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/database/" class="post-category" title="分类 - Database"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Database</a>&ensp;<a href="/categories/storage/" class="post-category" title="分类 - Storage"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a></span></div><div class="post-meta-line"><span title="发布于 2020-06-16 15:02:52"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2020-06-16">2020-06-16</time></span>&nbsp;<span title="199 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 200 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 1 分钟</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>目录</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#下载">下载</a>
+      <ul>
+        <li><a href="#python-驱动">Python 驱动</a></li>
+      </ul>
+    </li>
+    <li><a href="#cypher-query-language-cql">Cypher Query Language (CQL)</a>
+      <ul>
+        <li><a href="#创建节点">创建节点</a></li>
+        <li><a href="#merge">MERGE</a></li>
+        <li><a href="#删除节点">删除节点</a></li>
+        <li><a href="#查找节点">查找节点</a></li>
+        <li><a href="#更新节点">更新节点</a></li>
+        <li><a href="#limit">LIMIT</a></li>
+      </ul>
+    </li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><h2 id="简介" class="heading-element"><span>简介</span>
+  <a href="#%e7%ae%80%e4%bb%8b" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>图形数据库： 存储 查询/遍历 多个连接数据</p>
+<p>Neo4j是一个嵌入式的、基于磁盘的、具备完全的事务特性的Java持久化引擎，但是它将结构化数据存储在网络(从数学角度叫做图)上而不是表中。Neo4j也可以被看作是一个高性能的图引擎，该引擎具有成熟数据库的所有特性。</p>
+<p>节点/关系 用自增id来唯一标识， 容量35亿； 关系应该是方向性的。</p>
+<table>
+<thead>
+<tr>
+<th>关系数据库</th>
+<th>图形数据库</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>表</td>
+<td>图</td>
+</tr>
+<tr>
+<td>行</td>
+<td>节点</td>
+</tr>
+<tr>
+<td>列和数据</td>
+<td>属性和值(KV)</td>
+</tr>
+<tr>
+<td>Join</td>
+<td>边</td>
+</tr>
+</tbody>
+</table>
+<h2 id="下载" class="heading-element"><span>下载</span>
+  <a href="#%e4%b8%8b%e8%bd%bd" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p><a href="https://neo4j.com/download-center/#community"target="_blank" rel="external nofollow noopener noreferrer">https://neo4j.com/download-center/#community</a></p>
+<h3 id="python-驱动" class="heading-element"><span>Python 驱动</span>
+  <a href="#python-%e9%a9%b1%e5%8a%a8" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p><a href="https://github.com/neo4j/neo4j-python-driver"target="_blank" rel="external nofollow noopener noreferrer">https://github.com/neo4j/neo4j-python-driver</a></p>
+<h2 id="cypher-query-language-cql" class="heading-element"><span>Cypher Query Language (CQL)</span>
+  <a href="#cypher-query-language-cql" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p><a href="https://neo4j.com/developer/cypher-query-language/"target="_blank" rel="external nofollow noopener noreferrer">https://neo4j.com/developer/cypher-query-language/</a></p>
+<h3 id="创建节点" class="heading-element"><span>创建节点</span>
+  <a href="#%e5%88%9b%e5%bb%ba%e8%8a%82%e7%82%b9" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>语法：CREATE (节点名: 标签 {节点属性})</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># 一个标签的节点
+</span></span><span class="line"><span class="cl">CREATE (node:label)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 多个标签的节点
+</span></span><span class="line"><span class="cl">CREATE (node:label_1:label_2:label_3...label_N)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 创建节点属性
+</span></span><span class="line"><span class="cl">CREATE (node:label { property_1: value_1, property_2: value_2...})
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">CREATE (p:Person {name: &#34;Finger&#34;, city: &#34;HengYang&#34;}) RETURN p</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="merge" class="heading-element"><span>MERGE</span>
+  <a href="#merge" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>合并节点或者关系，属于先读后写操作，相当于MATCH + CREATE，先检查数据库中节点/关系是否存在，如果存在的话就不再创建，反之执行CREATE。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// 给节点a, b建立关系，如果a,b已经存在，就无需新建。 
+</span></span><span class="line"><span class="cl">MATCH (a:Person {name:&#34;Finger&#34;}), (b:Person{name:&#34;Jack Ma&#34;}) MERGE (a)-[:KNOWS]-&gt;(b)</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">[</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;id&#34;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="nt">&#34;friends&#34;</span><span class="p">:[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;Bob&#34;</span><span class="p">,</span> <span class="nt">&#34;age&#34;</span><span class="p">:</span> <span class="mi">27</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;book&#34;</span><span class="p">:[{</span><span class="nt">&#34;name&#34;</span><span class="p">:</span><span class="s2">&#34;book1&#34;</span><span class="p">,</span> <span class="nt">&#34;year&#34;</span><span class="p">:</span><span class="mi">2000</span><span class="p">},</span> <span class="p">{</span><span class="nt">&#34;name&#34;</span><span class="p">:</span><span class="s2">&#34;book3&#34;</span><span class="p">,</span> <span class="nt">&#34;year&#34;</span><span class="p">:</span><span class="mi">1990</span><span class="p">}]</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;id&#34;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="nt">&#34;friends&#34;</span><span class="p">:[</span><span class="mi">1</span><span class="p">],</span> <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;Alice&#34;</span><span class="p">,</span> <span class="nt">&#34;age&#34;</span><span class="p">:</span> <span class="mi">29</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;book&#34;</span><span class="p">:[{</span><span class="nt">&#34;name&#34;</span><span class="p">:</span><span class="s2">&#34;book1&#34;</span><span class="p">,</span> <span class="nt">&#34;year&#34;</span><span class="p">:</span><span class="mi">2000</span><span class="p">},</span> <span class="p">{</span><span class="nt">&#34;name&#34;</span><span class="p">:</span><span class="s2">&#34;book2&#34;</span><span class="p">,</span> <span class="nt">&#34;year&#34;</span><span class="p">:</span><span class="mi">1999</span><span class="p">}]</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;id&#34;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="nt">&#34;friends&#34;</span><span class="p">:[</span><span class="mi">2</span><span class="p">],</span> <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;John&#34;</span><span class="p">,</span> <span class="nt">&#34;age&#34;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;book&#34;</span><span class="p">:[{</span><span class="nt">&#34;name&#34;</span><span class="p">:</span><span class="s2">&#34;book3&#34;</span><span class="p">,</span> <span class="nt">&#34;year&#34;</span><span class="p">:</span><span class="mi">1990</span><span class="p">}]</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">]</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="删除节点" class="heading-element"><span>删除节点</span>
+  <a href="#%e5%88%a0%e9%99%a4%e8%8a%82%e7%82%b9" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>语法：MATCH (节点名：标签) DELETE 节点名</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">MATCH (p:Persion) WHERE p.name = &#34;Finger&#34; DELETE p</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="查找节点" class="heading-element"><span>查找节点</span>
+  <a href="#%e6%9f%a5%e6%89%be%e8%8a%82%e7%82%b9" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>语法：MATCH (变量名：匹配的标签) WHERE 过滤结果 RETURN 返回特定结果</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">MATCH (p:Persion) WHERE p.name = &#34;Finger&#34; RETURN p.name</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="更新节点" class="heading-element"><span>更新节点</span>
+  <a href="#%e6%9b%b4%e6%96%b0%e8%8a%82%e7%82%b9" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>语法：MATCH (变量名: 匹配的标签) WHERE 过滤结果 SET 变量名.属性名=值 RETURN 变量名</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">MATCH (p:Persion) WHERE p.name = &#34;Finger&#34; SET p.city = &#34;ChangSha&#34; RETURN p</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="limit" class="heading-element"><span>LIMIT</span>
+  <a href="#limit" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">MATCH (p:Persion) RETURN p LIMIT 10</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="参考" class="heading-element"><span>参考</span>
+  <a href="#%e5%8f%82%e8%80%83" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><ul>
+<li><a href="http://neo4j.com.cn/public/docs/index.html"target="_blank" rel="external nofollow noopener noreferrer">http://neo4j.com.cn/public/docs/index.html</a></li>
+</ul></div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="更新于 2020-06-16 15:02:52">更新于 2020-06-16&nbsp;</span>
+      </div><div class="post-info-license">
+            <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
+          </div></div><div class="post-info-line">
+        <div class="post-info-md"><span><a href="https://github.com/hugo-fixit/docs/blob/main/main/posts%5cstorage%5cneo4j-basic.md?plain=1" title="查看源码"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-source">查看源码</a></span><span><a href="https://github.com/hugo-fixit/docs/edit/main/main/posts%5cstorage%5cneo4j-basic.md" title="编辑此页"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-edit">编辑此页</a></span><span><a href="https://github.com/hugo-fixit/docs/issues/new?title=[BUG]%20Neo4j&#43;%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86&amp;body=%7cField%7cValue%7c%0A%7c-%7c-%7c%0A%7cTitle%7cNeo4j&#43;%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%7c%0A%7cURL%7chttps://hellofinger.tech/2020/06/neo4j-basic/%7c%0A%7cFilename%7chttps://github.com/hugo-fixit/docs/blob/main/main/posts%5cstorage%5cneo4j-basic.md?plain=1%7c" title="报告问题"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-report">报告问题</a></span></div>
+        <div class="post-info-share">
+          <span><a href="javascript:void(0);" title="分享到 X" data-sharer="twitter" data-url="https://hellofinger.tech/2020/06/neo4j-basic/" data-title="Neo4j 基础知识" data-hashtags="Neo4j"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://hellofinger.tech/2020/06/neo4j-basic/" data-hashtag="Neo4j"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://hellofinger.tech/2020/06/neo4j-basic/" data-title="Neo4j 基础知识"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+        </div>
+      </div></div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href="/tags/neo4j/" class="post-tag" title="标签 - Neo4j">Neo4j</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+    </section>
+  </div><div class="post-nav"><a href="/2020/02/terraform-modules/" class="post-nav-item" rel="prev" title="Terraform模块基础"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>Terraform模块基础</a></div>
+</div>
+</article>
+
+  <aside class="toc" id="toc-auto" aria-label="目录"><h2 class="toc-title">目录&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2017 - 2024</span><span class="author" itemprop="copyrightHolder">
+              <a href="/">Finger</a></span><span class="license footer-divider"><a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="回到顶部"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">该网站在启用 JavaScript 的情况下效果最佳。</div>
+  </noscript>
+</div><link rel="preload" href="/lib/katex/katex.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/katex/katex.min.css"></noscript><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script src="/lib/autocomplete/autocomplete.min.js" defer></script><script src="/lib/fuse/fuse.min.js" defer></script><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/copy-tex.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="/js/flyfish.js" defer></script><script>window.config={"code":{"copyTitle":"复制到剪贴板","editLockTitle":"锁定可编辑代码块","editUnLockTitle":"解锁可编辑代码块","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"同意","link":"了解更多","message":"本网站使用 Cookies 来改善您的浏览体验。"},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"distance":100,"findAllMatches":false,"highlightTag":"em","ignoreFieldNorm":false,"ignoreLocation":false,"isCaseSensitive":false,"location":0,"maxResultLength":10,"minMatchCharLength":2,"noResultsFound":"没有找到结果","snippetLength":30,"threshold":0.3,"useExtendedSearch":false},"version":"v0.3.10-c936e541"};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

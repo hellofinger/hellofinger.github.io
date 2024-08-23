@@ -1,0 +1,32 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>Shard - 标签 - Finger&#39;s Blog</title>
+    <link>https://hellofinger.tech/tags/shard/</link>
+    <description>Shard - 标签 | Finger&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Sat, 29 Jul 2017 13:44:00 &#43;0000</lastBuildDate><atom:link href="https://hellofinger.tech/tags/shard/" rel="self" type="application/rss+xml" /><item>
+  <title>数据库分库分表</title>
+  <link>https://hellofinger.tech/2017/07/database-sharding/</link>
+  <pubDate>Sat, 29 Jul 2017 13:44:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2017/07/database-sharding/</guid>
+  <description><![CDATA[一、背景大量的并发读/写操作，导致单库出现难以承受的负载压力 单表存储数据量过大，导致索引效率低下 二、读写分离将数据库设置为读写分离状态，由Master（主）负责写数据，Salve（从）只负责读数据。主从之间保持数据同步。根据二八法则，80%的数据库操作是读，20%则为写。读写分离后，可以大大提升单库负载压力。
+但是，当Master存在TPS（系统吞吐量）较高的情况，Master和Slave数据库之间数据同步是会存在一定延迟，因此在写入Master之前最好还是要将同一份数据放入缓存中，以避免高并发情况下，从Slave中获取不到指定数据的情况
+三、分库分表随着用户规模的不断上升，仅仅只是依靠数据库的读写分离并不能解决系统瓶颈。因此需要考虑分库分表的解决方案。
+分表 就是将原来冗余在单库中的单个业务表拆分为N个“逻辑相关”的业务子表（如tab_0000, tab_0001, tab_0002&hellip;），不同的业务字表各自负责存储不同区间数据，对外形成一个整体
+分库 就是将分表后的业务子表按照特定的算法和规则分散到N个“逻辑相关”的业务子库中（如db_0000, db_0001, db_0002&hellip;）
+分库分表策略主要原理：分区，取模，数据路由表
+1、按时间区间一定时间区间内产生的数据放到一张表里面，多个时间区间的表放到一个库里面
+比如，
+a、单库多表结构，按月分表可以这样：user_201701, user_201702&hellip;user_201712；按年分表可以这样，user_2016, user_2017&hellip;
+b、多库多表，比如按天分表，每天一张表，当单库超过100张表的时候，进行分库到下一张表。那么假如第一张表在库db0，表名是user_20160201。从db0.user_20160201 - db0.user_20160511就是100张表了，接下来就是分库，进入20160512，就是db1.user_20160512，这个算法就是上线的时候定一个上线日期，具体算法如下：
+1 2 库ID = （当前日期 - 上线日期）/ 100 表ID = user_yyyyMMdd 注：好处是可以直接根据时间经过简单计算定位到哪个库和哪个表
+还有一种算法：
+1 2 表ID = (当前日期 - 上线日期) % 100 表名如下： DB0.user_0001，user_0002 .... user_01000 注：表名和库名都要经过计算，比较麻烦
+c、按月分表，每个月一张表。这种情况，一般就不用分库了，一年12张表说明量也不会特别大，如果量特别大，或者是热点数据，可以一年分一个库，具体算法和上面差不多。
+d、按季度分表，按年度分表（基本不用分库）
+2、按主键ID区间对于自增的主键ID，可以按照ID区间进行分表，以1000万数据量为分界线，对线性的ID进行切割分表，每涨到1000万数据，分到下一张表，超过一定数目的表，进行分库。
+1 2 库ID = 主键ID / 1000万 / 100 表ID = 主键ID / 1000万 % 100 如：]]></description>
+</item>
+</channel>
+</rss>

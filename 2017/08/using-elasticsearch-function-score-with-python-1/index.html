@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>用Python实现Elasticsearch Function_score查询(一) - Finger&#39;s Blog</title><meta name="author" content="Finger">
+<meta name="author-link" content="">
+<meta name="description" content="什么是function_scorefunction_score查询是处理分值计算过程的终极工具。它让你能够对所有匹配了主查询的每份文档调用一个函数来调整甚至是完全替换原来的_score。
+实际上，你可以通过设置过滤器来将查询得到的结果分成若干个子集，然后对每个子集使用不同的函数。这样你就能够同时得益于：高效的分值计算以及可以缓存的过滤器。
+它拥有几种预先定义好了的函数：
+weight 对每份文档适用一个简单的提升，且该提升不会被归约：当weight为2时，结果为2 * _score。 field_value_factor 使用文档中某个字段的值来改变_score，比如将受欢迎程度或者投票数量考虑在内。 random_score 使用一致性随机分值计算来对每个用户采用不同的结果排序方式，对相同用户仍然使用相同的排序方式。 衰减函数(Decay Function)-(linear，exp，gauss) 将像publish_date，geo_location或者price这类浮动值考虑到_score中，偏好最近发布的文档，邻近于某个地理位置(译注：其中的某个字段)的文档或者价格(译注：其中的某个字段)靠近某一点的文档。 script_score 使用自定义的脚本来完全控制分值计算逻辑。如果你需要以上预定义函数之外的功能，可以根据需要通过脚本进行实现。 没有function_score查询的话，我们也许就不能将全文搜索得到分值和近因进行结合了。我们将不得不根据_score或者date进行排序；无论采用哪一种都会抹去另一种的影响。function_score查询让我们能够将两者融合在一起：仍然通过全文相关度排序，但是给新近发布的文档，或者流行的文档，或者符合用户价格期望的文档额外的权重。你可以想象，一个拥有所有这些功能的查询看起来会相当复杂。我们从一个简单的例子开始，循序渐进地对它进行介绍。
+如何使用function_score假设我们有一个博客网站让用户投票选择他们喜欢的文章。我们希望让人气高的文章出现在结果列表的头部，但是主要的排序依据仍然是全文搜索分值。我们可以通过保存每篇文章的投票数量来实现。
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 # 1、新建一个索引映射： class Post(DocType): title = String() content = Text() votes = Integer() created_at = Date() class Meta: index = &#39;blogposts&#39; type = &#39;post&#39; Post." /><meta name="keywords" content='ElasticSearch, Python' />
+  <meta itemprop="name" content="用Python实现Elasticsearch function_score查询(一)">
+  <meta itemprop="description" content="什么是function_scorefunction_score查询是处理分值计算过程的终极工具。它让你能够对所有匹配了主查询的每份文档调用一个函数来调整甚至是完全替换原来的_score。
+实际上，你可以通过设置过滤器来将查询得到的结果分成若干个子集，然后对每个子集使用不同的函数。这样你就能够同时得益于：高效的分值计算以及可以缓存的过滤器。
+它拥有几种预先定义好了的函数：
+weight 对每份文档适用一个简单的提升，且该提升不会被归约：当weight为2时，结果为2 * _score。 field_value_factor 使用文档中某个字段的值来改变_score，比如将受欢迎程度或者投票数量考虑在内。 random_score 使用一致性随机分值计算来对每个用户采用不同的结果排序方式，对相同用户仍然使用相同的排序方式。 衰减函数(Decay Function)-(linear，exp，gauss) 将像publish_date，geo_location或者price这类浮动值考虑到_score中，偏好最近发布的文档，邻近于某个地理位置(译注：其中的某个字段)的文档或者价格(译注：其中的某个字段)靠近某一点的文档。 script_score 使用自定义的脚本来完全控制分值计算逻辑。如果你需要以上预定义函数之外的功能，可以根据需要通过脚本进行实现。 没有function_score查询的话，我们也许就不能将全文搜索得到分值和近因进行结合了。我们将不得不根据_score或者date进行排序；无论采用哪一种都会抹去另一种的影响。function_score查询让我们能够将两者融合在一起：仍然通过全文相关度排序，但是给新近发布的文档，或者流行的文档，或者符合用户价格期望的文档额外的权重。你可以想象，一个拥有所有这些功能的查询看起来会相当复杂。我们从一个简单的例子开始，循序渐进地对它进行介绍。
+如何使用function_score假设我们有一个博客网站让用户投票选择他们喜欢的文章。我们希望让人气高的文章出现在结果列表的头部，但是主要的排序依据仍然是全文搜索分值。我们可以通过保存每篇文章的投票数量来实现。
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 # 1、新建一个索引映射： class Post(DocType): title = String() content = Text() votes = Integer() created_at = Date() class Meta: index = &#39;blogposts&#39; type = &#39;post&#39; Post.">
+  <meta itemprop="datePublished" content="2017-08-19T12:38:00+00:00">
+  <meta itemprop="dateModified" content="2017-08-19T12:38:00+00:00">
+  <meta itemprop="wordCount" content="549">
+  <meta itemprop="keywords" content="ElasticSearch,Python"><meta property="og:url" content="https://hellofinger.tech/2017/08/using-elasticsearch-function-score-with-python-1/">
+  <meta property="og:site_name" content="Finger&#39;s Blog">
+  <meta property="og:title" content="用Python实现Elasticsearch function_score查询(一)">
+  <meta property="og:description" content="什么是function_scorefunction_score查询是处理分值计算过程的终极工具。它让你能够对所有匹配了主查询的每份文档调用一个函数来调整甚至是完全替换原来的_score。
+实际上，你可以通过设置过滤器来将查询得到的结果分成若干个子集，然后对每个子集使用不同的函数。这样你就能够同时得益于：高效的分值计算以及可以缓存的过滤器。
+它拥有几种预先定义好了的函数：
+weight 对每份文档适用一个简单的提升，且该提升不会被归约：当weight为2时，结果为2 * _score。 field_value_factor 使用文档中某个字段的值来改变_score，比如将受欢迎程度或者投票数量考虑在内。 random_score 使用一致性随机分值计算来对每个用户采用不同的结果排序方式，对相同用户仍然使用相同的排序方式。 衰减函数(Decay Function)-(linear，exp，gauss) 将像publish_date，geo_location或者price这类浮动值考虑到_score中，偏好最近发布的文档，邻近于某个地理位置(译注：其中的某个字段)的文档或者价格(译注：其中的某个字段)靠近某一点的文档。 script_score 使用自定义的脚本来完全控制分值计算逻辑。如果你需要以上预定义函数之外的功能，可以根据需要通过脚本进行实现。 没有function_score查询的话，我们也许就不能将全文搜索得到分值和近因进行结合了。我们将不得不根据_score或者date进行排序；无论采用哪一种都会抹去另一种的影响。function_score查询让我们能够将两者融合在一起：仍然通过全文相关度排序，但是给新近发布的文档，或者流行的文档，或者符合用户价格期望的文档额外的权重。你可以想象，一个拥有所有这些功能的查询看起来会相当复杂。我们从一个简单的例子开始，循序渐进地对它进行介绍。
+如何使用function_score假设我们有一个博客网站让用户投票选择他们喜欢的文章。我们希望让人气高的文章出现在结果列表的头部，但是主要的排序依据仍然是全文搜索分值。我们可以通过保存每篇文章的投票数量来实现。
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 # 1、新建一个索引映射： class Post(DocType): title = String() content = Text() votes = Integer() created_at = Date() class Meta: index = &#39;blogposts&#39; type = &#39;post&#39; Post.">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2017-08-19T12:38:00+00:00">
+    <meta property="article:modified_time" content="2017-08-19T12:38:00+00:00">
+    <meta property="article:tag" content="ElasticSearch">
+    <meta property="article:tag" content="Python">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="用Python实现Elasticsearch function_score查询(一)">
+  <meta name="twitter:description" content="什么是function_scorefunction_score查询是处理分值计算过程的终极工具。它让你能够对所有匹配了主查询的每份文档调用一个函数来调整甚至是完全替换原来的_score。
+实际上，你可以通过设置过滤器来将查询得到的结果分成若干个子集，然后对每个子集使用不同的函数。这样你就能够同时得益于：高效的分值计算以及可以缓存的过滤器。
+它拥有几种预先定义好了的函数：
+weight 对每份文档适用一个简单的提升，且该提升不会被归约：当weight为2时，结果为2 * _score。 field_value_factor 使用文档中某个字段的值来改变_score，比如将受欢迎程度或者投票数量考虑在内。 random_score 使用一致性随机分值计算来对每个用户采用不同的结果排序方式，对相同用户仍然使用相同的排序方式。 衰减函数(Decay Function)-(linear，exp，gauss) 将像publish_date，geo_location或者price这类浮动值考虑到_score中，偏好最近发布的文档，邻近于某个地理位置(译注：其中的某个字段)的文档或者价格(译注：其中的某个字段)靠近某一点的文档。 script_score 使用自定义的脚本来完全控制分值计算逻辑。如果你需要以上预定义函数之外的功能，可以根据需要通过脚本进行实现。 没有function_score查询的话，我们也许就不能将全文搜索得到分值和近因进行结合了。我们将不得不根据_score或者date进行排序；无论采用哪一种都会抹去另一种的影响。function_score查询让我们能够将两者融合在一起：仍然通过全文相关度排序，但是给新近发布的文档，或者流行的文档，或者符合用户价格期望的文档额外的权重。你可以想象，一个拥有所有这些功能的查询看起来会相当复杂。我们从一个简单的例子开始，循序渐进地对它进行介绍。
+如何使用function_score假设我们有一个博客网站让用户投票选择他们喜欢的文章。我们希望让人气高的文章出现在结果列表的头部，但是主要的排序依据仍然是全文搜索分值。我们可以通过保存每篇文章的投票数量来实现。
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 # 1、新建一个索引映射： class Post(DocType): title = String() content = Text() votes = Integer() created_at = Date() class Meta: index = &#39;blogposts&#39; type = &#39;post&#39; Post.">
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://hellofinger.tech/2017/08/using-elasticsearch-function-score-with-python-1/" /><link rel="prev" href="https://hellofinger.tech/2017/08/elasticsearch-search-suggest-with-python/" /><link rel="next" href="https://hellofinger.tech/2017/08/using-elasticsearch-function-score-with-python-2/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "用Python实现Elasticsearch function_score查询(一)",
+    "inLanguage": "zh-CN",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/hellofinger.tech\/2017\/08\/using-elasticsearch-function-score-with-python-1\/"
+    },"genre": "posts","keywords": "ElasticSearch, Python","wordcount":  549 ,
+    "url": "https:\/\/hellofinger.tech\/2017\/08\/using-elasticsearch-function-score-with-python-1\/","datePublished": "2017-08-19T12:38:00+00:00","dateModified": "2017-08-19T12:38:00+00:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Finger"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/about/"
+                
+                
+              ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item delimiter"></li><li class="menu-item search" id="search-desktop">
+            <input type="text" placeholder="搜索文章标题或内容……" id="search-input-desktop">
+            <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+              <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+            </a>
+            <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+              <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+            </a>
+            <span class="search-button search-loading" id="search-loading-desktop">
+              <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+            </span>
+          </li><li class="menu-item theme-switch" title="切换主题">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li class="search-wrapper">
+            <div class="search mobile" id="search-mobile">
+              <input type="text" placeholder="搜索文章标题或内容……" id="search-input-mobile">
+              <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+              </a>
+              <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+              </a>
+              <span class="search-button search-loading" id="search-loading-mobile">
+                <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+              </span>
+            </div>
+            <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+              取消
+            </a>
+          </li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/about/"
+                  
+                  
+                ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="切换主题"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+  </div>
+  <div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+  </div><main class="container"><aside class="aside-collection animate__animated animate__fadeIn animate__faster" aria-label="合集"></aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>用Python实现Elasticsearch Function_score查询(一)</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><span class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+      Finger</span></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/elasticsearch/" class="post-category" title="分类 - ElasticSearch"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> ElasticSearch</a>&ensp;<a href="/categories/storage/" class="post-category" title="分类 - Storage"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a></span></div><div class="post-meta-line"><span title="发布于 2017-08-19 12:38:00"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2017-08-19">2017-08-19</time></span>&nbsp;<span title="549 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 600 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 3 分钟</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>目录</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#什么是function_score">什么是function_score</a></li>
+        <li><a href="#如何使用function_score">如何使用function_score</a></li>
+        <li><a href="#参考文档">参考文档</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><h3 id="什么是function_score" class="heading-element"><span>什么是function_score</span>
+  <a href="#%e4%bb%80%e4%b9%88%e6%98%affunction_score" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p><code>function_score</code>查询是处理分值计算过程的终极工具。它让你能够对所有匹配了主查询的每份文档调用一个函数来调整甚至是完全替换原来的<code>_score</code>。</p>
+<p>实际上，你可以通过设置过滤器来将查询得到的结果分成若干个子集，然后对每个子集使用不同的函数。这样你就能够同时得益于：高效的分值计算以及可以缓存的过滤器。</p>
+<p>它拥有几种预先定义好了的函数：</p>
+<ul>
+<li><code>weight</code> 对每份文档适用一个简单的提升，且该提升不会被归约：当<code>weight</code>为2时，结果为2 * <code>_score</code>。</li>
+<li><code>field_value_factor</code> 使用文档中某个字段的值来改变<code>_score</code>，比如将受欢迎程度或者投票数量考虑在内。</li>
+<li><code>random_score</code> 使用一致性随机分值计算来对每个用户采用不同的结果排序方式，对相同用户仍然使用相同的排序方式。</li>
+<li>衰减函数(Decay Function)-(<code>linear</code>，<code>exp</code>，<code>gauss</code>) 将像<code>publish_date</code>，<code>geo_location</code>或者<code>price</code>这类浮动值考虑到<code>_score</code>中，偏好最近发布的文档，邻近于某个地理位置(译注：其中的某个字段)的文档或者价格(译注：其中的某个字段)靠近某一点的文档。</li>
+<li><code>script_score</code> 使用自定义的脚本来完全控制分值计算逻辑。如果你需要以上预定义函数之外的功能，可以根据需要通过脚本进行实现。</li>
+</ul>
+<p>没有<code>function_score</code>查询的话，我们也许就不能将全文搜索得到分值和近因进行结合了。我们将不得不根据<code>_score</code>或者<code>date</code>进行排序；无论采用哪一种都会抹去另一种的影响。<code>function_score</code>查询让我们能够将两者融合在一起：仍然通过全文相关度排序，但是给新近发布的文档，或者流行的文档，或者符合用户价格期望的文档额外的权重。你可以想象，一个拥有所有这些功能的查询看起来会相当复杂。我们从一个简单的例子开始，循序渐进地对它进行介绍。</p>
+<h3 id="如何使用function_score" class="heading-element"><span>如何使用function_score</span>
+  <a href="#%e5%a6%82%e4%bd%95%e4%bd%bf%e7%94%a8function_score" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>假设我们有一个博客网站让用户投票选择他们喜欢的文章。我们希望让人气高的文章出现在结果列表的头部，但是主要的排序依据仍然是全文搜索分值。我们可以通过保存每篇文章的投票数量来实现。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 1、新建一个索引映射：</span>
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Post</span><span class="p">(</span><span class="n">DocType</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">title</span> <span class="o">=</span> <span class="n">String</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">content</span> <span class="o">=</span> <span class="n">Text</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">votes</span> <span class="o">=</span> <span class="n">Integer</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">created_at</span> <span class="o">=</span> <span class="n">Date</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">index</span> <span class="o">=</span> <span class="s1">&#39;blogposts&#39;</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">type</span> <span class="o">=</span> <span class="s1">&#39;post&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Post</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 2、添加测试数据</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">add_post</span><span class="p">(</span><span class="n">id_</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">post</span> <span class="o">=</span> <span class="n">Post</span><span class="p">(</span><span class="n">meta</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">id_</span><span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="n">post</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">title</span>
+</span></span><span class="line"><span class="cl">    <span class="n">post</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="n">content</span>
+</span></span><span class="line"><span class="cl">    <span class="n">post</span><span class="o">.</span><span class="n">votes</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">post</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 3、初始化数据</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">init_data</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="n">add_post</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Python is good&#39;</span><span class="p">,</span> <span class="s1">&#39;Python is good&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">add_post</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;Python is beautiful&#39;</span><span class="p">,</span> <span class="s1">&#39;Python is beautiful&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">add_post</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;Python is nice&#39;</span><span class="p">,</span> <span class="s1">&#39;Python is nice&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">add_post</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;Today is good day&#39;</span><span class="p">,</span> <span class="s1">&#39;Today is good day&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">add_post</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;Today is nice day&#39;</span><span class="p">,</span> <span class="s1">&#39;Today is nice day&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">add_post</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="s1">&#39;The key aspect in promoting&#39;</span><span class="p">,</span> <span class="s1">&#39;The key aspect in promoting&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">add_post</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="s1">&#39;Just a month after we started&#39;</span><span class="p">,</span> <span class="s1">&#39;Just a month after we started working on reddit&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">add_post</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s2">&#34;If I can&#39;t hear your heartbeat&#34;</span><span class="p">,</span> <span class="s2">&#34;If I can&#39;t hear your heartbeat, you&#39;re too far away.&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">add_post</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="s1">&#39;No Country for Old Men&#39;</span><span class="p">,</span> <span class="s1">&#39;No Country for Old Men&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">add_post</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;Django is web framework&#39;</span><span class="p">,</span> <span class="s1">&#39;Django is python lib&#39;</span><span class="p">)</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="field_value_factor" class="heading-element"><span>field_value_factor</span>
+  <a href="#field_value_factor" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p>使用<code>field_value_factor</code>函数的<code>function_score</code>查询将投票数和全文相关度分值结合起来：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">q</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;function_score&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span><span class="s2">&#34;multi_match&#34;</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="s1">&#39;python&#39;</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;content&#39;</span><span class="p">]),</span>
+</span></span><span class="line"><span class="cl">    <span class="n">functions</span><span class="o">=</span><span class="p">[</span>
+</span></span><span class="line"><span class="cl">        <span class="n">query</span><span class="o">.</span><span class="n">SF</span><span class="p">(</span><span class="s1">&#39;field_value_factor&#39;</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="s1">&#39;votes&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">s</span> <span class="o">=</span> <span class="n">Post</span><span class="o">.</span><span class="n">search</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">response</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">response</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">Out:
+</span></span></span><span class="line"><span class="cl"><span class="s2">Python is nice
+</span></span></span><span class="line"><span class="cl"><span class="s2">Python is good
+</span></span></span><span class="line"><span class="cl"><span class="s2">Python is beautiful
+</span></span></span><span class="line"><span class="cl"><span class="s2">Django is web framework
+</span></span></span><span class="line"><span class="cl"><span class="s2">&#34;&#34;&#34;</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img loading="lazy" src="/imgs/20170819/20170819125817.png" alt="/imgs/20170819/20170819125817.png" srcset="/imgs/20170819/20170819125817.png?size=small, /imgs/20170819/20170819125817.png?size=medium 1.5x, /imgs/20170819/20170819125817.png?size=large 2x" data-title="/imgs/20170819/20170819125817.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p><code>function_score</code>查询会包含主查询(Main Query)和希望使用的函数。先会执行主查询，然后再为匹配的文档调用相应的函数。每份文档中都必须有一个<code>votes</code>字段用来保证<code>function_score</code>能够起作用。</p>
+<p>在前面的例子中，每份文档的最终<code>_score</code>会通过下面的方式改变：</p>
+<blockquote>
+<p>new_score = old_score * number_of_votes</p>
+</blockquote>
+<p>它得到的结果并不好。全文搜索的<code>_score</code>通常会在0到10之间。而从下图我们可以发现，拥有10票以上的文章的分值大大超过了这个范围，而没有被投票的文章的分值会被重置为0。
+<img loading="lazy" src="/imgs/20170819/20170819125818.png" alt="/imgs/20170819/20170819125818.png" srcset="/imgs/20170819/20170819125818.png?size=small, /imgs/20170819/20170819125818.png?size=medium 1.5x, /imgs/20170819/20170819125818.png?size=large 2x" data-title="/imgs/20170819/20170819125818.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>
+<img loading="lazy" src="/imgs/20170819/20170819133637.png" alt="/imgs/20170819/20170819133637.png" srcset="/imgs/20170819/20170819133637.png?size=small, /imgs/20170819/20170819133637.png?size=medium 1.5x, /imgs/20170819/20170819133637.png?size=large 2x" data-title="/imgs/20170819/20170819133637.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<h4 id="modifier" class="heading-element"><span>modifier</span>
+  <a href="#modifier" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p>为了让<code>votes</code>值对最终分值的影响更缓和，我们可以使用modifier。换言之，我们需要让头几票的效果更明显，其后的票的影响逐渐减小。0票和1票的区别应该比10票和11票的区别要大的多。</p>
+<p>一个用于此场景的典型modifier是log1p，它将公式改成这样：</p>
+<blockquote>
+<p>new_score = old_score * log(1 + number_of_votes)</p>
+</blockquote>
+<p><code>log</code>函数将<code>votes</code>字段的效果减缓了，其效果类似下面的曲线：
+<img loading="lazy" src="/imgs/20170819/20170819125819.png" alt="/imgs/20170819/20170819125819.png" srcset="/imgs/20170819/20170819125819.png?size=small, /imgs/20170819/20170819125819.png?size=medium 1.5x, /imgs/20170819/20170819125819.png?size=large 2x" data-title="/imgs/20170819/20170819125819.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>
+使用了<code>modifier</code>参数的请求如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">q</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;function_score&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span><span class="s2">&#34;multi_match&#34;</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="s1">&#39;python&#39;</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;content&#39;</span><span class="p">]),</span>
+</span></span><span class="line"><span class="cl">    <span class="n">functions</span><span class="o">=</span><span class="p">[</span>
+</span></span><span class="line"><span class="cl">        <span class="n">query</span><span class="o">.</span><span class="n">SF</span><span class="p">(</span><span class="s1">&#39;field_value_factor&#39;</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="s1">&#39;votes&#39;</span><span class="p">,</span> <span class="n">modifier</span><span class="o">=</span><span class="s1">&#39;log1p&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img loading="lazy" src="/imgs/20170819/20170819131048.png" alt="/imgs/20170819/20170819131048.png" srcset="/imgs/20170819/20170819131048.png?size=small, /imgs/20170819/20170819131048.png?size=medium 1.5x, /imgs/20170819/20170819131048.png?size=large 2x" data-title="/imgs/20170819/20170819131048.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>
+可用的<code>modifiers</code>有：none(默认值)，log，log1p，log2p，ln，ln1p，ln2p，square，sqrt以及reciprocal。</p>
+<table>
+<thead>
+<tr>
+<th>Modifier</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>none</td>
+<td>Do not apply any multiplier to the field value</td>
+</tr>
+<tr>
+<td>log</td>
+<td>Take the logarithm of the field value</td>
+</tr>
+<tr>
+<td>log1p</td>
+<td>Add 1 to the field value and take the logarithm</td>
+</tr>
+<tr>
+<td>log2p</td>
+<td>Add 2 to the field value and take the logarithm</td>
+</tr>
+<tr>
+<td>ln</td>
+<td>Take the natural logarithm of the field value</td>
+</tr>
+<tr>
+<td>ln1p</td>
+<td>Add 1 to the field value and take the natural logarithm</td>
+</tr>
+<tr>
+<td>ln2p</td>
+<td>Add 2 to the field value and take the natural logarithm</td>
+</tr>
+<tr>
+<td>square</td>
+<td>Square the field value (multiply it by itself)</td>
+</tr>
+<tr>
+<td>sqrt</td>
+<td>Take the square root of the field value</td>
+</tr>
+<tr>
+<td>reciprocal</td>
+<td>Reciprocate the field value, same as 1/x where x is the field’s value</td>
+</tr>
+</tbody>
+</table>
+<p>具体详情请查阅<a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-function-score-query.html#function-field-value-factor"target="_blank" rel="external nofollow noopener noreferrer">官网介绍</a></p>
+<h4 id="factor" class="heading-element"><span>factor</span>
+  <a href="#factor" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p>可以通过将<code>votes</code>字段的值乘以某个数值来增加该字段的影响力，这个数值被称为<code>factor</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">q</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;function_score&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span><span class="s2">&#34;multi_match&#34;</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="s1">&#39;python&#39;</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;content&#39;</span><span class="p">]),</span>
+</span></span><span class="line"><span class="cl">    <span class="n">functions</span><span class="o">=</span><span class="p">[</span>
+</span></span><span class="line"><span class="cl">        <span class="n">query</span><span class="o">.</span><span class="n">SF</span><span class="p">(</span><span class="s1">&#39;field_value_factor&#39;</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="s1">&#39;votes&#39;</span><span class="p">,</span> <span class="n">modifier</span><span class="o">=</span><span class="s1">&#39;log1p&#39;</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>添加了<code>factor</code>将公式修改成这样：</p>
+<blockquote>
+<p>new_score = old_score * log(1 + factor * number_of_votes)
+当<code>factor</code>大于1时，会增加其影响力，而小于1的<code>factor</code>则相应减小了其影响力，如下图所示：</p>
+</blockquote>
+<p><img loading="lazy" src="/imgs/20170819/20170819131049.png" alt="/imgs/20170819/20170819131049.png" srcset="/imgs/20170819/20170819131049.png?size=small, /imgs/20170819/20170819131049.png?size=medium 1.5x, /imgs/20170819/20170819131049.png?size=large 2x" data-title="/imgs/20170819/20170819131049.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>
+<img loading="lazy" src="/imgs/20170819/20170819132115.png" alt="/imgs/20170819/20170819132115.png" srcset="/imgs/20170819/20170819132115.png?size=small, /imgs/20170819/20170819132115.png?size=medium 1.5x, /imgs/20170819/20170819132115.png?size=large 2x" data-title="/imgs/20170819/20170819132115.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<h4 id="boost_mode" class="heading-element"><span>boost_mode</span>
+  <a href="#boost_mode" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p>将全文搜索的相关度分值乘以<code>field_value_factor</code>函数的结果，对最终分值的影响可能太大了。通过<code>boost_mode</code>参数，我们可以控制函数的结果应该如何与<code>_score</code>结合在一起，该参数接受下面的值：</p>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>multiply</td>
+<td>_score 与函数值的积（默认）</td>
+</tr>
+<tr>
+<td>sum</td>
+<td>_score 与函数值的和</td>
+</tr>
+<tr>
+<td>avg</td>
+<td>_score 平均值</td>
+</tr>
+<tr>
+<td>first</td>
+<td>应用filter匹配上的第一个函数值</td>
+</tr>
+<tr>
+<td>min</td>
+<td>_score 与函数值间的较小值</td>
+</tr>
+<tr>
+<td>max</td>
+<td>_score 与函数值间的较大值</td>
+</tr>
+<tr>
+<td>replace</td>
+<td>将_score替换成函数结果</td>
+</tr>
+</tbody>
+</table>
+<p>如果我们是通过将函数结果累加来得到<code>_score</code>，其影响会小的多，特别是当我们使用了一个较低的<code>factor</code>时：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">q</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;function_score&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span><span class="s2">&#34;multi_match&#34;</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="s1">&#39;python&#39;</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;content&#39;</span><span class="p">]),</span>
+</span></span><span class="line"><span class="cl">    <span class="n">functions</span><span class="o">=</span><span class="p">[</span>
+</span></span><span class="line"><span class="cl">        <span class="n">query</span><span class="o">.</span><span class="n">SF</span><span class="p">(</span><span class="s1">&#39;field_value_factor&#39;</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="s1">&#39;votes&#39;</span><span class="p">,</span> <span class="n">modifier</span><span class="o">=</span><span class="s1">&#39;log1p&#39;</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">],</span>
+</span></span><span class="line"><span class="cl">    <span class="n">score_mode</span><span class="o">=</span><span class="s2">&#34;sum&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>上述请求的公式如下所示：</p>
+<blockquote>
+<p>new_score = old_score + log(1 + 0.1 * number_of_votes)</p>
+</blockquote>
+<p><img loading="lazy" src="/imgs/20170819/20170819131050.png" alt="/imgs/20170819/20170819131050.png" srcset="/imgs/20170819/20170819131050.png?size=small, /imgs/20170819/20170819131050.png?size=medium 1.5x, /imgs/20170819/20170819131050.png?size=large 2x" data-title="/imgs/20170819/20170819131050.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>
+<img loading="lazy" src="/imgs/20170819/20170819133115.png" alt="/imgs/20170819/20170819133115.png" srcset="/imgs/20170819/20170819133115.png?size=small, /imgs/20170819/20170819133115.png?size=medium 1.5x, /imgs/20170819/20170819133115.png?size=large 2x" data-title="/imgs/20170819/20170819133115.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<h4 id="max_boost" class="heading-element"><span>max_boost</span>
+  <a href="#max_boost" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p>最后，我们能够通过制定<code>max_boost</code>参数来限制函数的最大影响：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">q</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;function_score&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="o">.</span><span class="n">Q</span><span class="p">(</span><span class="s2">&#34;multi_match&#34;</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="s1">&#39;python&#39;</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;content&#39;</span><span class="p">]),</span>
+</span></span><span class="line"><span class="cl">    <span class="n">functions</span><span class="o">=</span><span class="p">[</span>
+</span></span><span class="line"><span class="cl">        <span class="n">query</span><span class="o">.</span><span class="n">SF</span><span class="p">(</span><span class="s1">&#39;field_value_factor&#39;</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="s1">&#39;votes&#39;</span><span class="p">,</span> <span class="n">modifier</span><span class="o">=</span><span class="s1">&#39;log1p&#39;</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">],</span>
+</span></span><span class="line"><span class="cl">    <span class="n">score_mode</span><span class="o">=</span><span class="s2">&#34;sum&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">max_boost</span><span class="o">=</span><span class="mf">1.5</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>无论<code>field_value_factor</code>函数的结果是多少，它绝不会大于1.5。</p>
+<p>NOTE</p>
+<blockquote>
+<p>max_boost只是对函数的结果有所限制，并不是最终的_score。</p>
+</blockquote>
+<p><img loading="lazy" src="/imgs/20170819/20170819134205.png" alt="/imgs/20170819/20170819134205.png" srcset="/imgs/20170819/20170819134205.png?size=small, /imgs/20170819/20170819134205.png?size=medium 1.5x, /imgs/20170819/20170819134205.png?size=large 2x" data-title="/imgs/20170819/20170819134205.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<h3 id="参考文档" class="heading-element"><span>参考文档</span>
+  <a href="#%e5%8f%82%e8%80%83%e6%96%87%e6%a1%a3" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-function-score-query.html"target="_blank" rel="external nofollow noopener noreferrer">https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-function-score-query.html</a></p>
+<p><a href="http://itindex.net/detail/57059-elasticsearch-%E6%8E%A7%E5%88%B6-%E7%9B%B8%E5%85%B3"target="_blank" rel="external nofollow noopener noreferrer">http://itindex.net/detail/57059-elasticsearch-%E6%8E%A7%E5%88%B6-%E7%9B%B8%E5%85%B3</a></p>
+</div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="更新于 2017-08-19 12:38:00">更新于 2017-08-19&nbsp;</span>
+      </div><div class="post-info-license">
+            <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
+          </div></div><div class="post-info-line">
+        <div class="post-info-md"><span><a href="https://github.com/hugo-fixit/docs/blob/main/main/posts%5cstorage%5celasticsearch%5cusing-elasticsearch-function-score-with-python-1.md?plain=1" title="查看源码"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-source">查看源码</a></span><span><a href="https://github.com/hugo-fixit/docs/edit/main/main/posts%5cstorage%5celasticsearch%5cusing-elasticsearch-function-score-with-python-1.md" title="编辑此页"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-edit">编辑此页</a></span><span><a href="https://github.com/hugo-fixit/docs/issues/new?title=[BUG]%20%E7%94%A8Python%E5%AE%9E%E7%8E%B0Elasticsearch&#43;function_score%E6%9F%A5%E8%AF%A2%28%E4%B8%80%29&amp;body=%7cField%7cValue%7c%0A%7c-%7c-%7c%0A%7cTitle%7c%E7%94%A8Python%E5%AE%9E%E7%8E%B0Elasticsearch&#43;function_score%E6%9F%A5%E8%AF%A2%28%E4%B8%80%29%7c%0A%7cURL%7chttps://hellofinger.tech/2017/08/using-elasticsearch-function-score-with-python-1/%7c%0A%7cFilename%7chttps://github.com/hugo-fixit/docs/blob/main/main/posts%5cstorage%5celasticsearch%5cusing-elasticsearch-function-score-with-python-1.md?plain=1%7c" title="报告问题"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-report">报告问题</a></span></div>
+        <div class="post-info-share">
+          <span><a href="javascript:void(0);" title="分享到 X" data-sharer="twitter" data-url="https://hellofinger.tech/2017/08/using-elasticsearch-function-score-with-python-1/" data-title="用Python实现Elasticsearch Function_score查询(一)" data-hashtags="ElasticSearch,Python"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://hellofinger.tech/2017/08/using-elasticsearch-function-score-with-python-1/" data-hashtag="ElasticSearch"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://hellofinger.tech/2017/08/using-elasticsearch-function-score-with-python-1/" data-title="用Python实现Elasticsearch Function_score查询(一)"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+        </div>
+      </div></div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href="/tags/elasticsearch/" class="post-tag" title="标签 - ElasticSearch">ElasticSearch</a><a href="/tags/python/" class="post-tag" title="标签 - Python">Python</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+    </section>
+  </div><div class="post-nav"><a href="/2017/08/elasticsearch-search-suggest-with-python/" class="post-nav-item" rel="prev" title="用Python实现Elasticsearch提供的搜索建议"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>用Python实现Elasticsearch提供的搜索建议</a>
+      <a href="/2017/08/using-elasticsearch-function-score-with-python-2/" class="post-nav-item" rel="next" title="用Python实现Elasticsearch Function_score查询(二)">用Python实现Elasticsearch Function_score查询(二)<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article>
+
+  <aside class="toc" id="toc-auto" aria-label="目录"><h2 class="toc-title">目录&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2017 - 2024</span><span class="author" itemprop="copyrightHolder">
+              <a href="/">Finger</a></span><span class="license footer-divider"><a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="回到顶部"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">该网站在启用 JavaScript 的情况下效果最佳。</div>
+  </noscript>
+</div><link rel="preload" href="/lib/katex/katex.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/katex/katex.min.css"></noscript><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script src="/lib/autocomplete/autocomplete.min.js" defer></script><script src="/lib/fuse/fuse.min.js" defer></script><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/copy-tex.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="/js/flyfish.js" defer></script><script>window.config={"code":{"copyTitle":"复制到剪贴板","editLockTitle":"锁定可编辑代码块","editUnLockTitle":"解锁可编辑代码块","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"同意","link":"了解更多","message":"本网站使用 Cookies 来改善您的浏览体验。"},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"distance":100,"findAllMatches":false,"highlightTag":"em","ignoreFieldNorm":false,"ignoreLocation":false,"isCaseSensitive":false,"location":0,"maxResultLength":10,"minMatchCharLength":2,"noResultsFound":"没有找到结果","snippetLength":30,"threshold":0.3,"useExtendedSearch":false},"version":"v0.3.10-c936e541"};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

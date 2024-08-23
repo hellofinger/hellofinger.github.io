@@ -1,0 +1,92 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>ElasticSearch - 标签 - Finger&#39;s Blog</title>
+    <link>https://hellofinger.tech/tags/elasticsearch/</link>
+    <description>ElasticSearch - 标签 | Finger&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Sat, 26 Aug 2017 10:23:00 &#43;0000</lastBuildDate><atom:link href="https://hellofinger.tech/tags/elasticsearch/" rel="self" type="application/rss+xml" /><item>
+  <title>用Python实现Elasticsearch function_score查询(二)</title>
+  <link>https://hellofinger.tech/2017/08/using-elasticsearch-function-score-with-python-2/</link>
+  <pubDate>Sat, 26 Aug 2017 10:23:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2017/08/using-elasticsearch-function-score-with-python-2/</guid>
+  <description><![CDATA[random_scorerandom_score函数，它的输出是一个介于0到1之间的数字，当给它提供相同的seed值时，它能够产生一致性随机的结果。random_score 子句不包含任何的filter，因此它适用于所有文档。当然，如果你索引了能匹配查询的新文档，无论你是否使用了一致性随机，结果的顺序都会有所改变。
+1 2 3 4 5 6 q = query.Q( &#39;function_score&#39;, functions=[ query.SF(&#39;random_score&#39;, seed=10) ] ) 1 2 3 4 5 6 7 8 9 10 GET /_search { &#34;query&#34;: { &#34;function_score&#34;: { &#34;random_score&#34;: { &#34;seed&#34;: 10 } } } } decay functions之前提过的weight，field_value_factor，random_score等函数都是一种线性的影响关系，给出的分数随着距离变大而变低。有时候我们会有范围性质，分数变化缓慢的需求场景。此时上述函数就显得不那么适用。 Elasticsearch提供了三种decay functions，让我们可以基于一个单值的数值型字段（比如日期、地点或者价格类似标准的数值型字段）来计算分数。
+这三个衰减函数分别为：
+线性衰减(linear) 指数衰减(exp) 高斯衰减(gauss) 它们可以操作数值，时间以及经纬度地理坐标点这样的字段，这三个函数都有以下参数：
+origin: 中心点或字段可能的最佳值，落在原点origin上的文档评分 _score 为满分1.0 。 scale: 衰减率，即一个文档从原点origin下落时，评分_score改变的速度(例如每 £10 欧元或每 100 米)。 decay: 从原点origin衰减到scale所得的评分_score，默认值为 0.5。 offset: 以原点origin为中心点，为其设置一个非零的偏移量offset 覆盖一个范围，而不只是单个原点。在范围 -offset &lt;= origin &lt;= +offset 内的所有评分_score都是 1.]]></description>
+</item>
+<item>
+  <title>用Python实现Elasticsearch function_score查询(一)</title>
+  <link>https://hellofinger.tech/2017/08/using-elasticsearch-function-score-with-python-1/</link>
+  <pubDate>Sat, 19 Aug 2017 12:38:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2017/08/using-elasticsearch-function-score-with-python-1/</guid>
+  <description><![CDATA[什么是function_scorefunction_score查询是处理分值计算过程的终极工具。它让你能够对所有匹配了主查询的每份文档调用一个函数来调整甚至是完全替换原来的_score。
+实际上，你可以通过设置过滤器来将查询得到的结果分成若干个子集，然后对每个子集使用不同的函数。这样你就能够同时得益于：高效的分值计算以及可以缓存的过滤器。
+它拥有几种预先定义好了的函数：
+weight 对每份文档适用一个简单的提升，且该提升不会被归约：当weight为2时，结果为2 * _score。 field_value_factor 使用文档中某个字段的值来改变_score，比如将受欢迎程度或者投票数量考虑在内。 random_score 使用一致性随机分值计算来对每个用户采用不同的结果排序方式，对相同用户仍然使用相同的排序方式。 衰减函数(Decay Function)-(linear，exp，gauss) 将像publish_date，geo_location或者price这类浮动值考虑到_score中，偏好最近发布的文档，邻近于某个地理位置(译注：其中的某个字段)的文档或者价格(译注：其中的某个字段)靠近某一点的文档。 script_score 使用自定义的脚本来完全控制分值计算逻辑。如果你需要以上预定义函数之外的功能，可以根据需要通过脚本进行实现。 没有function_score查询的话，我们也许就不能将全文搜索得到分值和近因进行结合了。我们将不得不根据_score或者date进行排序；无论采用哪一种都会抹去另一种的影响。function_score查询让我们能够将两者融合在一起：仍然通过全文相关度排序，但是给新近发布的文档，或者流行的文档，或者符合用户价格期望的文档额外的权重。你可以想象，一个拥有所有这些功能的查询看起来会相当复杂。我们从一个简单的例子开始，循序渐进地对它进行介绍。
+如何使用function_score假设我们有一个博客网站让用户投票选择他们喜欢的文章。我们希望让人气高的文章出现在结果列表的头部，但是主要的排序依据仍然是全文搜索分值。我们可以通过保存每篇文章的投票数量来实现。
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 # 1、新建一个索引映射： class Post(DocType): title = String() content = Text() votes = Integer() created_at = Date() class Meta: index = &#39;blogposts&#39; type = &#39;post&#39; Post.]]></description>
+</item>
+<item>
+  <title>用Python实现Elasticsearch提供的搜索建议</title>
+  <link>https://hellofinger.tech/2017/08/elasticsearch-search-suggest-with-python/</link>
+  <pubDate>Wed, 16 Aug 2017 23:01:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2017/08/elasticsearch-search-suggest-with-python/</guid>
+  <description><![CDATA[Suggest搜索Elasticsearch支持多种suggest类型，也支持模糊搜索。
+Elasticsearch支持如下4种搜索类型：
+Term。基于编辑距离的搜索，也就是对比两个字串之间，由一个转成另一个所需的最少编辑操作次数，编辑距离越少说明越相近。搜索时需要指定字段，是很基础的一种搜索。 Phrase。Term的优化，能够基于共现和频率来做出关于选择哪些token的更好的决定。 Completion。提供自动完成/按需搜索的功能，这是一种导航功能，可在用户输入时引导用户查看相关结果，从而提高搜索精度。和前2种用法不同，需要在mapping时指定suggester字段，使用允许快速查找的数据结构，所以在搜索速度上得到了很大的优化。 Context。Completion搜索的是索引中的全部文档，但是有时候希望对这个结果进行一些and/or的过滤，就需要使用Context类型了。 下面使用elasticsearch_dsl自带的Suggestions功能
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 #!]]></description>
+</item>
+<item>
+  <title>Using Elasticsearch Bulk With Python</title>
+  <link>https://hellofinger.tech/2017/08/using-elasticsearch-bulk-with-python/</link>
+  <pubDate>Wed, 16 Aug 2017 22:02:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2017/08/using-elasticsearch-bulk-with-python/</guid>
+  <description><![CDATA[Python Elasticsearch客户端提供了批量索引的功能，详情请查看项目主页
+主要封装了两种方式进行bulk操作：
+streaming_bulk 流式 parallel_buck 多线程 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 def streaming_bulk( client, actions, chunk_size=500, max_chunk_bytes=104857600, raise_on_error=True, expand_action_callback=&lt;function expand_action&gt;, raise_on_exception=True, max_retries=0, initial_backoff=2, max_backoff=600, yield_ok=True, **kwargs): pass def parallel_bulk( client, actions, thread_count=4, chunk_size=500, max_chunk_bytes=104857600, queue_size=4, expand_action_callback=&lt;function expand_action&gt;, **kwargs): pass streaming比parallel多了重试的机制。两个方法默认都是每次处理500索引，两个方法都返回迭代器对象，bulk方法默认使用的是streaming_bulk方式。如果要使用parallel_buck需要修改源代码或者自己扩展。
+bulk方法定义：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 def bulk(client, actions, stats_only=False, **kwargs): success, failed = 0, 0 # list of errors to be collected is not stats_only errors = [] for ok, item in streaming_bulk(client, actions, **kwargs): # go through request-reponse pairs and detect failures if not ok: if not stats_only: errors.]]></description>
+</item>
+<item>
+  <title>Elasticsearch Documents APIs</title>
+  <link>https://hellofinger.tech/2017/08/elasticsearch-document-api/</link>
+  <pubDate>Tue, 15 Aug 2017 23:24:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2017/08/elasticsearch-document-api/</guid>
+  <description><![CDATA[一、Elasticsearch 索引别名索引别名就像一个快捷方式或软链接，可以指向一个或多个索引，也可以给任何需要索引名的API使用。别名带给我们极大的灵活性，允许我们做到：
+在一个运行的集群上无缝的从一个索引切换到另一个 给多个索引分类 给索引的一个子集创建视图 1 2 3 4 5 6 7 8 9 10 11 # 创建别名 PUT /my_index_v1 # 将别名my_index指向my_index_v1 PUT /my_index_v1/_alias/my_index # 检查别名指向哪个索引 GET /*/_alias/my_index # 或者哪个别名指向这个索引 GET /my_index_v1/_alias/* 如果我们决定要修改索引中一个字段的映射。但是我们不能修改现存的映射，因此我们需要重新索引数据。这个时候别名就可以帮助我们完成。
+首先，我们需要创建新的索引 my_index_v2
+1 PUT /my_index_v2 然后我们将数据从 my_index_v1 迁移到 my_index_v2
+1 2 3 4 5 6 7 POST /_aliases { &#34;actions&#34;: [ { &#34;remove&#34;: { &#34;index&#34;: &#34;my_index_v1&#34;, &#34;alias&#34;: &#34;my_index&#34; }}, { &#34;add&#34;: { &#34;index&#34;: &#34;my_index_v2&#34;, &#34;alias&#34;: &#34;my_index&#34; }} ] } 最后，我们的应用就从旧的索引迁移到了新的，而没有停机时间。]]></description>
+</item>
+<item>
+  <title>Python Elasticsearch DSL 使用笔记(二)</title>
+  <link>https://hellofinger.tech/2017/08/elasticsearch-dsl-with-python-usage-2/</link>
+  <pubDate>Sun, 13 Aug 2017 07:56:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2017/08/elasticsearch-dsl-with-python-usage-2/</guid>
+  <description><![CDATA[使用ElasticSearch DSL进行搜索Search主要包括：
+查询(queries) 过滤器(filters) 聚合(aggreations) 排序(sort) 分页(pagination) 额外的参数(additional parameters) 相关性(associated) 创建一个查询对象
+1 2 3 4 5 6 from elasticsearch import Elasticsearch from elasticsearch_dsl import Search client = Elasticsearch() s = Search(using=client) 初始化测试数据
+1 2 3 4 5 6 7 8 9 10 11 12 13 def add_article(id_, title, body, tags): article = Article(meta={&#39;id&#39;: id_}, title=title, tags=tags) article.body = body article.published_from = datetime.now() article.save() def init_test_data(): add_article(2, &#39;Python is good!&#39;, &#39;Python is good!]]></description>
+</item>
+<item>
+  <title>Python Elasticsearch DSL 使用笔记(一)</title>
+  <link>https://hellofinger.tech/2017/08/elasticsearch-dsl-with-python-usage-1/</link>
+  <pubDate>Sat, 12 Aug 2017 20:39:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2017/08/elasticsearch-dsl-with-python-usage-1/</guid>
+  <description><![CDATA[下载地址: https://www.elastic.co/downloads/elasticsearch
+使用版本: elasticsearch-5.5.1
+Python Elasticsearch DSL: https://github.com/elastic/elasticsearch-dsl-py
+测试代码： https://github.com/zhoujun/mydemos/tree/master/elasticsearch-demo
+一、Elasticsearch的基本概念Index：Elasticsearch用来存储数据的逻辑区域，它类似于关系型数据库中的database 概念。一个index可以在一个或者多个shard上面，同时一个shard也可能会有多个replicas。 Document：Elasticsearch里面存储的实体数据，类似于关系数据中一个table里面的一行数据。 document由多个field组成，不同的document里面同名的field一定具有相同的类型。document里面field可以重复出现，也就是一个field会有多个值，即multivalued。 Document type：为了查询需要，一个index可能会有多种document，也就是document type. 它类似于关系型数据库中的 table 概念。但需要注意，不同document里面同名的field一定要是相同类型的。 Mapping：它类似于关系型数据库中的 schema 定义概念。存储field的相关映射信息，不同document type会有不同的mapping。 下图是ElasticSearch和关系型数据库的一些术语比较：
+Relationnal database Elasticsearch Database Index Table Type Row Document Column Field Schema Mapping Index Everything is indexed SQL Query DSL SELECT * FROM table&hellip; GET http://&hellip; UPDATE table SET PUT http://&hellip; 二、Python Elasticsearch DSL使用简介1、安装1 $ pip install elasticsearch-dsl 2、创建索引和文档1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 from datetime import datetime from elasticsearch_dsl import DocType, Date, Integer, Keyword, Text from elasticsearch_dsl.]]></description>
+</item>
+</channel>
+</rss>

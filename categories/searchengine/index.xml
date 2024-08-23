@@ -1,0 +1,21 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>SearchEngine - 分类 - Finger&#39;s Blog</title>
+    <link>http://localhost:1313/categories/searchengine/</link>
+    <description>SearchEngine - 分类 | Finger&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Sat, 09 Jun 2018 13:06:00 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/categories/searchengine/" rel="self" type="application/rss+xml" /><item>
+  <title>用Python实现一个大数据搜索引擎</title>
+  <link>http://localhost:1313/2018/06/simple-bigdata-search-with-python/</link>
+  <pubDate>Sat, 09 Jun 2018 13:06:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>http://localhost:1313/2018/06/simple-bigdata-search-with-python/</guid>
+  <description><![CDATA[本文转自：https://my.oschina.net/taogang/blog/1579204
+搜索是大数据领域里常见的需求。Splunk和ELK分别是该领域在非开源和开源领域里的领导者。本文利用很少的Python代码实现了一个基本的数据搜索功能，试图让大家理解大数据搜索的基本原理。
+1、布隆过滤器（Bloom Filter）第一步我们先要实现一个布隆过滤器
+布隆过滤器是大数据领域的一个常见算法，它的目的是过滤掉那些不是目标的元素。也就是说如果一个要搜索的词并不存在与我的数据中，那么它可以以很快的速度返回目标不存在。
+让我们看看以下布隆过滤器的代码：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 class Bloomfilter(object): &#34;&#34;&#34; A Bloom filter is a probabilistic data-structure that trades space for accuracy when determining if a value is in a set. It can tell you if a value was possibly added, or if it was definitely not added, but it can&#39;t tell you for certain that it was added.]]></description>
+</item>
+</channel>
+</rss>

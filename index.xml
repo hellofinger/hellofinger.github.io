@@ -1,0 +1,572 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>Finger&#39;s Blog</title>
+    <link>https://hellofinger.tech/</link>
+    <description>Finger&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Tue, 16 Jun 2020 15:02:52 &#43;0800</lastBuildDate>
+      <atom:link href="https://hellofinger.tech/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+  <title>Neo4j 基础知识</title>
+  <link>https://hellofinger.tech/2020/06/neo4j-basic/</link>
+  <pubDate>Tue, 16 Jun 2020 15:02:52 &#43;0800</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2020/06/neo4j-basic/</guid>
+  <description><![CDATA[<h2 id="简介" class="heading-element"><span>简介</span>
+  <a href="#%e7%ae%80%e4%bb%8b" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>图形数据库： 存储 查询/遍历 多个连接数据</p>
+<p>Neo4j是一个嵌入式的、基于磁盘的、具备完全的事务特性的Java持久化引擎，但是它将结构化数据存储在网络(从数学角度叫做图)上而不是表中。Neo4j也可以被看作是一个高性能的图引擎，该引擎具有成熟数据库的所有特性。</p>
+<p>节点/关系 用自增id来唯一标识， 容量35亿； 关系应该是方向性的。</p>
+<table>
+<thead>
+<tr>
+<th>关系数据库</th>
+<th>图形数据库</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>表</td>
+<td>图</td>
+</tr>
+<tr>
+<td>行</td>
+<td>节点</td>
+</tr>
+<tr>
+<td>列和数据</td>
+<td>属性和值(KV)</td>
+</tr>
+<tr>
+<td>Join</td>
+<td>边</td>
+</tr>
+</tbody>
+</table>
+<h2 id="下载" class="heading-element"><span>下载</span>
+  <a href="#%e4%b8%8b%e8%bd%bd" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p><a href="https://neo4j.com/download-center/#community"target="_blank" rel="external nofollow noopener noreferrer">https://neo4j.com/download-center/#community</a></p>
+<h3 id="python-驱动" class="heading-element"><span>Python 驱动</span>
+  <a href="#python-%e9%a9%b1%e5%8a%a8" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p><a href="https://github.com/neo4j/neo4j-python-driver"target="_blank" rel="external nofollow noopener noreferrer">https://github.com/neo4j/neo4j-python-driver</a></p>
+<h2 id="cypher-query-language-cql" class="heading-element"><span>Cypher Query Language (CQL)</span>
+  <a href="#cypher-query-language-cql" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p><a href="https://neo4j.com/developer/cypher-query-language/"target="_blank" rel="external nofollow noopener noreferrer">https://neo4j.com/developer/cypher-query-language/</a></p>
+<h3 id="创建节点" class="heading-element"><span>创建节点</span>
+  <a href="#%e5%88%9b%e5%bb%ba%e8%8a%82%e7%82%b9" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>语法：CREATE (节点名: 标签 {节点属性})</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># 一个标签的节点
+</span></span><span class="line"><span class="cl">CREATE (node:label)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 多个标签的节点
+</span></span><span class="line"><span class="cl">CREATE (node:label_1:label_2:label_3...label_N)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 创建节点属性
+</span></span><span class="line"><span class="cl">CREATE (node:label { property_1: value_1, property_2: value_2...})
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">CREATE (p:Person {name: &#34;Finger&#34;, city: &#34;HengYang&#34;}) RETURN p</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="merge" class="heading-element"><span>MERGE</span>
+  <a href="#merge" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>合并节点或者关系，属于先读后写操作，相当于MATCH + CREATE，先检查数据库中节点/关系是否存在，如果存在的话就不再创建，反之执行CREATE。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">// 给节点a, b建立关系，如果a,b已经存在，就无需新建。 
+</span></span><span class="line"><span class="cl">MATCH (a:Person {name:&#34;Finger&#34;}), (b:Person{name:&#34;Jack Ma&#34;}) MERGE (a)-[:KNOWS]-&gt;(b)</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">[</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;id&#34;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="nt">&#34;friends&#34;</span><span class="p">:[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;Bob&#34;</span><span class="p">,</span> <span class="nt">&#34;age&#34;</span><span class="p">:</span> <span class="mi">27</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;book&#34;</span><span class="p">:[{</span><span class="nt">&#34;name&#34;</span><span class="p">:</span><span class="s2">&#34;book1&#34;</span><span class="p">,</span> <span class="nt">&#34;year&#34;</span><span class="p">:</span><span class="mi">2000</span><span class="p">},</span> <span class="p">{</span><span class="nt">&#34;name&#34;</span><span class="p">:</span><span class="s2">&#34;book3&#34;</span><span class="p">,</span> <span class="nt">&#34;year&#34;</span><span class="p">:</span><span class="mi">1990</span><span class="p">}]</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;id&#34;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="nt">&#34;friends&#34;</span><span class="p">:[</span><span class="mi">1</span><span class="p">],</span> <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;Alice&#34;</span><span class="p">,</span> <span class="nt">&#34;age&#34;</span><span class="p">:</span> <span class="mi">29</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;book&#34;</span><span class="p">:[{</span><span class="nt">&#34;name&#34;</span><span class="p">:</span><span class="s2">&#34;book1&#34;</span><span class="p">,</span> <span class="nt">&#34;year&#34;</span><span class="p">:</span><span class="mi">2000</span><span class="p">},</span> <span class="p">{</span><span class="nt">&#34;name&#34;</span><span class="p">:</span><span class="s2">&#34;book2&#34;</span><span class="p">,</span> <span class="nt">&#34;year&#34;</span><span class="p">:</span><span class="mi">1999</span><span class="p">}]</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;id&#34;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="nt">&#34;friends&#34;</span><span class="p">:[</span><span class="mi">2</span><span class="p">],</span> <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;John&#34;</span><span class="p">,</span> <span class="nt">&#34;age&#34;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;book&#34;</span><span class="p">:[{</span><span class="nt">&#34;name&#34;</span><span class="p">:</span><span class="s2">&#34;book3&#34;</span><span class="p">,</span> <span class="nt">&#34;year&#34;</span><span class="p">:</span><span class="mi">1990</span><span class="p">}]</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">]</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="删除节点" class="heading-element"><span>删除节点</span>
+  <a href="#%e5%88%a0%e9%99%a4%e8%8a%82%e7%82%b9" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>语法：MATCH (节点名：标签) DELETE 节点名</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">MATCH (p:Persion) WHERE p.name = &#34;Finger&#34; DELETE p</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="查找节点" class="heading-element"><span>查找节点</span>
+  <a href="#%e6%9f%a5%e6%89%be%e8%8a%82%e7%82%b9" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>语法：MATCH (变量名：匹配的标签) WHERE 过滤结果 RETURN 返回特定结果</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">MATCH (p:Persion) WHERE p.name = &#34;Finger&#34; RETURN p.name</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="更新节点" class="heading-element"><span>更新节点</span>
+  <a href="#%e6%9b%b4%e6%96%b0%e8%8a%82%e7%82%b9" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>语法：MATCH (变量名: 匹配的标签) WHERE 过滤结果 SET 变量名.属性名=值 RETURN 变量名</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">MATCH (p:Persion) WHERE p.name = &#34;Finger&#34; SET p.city = &#34;ChangSha&#34; RETURN p</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="limit" class="heading-element"><span>LIMIT</span>
+  <a href="#limit" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">MATCH (p:Persion) RETURN p LIMIT 10</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="参考" class="heading-element"><span>参考</span>
+  <a href="#%e5%8f%82%e8%80%83" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><ul>
+<li><a href="http://neo4j.com.cn/public/docs/index.html"target="_blank" rel="external nofollow noopener noreferrer">http://neo4j.com.cn/public/docs/index.html</a></li>
+</ul>]]></description>
+</item>
+<item>
+  <title>Terraform模块基础</title>
+  <link>https://hellofinger.tech/2020/02/terraform-modules/</link>
+  <pubDate>Mon, 03 Feb 2020 09:22:52 &#43;0800</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2020/02/terraform-modules/</guid>
+  <description><![CDATA[什么是Terraform ModuleModule 是 Terraform 为了管理单元化资源而设计的，是子节点，子资源，子架构模板的整合和抽象。在实际复杂的技术架构中，涉及到的资源多种多样，资源与资源之间的关系错综复杂，资源模版的编写，扩展，维护等多个问题的成本都会不断增加。将多种可以复用的资源定义为一个module，通过对 module 的管理简化模板的架构，降低模板管理的复杂度，这就是module的作用。
+除此之外，对开发者和用户而言，只需关心 module 的 input 参数即可，无需关心module中资源的定义，参数，语法等细节问题，抽出更多的时间和精力投入到架构设计和资源关系整合上。
+Module的标准结构官方建议Module标准结构包含：main.tf，variables.tf，outputs.tf，README.md。这些是最小模块的建议文件名，即使它们为空。
+1、main.tf：资源的定义模板 2、variables.tf：模板所依赖的参数定义和参数值 3、outputs.tf：资源的输出值 4、README.md：模板的简单介绍和使用说明以及该模块可用的许可证
+对于一个简单的模块，main.tf 是主要入口点。包含了创建资源的主要内容。对于复杂的模块，可以将资源创建分为多个文件，但是任何嵌套的模块调用都应位于主文件中。variables.tf 并且outputs.tf应分别包含变量和输出的声明。
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 # 简单的模块 $ basic-module/ . ├── README.md ├── main.tf ├── variables.tf ├── outputs.tf # 复杂的模块 $ complete-module/ . ├── README.]]></description>
+</item>
+<item>
+  <title>Terraform的变量详解</title>
+  <link>https://hellofinger.tech/2020/02/terraform-variables/</link>
+  <pubDate>Sun, 02 Feb 2020 04:23:52 &#43;0800</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2020/02/terraform-variables/</guid>
+  <description><![CDATA[定义变量创建 variables.tf文件，定义变量名为：aws_region。设置默认值：ap-southeast-1。默认值是可选的。如果未设置默认值，则该变量是必需的。
+1 2 3 4 5 # variables.tf variable &#34;aws_region&#34; { default = &#34;ap-southeast-1&#34; } 注意：该文件可以命名为任何名称，因为Terraform加载目录下以*.tf结尾的所有文件。
+使用变量通过使用占位符 ${}和var关键字引用定义的变量名。
+1 2 3 provider &#34;aws&#34; { region = &#34;${var.aws_region}&#34; } 分配变量分配变量有多种方法。以变量的优先级考虑，从高到底的顺序主要的方法如下：
+命令行可以直接在命令行中使用-var标志设置变量 。在该Terraform检查配置的任何命令接受该标志，如apply 和 plan。
+1 2 terraform apply \ -var &#39;aws_region=ap-southeast-1&#39; 注意：以这种方式设置变量不会保存它们，并且在执行命令时必须重复输入它们。
+*.tfvars 文件变量如果想保留变量或者变量是一个固定的值，可以考虑创建后缀为 *.tfvars的文件。文件内容如下：
+1 2 3 # terraform.tfvars aws_region = &#34;ap-southeast-1&#34; 对于当前目录中匹配 terraform.tfvars 或 *.auto.tfvars 存在的所有文件，Terraform会自动加载它们以填充变量。如果文件名为其他名称，则可以-var-file直接使用该标志指定文件。这些文件与Terraform配置文件的语法相同。与Terraform配置文件一样，这些文件也可以是JSON。
+1 terraform apply -var-file=&#34;xxx.tfvars&#34; 注意：不建议将用户名和密码保存到版本控制中，但是可以创建一个本地秘钥变量文件用-var-file加载。
+-var-file 可以使用多次，指定不同的变量文件。例如：]]></description>
+</item>
+<item>
+  <title>Terraform的基本语法</title>
+  <link>https://hellofinger.tech/2020/02/terraform-basic/</link>
+  <pubDate>Sat, 01 Feb 2020 11:17:52 &#43;0800</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2020/02/terraform-basic/</guid>
+  <description><![CDATA[语法Terraform语言也就是HCL(HashiCorp Configuration Language)，是一种丰富的语言。他的语法结构类似于JSON语法。主要由参数和块构成。
+参数1 2 ami = &#34;ami-061eb2b23f9f8839c&#34; instance_type = &#34;t2.micro&#34; 等号前的标识符是参数名称，等号后的表达式是参数的值。
+代码块1 2 3 4 5 6 7 8 resource &#34;aws_instance&#34; &#34;example-instance&#34; { ami = &#34;ami-061eb2b23f9f8839c&#34; instance_type = &#34;t2.micro&#34; tags = { Name = &#34;Example by ChangSha Union&#34; } } 块具有类型(resource)，每一个块类型定义后需要定义多个标签，上述例子定义了 aws_instance和 example-instance 两个标签。特定的块类型可以具有任意数量的标签或者不需要标签名。aws_instance为第三方云资源的关键字，example-instance为自定义资源变量名。
+块主体由 { 和 } 字符(大括号)分隔。在块里面可以嵌套其他变量和块。从而创建块及其相关变量的层次结构。
+块可以出现在其他外部的terraform文件中。例如：a.tf 定义了某个变量块可以被b.tf引用。
+标识符参数名，块类型名以及大多数特定于Terraform的结构(如资源，输入变量)的名称都是标识符。
+标识符可以包含字母，数字，下划线（_）和连字符（-）。标识符的第一个字符不能为数字，这和编程语言规则相同。
+注释# 单行或者结尾注释 // 单行注释，以替代# /* */ 多行注释 Terraform VS 传统函数将Terraform与传统函数(以JavaScript语法为例)比较。input variable相当于函数参数，local value类似于局部变量。而output类似于返回值。]]></description>
+</item>
+<item>
+  <title>Terraform 是什么？</title>
+  <link>https://hellofinger.tech/2020/01/what-is-terraform/</link>
+  <pubDate>Mon, 06 Jan 2020 08:44:52 &#43;0800</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2020/01/what-is-terraform/</guid>
+  <description><![CDATA[一、Terraform 是什么？Terraform是一个开源基础架构，是HashiCorp创建的代码软件工具。它使用户能够使用称为HCL(HashiCorp Configuration Language)配置语言或可选的JSON来定义和配置数据中心基础架构。 HCL是声明式的，也就是说，程序员用HCL来描述整个基础架构应该是什么样的，然后把具体的实施工作交给Terraform就可以了，程序员不需要了解实施的具体步骤和细节，不需要了解terraform如何与云服务商的API进行对接。Terraform会根据代码，自动下载相应的Provider和Provisioner来负责具体步骤和细节。于声明式对应的是命令式。命令式语言是按照步骤执行的，先后顺序很重要，对固定输入执行命令式语言会得到固定的输出。声明式和命令式并无高下之分，只是在云资源编排这一领域，声明式会比较方便实现。
+Terraform 支持许多云基础架构提供商，国外云如 Amazon Web Services，IBM Cloud（以前的 Bluemix），Google Cloud Platform，Linode， Microsoft Azure， Oracle 云基础架构或 VMware vSphere 以及 OpenStack。 国内云包括阿里，腾讯，华为，京东等云服务商。
+Terraform 是一种安全有效地构建、更改和版本控制基础设施的工具(基础架构自动化的编排工具)。 以用来管理多层次的资源。从上层的软件配置到底层的网络、系统配置都可以使用 Terraform 统一进行管理。 它的目标是 &ldquo;Write, Plan, and create Infrastructure as Code&rdquo;, 基础架构即代码。
+Terraform 几乎可以支持所有市面上能见到的云服务。具体的说就是可以用代码来管理维护 IT 资源，把之前需要手动操作的一部分任务通过程序来自动化的完成，这样的做的结果非常明显：高效、不易出错。
+Terraform 提供了对资源和提供者的灵活抽象。该模型允许表示从物理硬件、虚拟机和容器到电子邮件和 DNS 提供者的所有内容。由于这种灵活性，Terraform 可以用来解决许多不同的问题。这意味着有许多现有的工具与Terraform 的功能重叠。但是需要注意的是，Terraform 与其他系统并不相互排斥。它可以用于管理小到单个应用程序或达到整个数据中心的不同对象。
+Terraform 使用配置文件描述管理的组件(小到单个应用程序，达到整个数据中心)。Terraform 生成一个执行计划，描述它将做什么来达到所需的状态，然后执行它来构建所描述的基础结构。随着配置的变化，Terraform 能够确定发生了什么变化，并创建可应用的增量执行计划。
+Terraform 通过插件机制管理不同的资源提供者，以此来接入各种资源，如虚拟机，存储，网络和各种应用服务。
+Terraform 是用 Go 语言开发的开源项目，你可以在 github 上访问到它的源代码。
+二、Terraform 特点2.1、基础架构即代码(Infrastructure as Code) 基础设施使用高级配置语法进行描述。这可以让你的数据中心蓝图像你其他代码一样进行版本控制和管理。此外基础设施可以被分享和重用。
+2.2、执行计划(Execution Plans)
+Terraform 有一个 plan 步骤，它生成一个执行计划。执行计划显示了当执行 apply 命令时 Terraform 将做什么。通过 plan 进行提前检查，可以使 Terraform 操作真正的基础结构时避免意外。]]></description>
+</item>
+<item>
+  <title>Terraform，从一个简单的例子开始</title>
+  <link>https://hellofinger.tech/2020/01/terraform-first-example/</link>
+  <pubDate>Sat, 04 Jan 2020 11:44:52 &#43;0800</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2020/01/terraform-first-example/</guid>
+  <description><![CDATA[安装Terraform1 2 3 4 5 # Step1, 下载适合您系统的Terraform安装包 wget https://releases.hashicorp.com/terraform/0.12.18/terraform_0.12.18_linux_amd64.zip # Step2, 解压该包，是一个名为terraform的二进制文件，可以在当前目录直接运行命令: terraform 1 2 # Step3, 将terraform加到环境变量。 export PATH=$PATH:/home/ubuntu/terraform:$PATH 1 2 $ terraform version Terraform v0.12.18 编写第一个Terraform例子我们在aws的新加坡(ap-southeast-1)区域创建一台实例类型为t2.micro的EC2，并标记一下Tag。
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 # main.tf provider &#34;aws&#34; { region = &#34;ap-southeast-1&#34; } resource &#34;aws_instance&#34; &#34;example-instance&#34; { ami = &#34;ami-061eb2b23f9f8839c&#34; instance_type = &#34;t2.micro&#34; tags = { Name = &#34;Example by ChangSha DevOps Union &#34; Terraform = true } } 1 2 3 4 5 6 ~/terraform-guide/example1$ tree .]]></description>
+</item>
+<item>
+  <title>InfluxDB 基础知识</title>
+  <link>https://hellofinger.tech/2019/11/influxdb-basic/</link>
+  <pubDate>Fri, 15 Nov 2019 11:51:52 &#43;0800</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2019/11/influxdb-basic/</guid>
+  <description><![CDATA[<h2 id="简介" class="heading-element"><span>简介</span>
+  <a href="#%e7%ae%80%e4%bb%8b" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>InfluxDB 是一个开源的时间序列数据库，专门设计用于处理时间相关数据。它被广泛用于监控、分析和存储大规模的时序数据，如应用程序指标、传感器数据、日志数据等。InfluxDB 使用一种称为 InfluxQL 的SQL-like 查询语言来查询和操作数据。它具有高性能、可扩展性和易用性的特点，适用于需要高速写入和查询时间序列数据的场景。</p>
+<p>InfluxDB 提供了多种客户端库和集成，使其可以轻松与各种编程语言和数据处理工具集成。此外，InfluxDB 还支持数据的持续查询和连续写入，可以实时监控和分析数据。由于其设计的时序数据库特性，InfluxDB 在处理时间序列数据方面表现出色，并被广泛应用于监控系统、IoT（物联网）应用、日志分析等领域。</p>
+<h2 id="安装" class="heading-element"><span>安装</span>
+  <a href="#%e5%ae%89%e8%a3%85" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># Ubuntu &amp; Debian
+</span></span><span class="line"><span class="cl">wget https://dl.influxdata.com/influxdb/releases/influxdb_1.7.9_amd64.deb
+</span></span><span class="line"><span class="cl">sudo dpkg -i influxdb_1.7.9_amd64.deb
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># or
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">wget -qO- https://repos.influxdata.com/influxdb.key | sudo apt-key add -
+</span></span><span class="line"><span class="cl">source /etc/lsb-release
+</span></span><span class="line"><span class="cl">echo &#34;deb https://repos.influxdata.com/${DISTRIB_ID,,} ${DISTRIB_CODENAME} stable&#34; | sudo tee /etc/apt/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">sudo apt-get update &amp;&amp; sudo apt-get install influxdb
+</span></span><span class="line"><span class="cl">sudo service influxdb start</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="卸载" class="heading-element"><span>卸载</span>
+  <a href="#%e5%8d%b8%e8%bd%bd" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># Ubuntu &amp; Debian</span>
+</span></span><span class="line"><span class="cl">sudo dpkg -l <span class="p">|</span> grep influxdb
+</span></span><span class="line"><span class="cl">sudo apt-get autoremove influxdb</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="认证管理" class="heading-element"><span>认证管理</span>
+  <a href="#%e8%ae%a4%e8%af%81%e7%ae%a1%e7%90%86" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><h3 id="修改配置文件" class="heading-element"><span>修改配置文件</span>
+  <a href="#%e4%bf%ae%e6%94%b9%e9%85%8d%e7%bd%ae%e6%96%87%e4%bb%b6" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># /etc/influxdb/influxdb.conf</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>http<span class="o">]</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">enabled</span> <span class="o">=</span> <span class="nb">true</span>
+</span></span><span class="line"><span class="cl">  bind-address <span class="o">=</span> <span class="s2">&#34;:8086&#34;</span>
+</span></span><span class="line"><span class="cl">  auth-enabled <span class="o">=</span> <span class="nb">true</span>
+</span></span><span class="line"><span class="cl">  log-enabled <span class="o">=</span> <span class="nb">true</span>
+</span></span><span class="line"><span class="cl">  write-tracing <span class="o">=</span> <span class="nb">false</span>
+</span></span><span class="line"><span class="cl">  pprof-enabled <span class="o">=</span> <span class="nb">true</span>
+</span></span><span class="line"><span class="cl">  pprof-auth-enabled <span class="o">=</span> <span class="nb">true</span>
+</span></span><span class="line"><span class="cl">  debug-pprof-enabled <span class="o">=</span> <span class="nb">false</span>
+</span></span><span class="line"><span class="cl">  ping-auth-enabled <span class="o">=</span> true</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># 重启</span>
+</span></span><span class="line"><span class="cl">sudo systemctl restart influxdb 
+</span></span><span class="line"><span class="cl"><span class="c1"># or</span>
+</span></span><span class="line"><span class="cl">sudo service influxdb restart
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 客户端认证登录</span>
+</span></span><span class="line"><span class="cl">influx -username devops -password xxx
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 测试</span>
+</span></span><span class="line"><span class="cl">curl -G http://localhost:8086/query -u username:password --data-urlencode <span class="s2">&#34;q=SHOW DATABASES&#34;</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="与关系型数据库比较" class="heading-element"><span>与关系型数据库比较</span>
+  <a href="#%e4%b8%8e%e5%85%b3%e7%b3%bb%e5%9e%8b%e6%95%b0%e6%8d%ae%e5%ba%93%e6%af%94%e8%be%83" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><table>
+<thead>
+<tr>
+<th>Relational database</th>
+<th>Influx DB</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>database</td>
+<td>database</td>
+</tr>
+<tr>
+<td>table</td>
+<td>measurement</td>
+</tr>
+<tr>
+<td>column</td>
+<td>points</td>
+</tr>
+</tbody>
+</table>
+<h2 id="特殊名词" class="heading-element"><span>特殊名词</span>
+  <a href="#%e7%89%b9%e6%ae%8a%e5%90%8d%e8%af%8d" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>Point由时间戳（time）、数据（field）、标签（tags）组成。</p>
+<table>
+<thead>
+<tr>
+<th>Point属性</th>
+<th>传统数据库中的概念</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>time</td>
+<td>每个数据记录时间，是数据库中的主索引(会自动生成)</td>
+</tr>
+<tr>
+<td>fields</td>
+<td>各种记录值（没有索引的属性）也就是记录的值：温度， 湿度</td>
+</tr>
+<tr>
+<td>tags</td>
+<td>各种有索引的属性：地区，海拔</td>
+</tr>
+</tbody>
+</table>
+<h2 id="用户管理" class="heading-element"><span>用户管理</span>
+  <a href="#%e7%94%a8%e6%88%b7%e7%ae%a1%e7%90%86" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><h3 id="创建管理员账号" class="heading-element"><span>创建管理员账号</span>
+  <a href="#%e5%88%9b%e5%bb%ba%e7%ae%a1%e7%90%86%e5%91%98%e8%b4%a6%e5%8f%b7" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="o">//</span><span class="w"> </span><span class="err">新用户</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">CREATE</span><span class="w"> </span><span class="k">USER</span><span class="w"> </span><span class="o">&lt;</span><span class="n">username</span><span class="o">&gt;</span><span class="w"> </span><span class="k">WITH</span><span class="w"> </span><span class="n">PASSWORD</span><span class="w"> </span><span class="s1">&#39;&lt;password&gt;&#39;</span><span class="w"> </span><span class="k">WITH</span><span class="w"> </span><span class="k">ALL</span><span class="w"> </span><span class="k">PRIVILEGES</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="w"> </span><span class="err">老用户</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">GRANT</span><span class="w"> </span><span class="k">ALL</span><span class="w"> </span><span class="k">PRIVILEGES</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="o">&lt;</span><span class="n">username</span><span class="o">&gt;</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="创建普通用户" class="heading-element"><span>创建普通用户</span>
+  <a href="#%e5%88%9b%e5%bb%ba%e6%99%ae%e9%80%9a%e7%94%a8%e6%88%b7" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="k">USER</span><span class="w"> </span><span class="o">&lt;</span><span class="n">username</span><span class="o">&gt;</span><span class="w"> </span><span class="k">WITH</span><span class="w"> </span><span class="n">PASSWORD</span><span class="w"> </span><span class="s1">&#39;&lt;password&gt;&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">//</span><span class="w"> </span><span class="err">授权数据库权限</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">GRANT</span><span class="w"> </span><span class="p">[</span><span class="k">READ</span><span class="p">,</span><span class="k">WRITE</span><span class="p">,</span><span class="k">ALL</span><span class="p">]</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="o">&lt;</span><span class="n">database_name</span><span class="o">&gt;</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="o">&lt;</span><span class="n">username</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">GRANT</span><span class="w"> </span><span class="k">READ</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="s2">&#34;grafana&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">GRANT</span><span class="w"> </span><span class="k">ALL</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="s2">&#34;devops&#34;</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="数据保存策略retention-policies" class="heading-element"><span>数据保存策略（Retention Policies）</span>
+  <a href="#%e6%95%b0%e6%8d%ae%e4%bf%9d%e5%ad%98%e7%ad%96%e7%95%a5retention-policies" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">#</span><span class="w"> </span><span class="err">创建策略</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">CREATE</span><span class="w"> </span><span class="n">RETENTION</span><span class="w"> </span><span class="n">POLICY</span><span class="w"> </span><span class="n">aws_elb_log_retention_policy</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">DevOpsBigScreen</span><span class="w"> </span><span class="n">DURATION</span><span class="w"> </span><span class="mi">3</span><span class="n">d</span><span class="w"> </span><span class="n">REPLICATION</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">#</span><span class="w"> </span><span class="err">查看策略</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">SHOW</span><span class="w"> </span><span class="n">RETENTION</span><span class="w"> </span><span class="n">POLICIES</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="o">&lt;</span><span class="n">database_name</span><span class="o">&gt;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="o">#</span><span class="w"> </span><span class="err">删除策略</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">DROP</span><span class="w"> </span><span class="n">RETENTION</span><span class="w"> </span><span class="n">POLICY</span><span class="w"> </span><span class="o">&lt;</span><span class="n">retention_policy_name</span><span class="o">&gt;</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="o">&lt;</span><span class="n">database_name</span><span class="o">&gt;</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="参考" class="heading-element"><span>参考</span>
+  <a href="#%e5%8f%82%e8%80%83" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><ul>
+<li><a href="https://docs.influxdata.com/influxdb/v1.7/introduction/installation/"target="_blank" rel="external nofollow noopener noreferrer">https://docs.influxdata.com/influxdb/v1.7/introduction/installation/</a></li>
+<li><a href="https://www.influxdata.com/blog/getting-started-python-influxdb/"target="_blank" rel="external nofollow noopener noreferrer">https://www.influxdata.com/blog/getting-started-python-influxdb/</a></li>
+<li><a href="https://xtutu.gitbooks.io/influxdb-handbook/content/shu_ju_ku_yu_biao_de_cao_zuo.html"target="_blank" rel="external nofollow noopener noreferrer">https://xtutu.gitbooks.io/influxdb-handbook/content/shu_ju_ku_yu_biao_de_cao_zuo.html</a></li>
+</ul>]]></description>
+</item>
+<item>
+  <title>关于缓存</title>
+  <link>https://hellofinger.tech/2019/07/about-the-cache/</link>
+  <pubDate>Sat, 13 Jul 2019 18:23:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2019/07/about-the-cache/</guid>
+  <description><![CDATA[缓存模式（Cache Aside Pattern）什么是&quot;Cache Aside Pattern&quot;?答： 旁路缓存方案的经验实践，这个实践又分读实践，写实践。
+对于读请求先读cache，再读db 如果，cache hit，则直接返回数据 如果，cache miss，则访问db，并将数据set回缓存 如上图：
+先从cache中尝试get数据，结果miss了 再从db中读取数据，从库，读写分离 最后把数据set回cache，方便下次读命中 对于写请求淘汰缓存，而不是更新缓存 先操作数据库，再淘汰缓存 如上图：
+第一步要操作数据库，第二步操作缓存 缓存，采用delete淘汰，而不是set更新 Cache Aside Pattern为什么建议淘汰缓存，而不是更新缓存？答： 如果更新缓存，在并发写时，可能出现数据不一致。
+如上图所示，如果采用set缓存。
+在1和2两个并发写发生时，由于无法保证时序，此时不管先操作缓存还是先操作数据库，都可能出现：
+请求1先操作数据库，请求2后操作数据库 请求2先set了缓存，请求1后set了缓存 导致，数据库与缓存之间的数据不一致。
+所以，Cache Aside Pattern建议，delete缓存，而不是set缓存。
+Cache Aside Pattern为什么建议先操作数据库，再操作缓存？答： 如果先操作缓存，在读写并发时，可能出现数据不一致。
+如上图所示，如果先操作缓存。
+在1和2并发读写发生时，由于无法保证时序，可能出现：
+写请求淘汰了缓存 写请求操作了数据库（主从同步没有完成） 读请求读了缓存（cache miss） 读请求读了从库（读了一个旧数据） 读请求set回缓存（set了一个旧数据） 数据库主从同步完成 导致，数据库与缓存的数据不一致。 所以，Cache Aside Pattern建议，先操作数据库，再操作缓存。
+Cache Aside Pattern方案存在什么问题？答： 如果先操作数据库，再淘汰缓存，在原子性被破坏时：
+修改数据库成功了 淘汰缓存失败了 导致，数据库与缓存的数据不一致。
+原文来自58沈剑: https://cloud.tencent.com/info/5e258c6f840423de68eda937db3e1c90.html
+缓存问题用一张脑图总结如下：]]></description>
+</item>
+<item>
+  <title>Python 杂记(一)</title>
+  <link>https://hellofinger.tech/2019/07/python-notes-1/</link>
+  <pubDate>Thu, 11 Jul 2019 07:31:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2019/07/python-notes-1/</guid>
+  <description><![CDATA[使用 slots__slots__变量是用来限制class能添加的属性
+例如
+1 2 3 &gt;&gt;&gt; class Student(object): ... __slots__ = (&#39;name&#39;, &#39;age&#39;) # 用tuple定义允许绑定的属性名称 ... 1 2 3 4 5 6 7 &gt;&gt;&gt; s = Student() # 创建新的实例 &gt;&gt;&gt; s.name = &#39;Michael&#39; # 绑定属性&#39;name&#39; &gt;&gt;&gt; s.age = 25 # 绑定属性&#39;age&#39; &gt;&gt;&gt; s.score = 99 # 绑定属性&#39;score&#39; Traceback (most recent call last): File &#34;&lt;stdin&gt;&#34;, line 1, in &lt;module&gt; AttributeError: &#39;Student&#39; object has no attribute &#39;score&#39; 从上面代码示例我们可以看到由于score没有被放到__slots__中，所以不能绑定score属性，试图绑定score将得到AttributeError的错误。 使用__slots__要注意，__slots__定义的属性仅对当前类起作用，对继承的子类是不起作用的：
+1 2 3 4 5 &gt;&gt;&gt; class GraduateStudent(Student): .]]></description>
+</item>
+<item>
+  <title>使用PyCryptodome替代pyscrypto</title>
+  <link>https://hellofinger.tech/2019/07/pycryptodome-usage/</link>
+  <pubDate>Thu, 04 Jul 2019 07:11:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2019/07/pycryptodome-usage/</guid>
+  <description><![CDATA[pycrypto 在Windows系统上安装比较麻烦，会出现意想不到的各种问题。因为pycrypto-2.6.1 之后就不在维护。因此系统兼容性就不那么友好。推荐PyCryptodome作为替代工具包。官方地址为：https://www.pycryptodome.org/en/latest/
+1 2 # 1、Windows pip install pycryptodomex # 2、Linux/Mac pip install pycryptodome 举个例子：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 #!usr/bin/env python3 # -*- coding:utf-8 _*- import base64 import hashlib import json import platform if platform.system() != &#39;Windows&#39;: from Crypto.]]></description>
+</item>
+</channel>
+</rss>

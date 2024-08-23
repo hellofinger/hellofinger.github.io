@@ -1,0 +1,21 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>Pandas - 标签 - Finger&#39;s Blog</title>
+    <link>https://hellofinger.tech/tags/pandas/</link>
+    <description>Pandas - 标签 | Finger&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Fri, 24 Aug 2018 22:19:00 &#43;0000</lastBuildDate><atom:link href="https://hellofinger.tech/tags/pandas/" rel="self" type="application/rss+xml" /><item>
+  <title>Pandas基础</title>
+  <link>https://hellofinger.tech/2018/08/pandas-basis/</link>
+  <pubDate>Fri, 24 Aug 2018 22:19:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2018/08/pandas-basis/</guid>
+  <description><![CDATA[原文地址：https://www.jiqizhixin.com/articles/2018-07-18-3
+介绍Pandas是基于Numpy构建的库，在数据处理方面可以把它理解为numpy加强版。不同于numpy的是，pandas拥有种数据结构：Series和DataFrame：
+用代码生成一个简单的Series对象
+1 2 3 4 5 6 7 8 9 &gt;&gt;&gt; from pandas import Series, DataFrame &gt;&gt;&gt; import pandas as pd &gt;&gt;&gt; data = Series([1,2,3,4],index = [&#39;a&#39;,&#39;b&#39;,&#39;c&#39;,&#39;d&#39;]) &gt;&gt;&gt; data a 1 b 2 c 3 d 4 dtype: int64 Series是一种类似一维数组的数据结构，由一组数据和与之相关的index组成，这个结构一看似乎与dict字典差不多，我们知道字典是一种无序的数据结构，而pandas中的Series的数据结构不一样，它相当于定长有序的字典，并且它的index和value之间是独立的，两者的索引还是有区别的，Series的index是可变的，而dict字典的key值是不可变的。
+用代码生成一个简单的DataFrame对象
+1 2 3 4 5 6 7 &gt;&gt;&gt; data = {&#39;a&#39;:[1,2,3],&#39;b&#39;:[&#39;we&#39;,&#39;you&#39;,&#39;they&#39;],&#39;c&#39;:[&#39;btc&#39;,&#39;eos&#39;,&#39;ae&#39;]} &gt;&gt;&gt; df = DataFrame(data) &gt;&gt;&gt; df a b c 0 1 we btc 1 2 you eos 2 3 they ae DataFrame这种数据结构我们可以把它看作是一张二维表，DataFrame长得跟我们平时使用的Excel表格差不多，DataFrame的横行称为columns，竖列和Series一样称为index，DataFrame每一列可以是不同类型的值集合，所以DataFrame你也可以把它视为不同数据类型同一index的Series集合。]]></description>
+</item>
+</channel>
+</rss>

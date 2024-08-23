@@ -1,0 +1,18 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>Scrapy - 分类 - Finger&#39;s Blog</title>
+    <link>http://localhost:1313/categories/scrapy/</link>
+    <description>Scrapy - 分类 | Finger&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Sun, 02 Jul 2017 10:41:00 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/categories/scrapy/" rel="self" type="application/rss+xml" /><item>
+  <title>Scrapy 部署笔记</title>
+  <link>http://localhost:1313/2017/07/scrapy-deploy-usage/</link>
+  <pubDate>Sun, 02 Jul 2017 10:41:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>http://localhost:1313/2017/07/scrapy-deploy-usage/</guid>
+  <description><![CDATA[关键字：
+scrapy， scrapyd， scrapy-client， spiderkeeper
+一、新建一个scrapy项目1 2 3 4 5 6 7 8 9 10 $ scrapy startproject scrapy_example $ cd scrapy_example # 修改配置文件scrapy.cfg [settings] default = scrapy_example.settings [deploy:scrapyd1] url = http://localhost:6800/ project = scrapy_example 二、安装并启动scrapyd1 2 3 4 $ pip install scrapyd # 启动, 默认的端口是6800。可以在浏览器中查看结果，比如：http://127.0.0.1:6800/。 $ scrapyd 三、发布工程到scrapyd1 2 3 4 5 6 7 8 9 10 # 发布scrapyd需要安装scrapy-client $ pip install scrapy-client # 发布命令：scrapyd-deploy &lt;target&gt; -p &lt;project&gt; $ scrapyd-deploy scrapyd1 -p scrapy_example # 检查发布是否成功 $ scrapyd-deploy -l 或者 scrapyd-deploy -L scrapyd1 # 启动爬虫 $ curl http://127.]]></description>
+</item>
+</channel>
+</rss>

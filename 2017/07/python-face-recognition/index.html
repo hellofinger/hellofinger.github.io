@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>基于 Python 的开源人脸识别库 - Finger&#39;s Blog</title><meta name="author" content="Finger">
+<meta name="author-link" content="">
+<meta name="description" content="项目说明该库使用 dlib 顶尖的深度学习人脸识别技术构建，在户外脸部检测数据库基准（Labeled Faces in the Wild benchmark）上的准确率高达 99.38%。 该项目是要构建一款免费、开源、实时、离线的网络 app，支持组织者使用人脸识别技术或二维码识别所有受邀人员。有了世界上最简单的人脸识别库，使用 Python 或命令行，即可识别和控制人脸。
+项目地址： https://github.com/ageitgey/face_recognition#face-recognition
+使用说明1、从图片中识别出人脸1 2 3 import face_recognition image = face_recognition.load_image_file(&#34;your_file.jpg&#34;) face_locations = face_recognition.face_locations(image) 2、从图片中识别面部特征，比如：眼睛, 鼻子, 嘴和下巴。1 2 3 import face_recognition image = face_recognition.load_image_file(&#34;your_file.jpg&#34;) face_landmarks_list = face_recognition.face_landmarks(image) 3、可以对识别的面部特征进行处理，比如类似美图秀秀的功能4、从图片中识别出某个具体的人1 2 3 4 5 6 7 8 import face_recognition known_image = face_recognition.load_image_file(&#34;biden.jpg&#34;) unknown_image = face_recognition.load_image_file(&#34;unknown.jpg&#34;) biden_encoding = face_recognition.face_encodings(known_image)[0] unknown_encoding = face_recognition.face_encodings(unknown_image)[0] results = face_recognition.compare_faces([biden_encoding], unknown_encoding) 更多请查看项目主页：" /><meta name="keywords" content='Python' />
+  <meta itemprop="name" content="基于 Python 的开源人脸识别库">
+  <meta itemprop="description" content="项目说明该库使用 dlib 顶尖的深度学习人脸识别技术构建，在户外脸部检测数据库基准（Labeled Faces in the Wild benchmark）上的准确率高达 99.38%。 该项目是要构建一款免费、开源、实时、离线的网络 app，支持组织者使用人脸识别技术或二维码识别所有受邀人员。有了世界上最简单的人脸识别库，使用 Python 或命令行，即可识别和控制人脸。
+项目地址： https://github.com/ageitgey/face_recognition#face-recognition
+使用说明1、从图片中识别出人脸1 2 3 import face_recognition image = face_recognition.load_image_file(&#34;your_file.jpg&#34;) face_locations = face_recognition.face_locations(image) 2、从图片中识别面部特征，比如：眼睛, 鼻子, 嘴和下巴。1 2 3 import face_recognition image = face_recognition.load_image_file(&#34;your_file.jpg&#34;) face_landmarks_list = face_recognition.face_landmarks(image) 3、可以对识别的面部特征进行处理，比如类似美图秀秀的功能4、从图片中识别出某个具体的人1 2 3 4 5 6 7 8 import face_recognition known_image = face_recognition.load_image_file(&#34;biden.jpg&#34;) unknown_image = face_recognition.load_image_file(&#34;unknown.jpg&#34;) biden_encoding = face_recognition.face_encodings(known_image)[0] unknown_encoding = face_recognition.face_encodings(unknown_image)[0] results = face_recognition.compare_faces([biden_encoding], unknown_encoding) 更多请查看项目主页：">
+  <meta itemprop="datePublished" content="2017-07-30T10:41:00+00:00">
+  <meta itemprop="dateModified" content="2017-07-30T10:41:00+00:00">
+  <meta itemprop="wordCount" content="73">
+  <meta itemprop="keywords" content="Python"><meta property="og:url" content="https://hellofinger.tech/2017/07/python-face-recognition/">
+  <meta property="og:site_name" content="Finger&#39;s Blog">
+  <meta property="og:title" content="基于 Python 的开源人脸识别库">
+  <meta property="og:description" content="项目说明该库使用 dlib 顶尖的深度学习人脸识别技术构建，在户外脸部检测数据库基准（Labeled Faces in the Wild benchmark）上的准确率高达 99.38%。 该项目是要构建一款免费、开源、实时、离线的网络 app，支持组织者使用人脸识别技术或二维码识别所有受邀人员。有了世界上最简单的人脸识别库，使用 Python 或命令行，即可识别和控制人脸。
+项目地址： https://github.com/ageitgey/face_recognition#face-recognition
+使用说明1、从图片中识别出人脸1 2 3 import face_recognition image = face_recognition.load_image_file(&#34;your_file.jpg&#34;) face_locations = face_recognition.face_locations(image) 2、从图片中识别面部特征，比如：眼睛, 鼻子, 嘴和下巴。1 2 3 import face_recognition image = face_recognition.load_image_file(&#34;your_file.jpg&#34;) face_landmarks_list = face_recognition.face_landmarks(image) 3、可以对识别的面部特征进行处理，比如类似美图秀秀的功能4、从图片中识别出某个具体的人1 2 3 4 5 6 7 8 import face_recognition known_image = face_recognition.load_image_file(&#34;biden.jpg&#34;) unknown_image = face_recognition.load_image_file(&#34;unknown.jpg&#34;) biden_encoding = face_recognition.face_encodings(known_image)[0] unknown_encoding = face_recognition.face_encodings(unknown_image)[0] results = face_recognition.compare_faces([biden_encoding], unknown_encoding) 更多请查看项目主页：">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2017-07-30T10:41:00+00:00">
+    <meta property="article:modified_time" content="2017-07-30T10:41:00+00:00">
+    <meta property="article:tag" content="Python">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="基于 Python 的开源人脸识别库">
+  <meta name="twitter:description" content="项目说明该库使用 dlib 顶尖的深度学习人脸识别技术构建，在户外脸部检测数据库基准（Labeled Faces in the Wild benchmark）上的准确率高达 99.38%。 该项目是要构建一款免费、开源、实时、离线的网络 app，支持组织者使用人脸识别技术或二维码识别所有受邀人员。有了世界上最简单的人脸识别库，使用 Python 或命令行，即可识别和控制人脸。
+项目地址： https://github.com/ageitgey/face_recognition#face-recognition
+使用说明1、从图片中识别出人脸1 2 3 import face_recognition image = face_recognition.load_image_file(&#34;your_file.jpg&#34;) face_locations = face_recognition.face_locations(image) 2、从图片中识别面部特征，比如：眼睛, 鼻子, 嘴和下巴。1 2 3 import face_recognition image = face_recognition.load_image_file(&#34;your_file.jpg&#34;) face_landmarks_list = face_recognition.face_landmarks(image) 3、可以对识别的面部特征进行处理，比如类似美图秀秀的功能4、从图片中识别出某个具体的人1 2 3 4 5 6 7 8 import face_recognition known_image = face_recognition.load_image_file(&#34;biden.jpg&#34;) unknown_image = face_recognition.load_image_file(&#34;unknown.jpg&#34;) biden_encoding = face_recognition.face_encodings(known_image)[0] unknown_encoding = face_recognition.face_encodings(unknown_image)[0] results = face_recognition.compare_faces([biden_encoding], unknown_encoding) 更多请查看项目主页：">
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://hellofinger.tech/2017/07/python-face-recognition/" /><link rel="prev" href="https://hellofinger.tech/2017/07/database-sharding/" /><link rel="next" href="https://hellofinger.tech/2017/08/elasticsearch-dsl-with-python-usage-1/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "基于 Python 的开源人脸识别库",
+    "inLanguage": "zh-CN",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/hellofinger.tech\/2017\/07\/python-face-recognition\/"
+    },"genre": "posts","keywords": "Python","wordcount":  73 ,
+    "url": "https:\/\/hellofinger.tech\/2017\/07\/python-face-recognition\/","datePublished": "2017-07-30T10:41:00+00:00","dateModified": "2017-07-30T10:41:00+00:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Finger"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/about/"
+                
+                
+              ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item delimiter"></li><li class="menu-item search" id="search-desktop">
+            <input type="text" placeholder="搜索文章标题或内容……" id="search-input-desktop">
+            <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+              <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+            </a>
+            <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+              <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+            </a>
+            <span class="search-button search-loading" id="search-loading-desktop">
+              <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+            </span>
+          </li><li class="menu-item theme-switch" title="切换主题">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li class="search-wrapper">
+            <div class="search mobile" id="search-mobile">
+              <input type="text" placeholder="搜索文章标题或内容……" id="search-input-mobile">
+              <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+              </a>
+              <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+              </a>
+              <span class="search-button search-loading" id="search-loading-mobile">
+                <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+              </span>
+            </div>
+            <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+              取消
+            </a>
+          </li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/about/"
+                  
+                  
+                ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="切换主题"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+  </div>
+  <div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+  </div><main class="container"><aside class="aside-collection animate__animated animate__fadeIn animate__faster" aria-label="合集"></aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>基于 Python 的开源人脸识别库</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><span class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+      Finger</span></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/python/" class="post-category" title="分类 - Python"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Python</a></span></div><div class="post-meta-line"><span title="发布于 2017-07-30 10:41:00"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2017-07-30">2017-07-30</time></span>&nbsp;<span title="73 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 100 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 1 分钟</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>目录</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#项目说明">项目说明</a></li>
+        <li><a href="#使用说明">使用说明</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><h3 id="项目说明" class="heading-element"><span>项目说明</span>
+  <a href="#%e9%a1%b9%e7%9b%ae%e8%af%b4%e6%98%8e" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>该库使用 dlib 顶尖的深度学习人脸识别技术构建，在户外脸部检测数据库基准（Labeled Faces in the Wild benchmark）上的准确率高达 99.38%。
+该项目是要构建一款免费、开源、实时、离线的网络 app，支持组织者使用人脸识别技术或二维码识别所有受邀人员。有了世界上最简单的人脸识别库，使用 Python 或命令行，即可识别和控制人脸。</p>
+<p>项目地址：
+<a href="https://github.com/ageitgey/face_recognition#face-recognition"target="_blank" rel="external nofollow noopener noreferrer">https://github.com/ageitgey/face_recognition#face-recognition</a></p>
+<h3 id="使用说明" class="heading-element"><span>使用说明</span>
+  <a href="#%e4%bd%bf%e7%94%a8%e8%af%b4%e6%98%8e" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><h4 id="1从图片中识别出人脸" class="heading-element"><span>1、从图片中识别出人脸</span>
+  <a href="#1%e4%bb%8e%e5%9b%be%e7%89%87%e4%b8%ad%e8%af%86%e5%88%ab%e5%87%ba%e4%ba%ba%e8%84%b8" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p><img loading="lazy" src="/2017/07/python-face-recognition/imgs/20170729/42c65360-025d-11e7-94ea-b12f28cb34b4.png" alt="/2017/07/python-face-recognition/imgs/20170729/42c65360-025d-11e7-94ea-b12f28cb34b4.png" srcset="/2017/07/python-face-recognition/imgs/20170729/42c65360-025d-11e7-94ea-b12f28cb34b4.png?size=small, /2017/07/python-face-recognition/imgs/20170729/42c65360-025d-11e7-94ea-b12f28cb34b4.png?size=medium 1.5x, /2017/07/python-face-recognition/imgs/20170729/42c65360-025d-11e7-94ea-b12f28cb34b4.png?size=large 2x" data-title="/2017/07/python-face-recognition/imgs/20170729/42c65360-025d-11e7-94ea-b12f28cb34b4.png" style="--width: 508px;--aspect-ratio: 508 / 268;background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">face_recognition</span>
+</span></span><span class="line"><span class="cl"><span class="n">image</span> <span class="o">=</span> <span class="n">face_recognition</span><span class="o">.</span><span class="n">load_image_file</span><span class="p">(</span><span class="s2">&#34;your_file.jpg&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">face_locations</span> <span class="o">=</span> <span class="n">face_recognition</span><span class="o">.</span><span class="n">face_locations</span><span class="p">(</span><span class="n">image</span><span class="p">)</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="2从图片中识别面部特征比如眼睛-鼻子-嘴和下巴" class="heading-element"><span>2、从图片中识别面部特征，比如：眼睛, 鼻子, 嘴和下巴。</span>
+  <a href="#2%e4%bb%8e%e5%9b%be%e7%89%87%e4%b8%ad%e8%af%86%e5%88%ab%e9%9d%a2%e9%83%a8%e7%89%b9%e5%be%81%e6%af%94%e5%a6%82%e7%9c%bc%e7%9d%9b-%e9%bc%bb%e5%ad%90-%e5%98%b4%e5%92%8c%e4%b8%8b%e5%b7%b4" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p><img loading="lazy" src="/2017/07/python-face-recognition/imgs/20170729/7f2d79dc-025d-11e7-8728-d8924596f8fa.png" alt="/2017/07/python-face-recognition/imgs/20170729/7f2d79dc-025d-11e7-8728-d8924596f8fa.png" srcset="/2017/07/python-face-recognition/imgs/20170729/7f2d79dc-025d-11e7-8728-d8924596f8fa.png?size=small, /2017/07/python-face-recognition/imgs/20170729/7f2d79dc-025d-11e7-8728-d8924596f8fa.png?size=medium 1.5x, /2017/07/python-face-recognition/imgs/20170729/7f2d79dc-025d-11e7-8728-d8924596f8fa.png?size=large 2x" data-title="/2017/07/python-face-recognition/imgs/20170729/7f2d79dc-025d-11e7-8728-d8924596f8fa.png" style="--width: 508px;--aspect-ratio: 508 / 288;background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">face_recognition</span>
+</span></span><span class="line"><span class="cl"><span class="n">image</span> <span class="o">=</span> <span class="n">face_recognition</span><span class="o">.</span><span class="n">load_image_file</span><span class="p">(</span><span class="s2">&#34;your_file.jpg&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">face_landmarks_list</span> <span class="o">=</span> <span class="n">face_recognition</span><span class="o">.</span><span class="n">face_landmarks</span><span class="p">(</span><span class="n">image</span><span class="p">)</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="3可以对识别的面部特征进行处理比如类似美图秀秀的功能" class="heading-element"><span>3、可以对识别的面部特征进行处理，比如类似美图秀秀的功能</span>
+  <a href="#3%e5%8f%af%e4%bb%a5%e5%af%b9%e8%af%86%e5%88%ab%e7%9a%84%e9%9d%a2%e9%83%a8%e7%89%b9%e5%be%81%e8%bf%9b%e8%a1%8c%e5%a4%84%e7%90%86%e6%af%94%e5%a6%82%e7%b1%bb%e4%bc%bc%e7%be%8e%e5%9b%be%e7%a7%80%e7%a7%80%e7%9a%84%e5%8a%9f%e8%83%bd" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p><img loading="lazy" src="/2017/07/python-face-recognition/imgs/20170729/80638760-025d-11e7-80a2-1d2779f7ccab.png" alt="/2017/07/python-face-recognition/imgs/20170729/80638760-025d-11e7-80a2-1d2779f7ccab.png" srcset="/2017/07/python-face-recognition/imgs/20170729/80638760-025d-11e7-80a2-1d2779f7ccab.png?size=small, /2017/07/python-face-recognition/imgs/20170729/80638760-025d-11e7-80a2-1d2779f7ccab.png?size=medium 1.5x, /2017/07/python-face-recognition/imgs/20170729/80638760-025d-11e7-80a2-1d2779f7ccab.png?size=large 2x" data-title="/2017/07/python-face-recognition/imgs/20170729/80638760-025d-11e7-80a2-1d2779f7ccab.png" style="--width: 508px;--aspect-ratio: 508 / 288;background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<h4 id="4从图片中识别出某个具体的人" class="heading-element"><span>4、从图片中识别出某个具体的人</span>
+  <a href="#4%e4%bb%8e%e5%9b%be%e7%89%87%e4%b8%ad%e8%af%86%e5%88%ab%e5%87%ba%e6%9f%90%e4%b8%aa%e5%85%b7%e4%bd%93%e7%9a%84%e4%ba%ba" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p><img loading="lazy" src="/2017/07/python-face-recognition/imgs/20170729/45e049b6-025d-11e7-89cc-8a71cf89e713.png" alt="/2017/07/python-face-recognition/imgs/20170729/45e049b6-025d-11e7-89cc-8a71cf89e713.png" srcset="/2017/07/python-face-recognition/imgs/20170729/45e049b6-025d-11e7-89cc-8a71cf89e713.png?size=small, /2017/07/python-face-recognition/imgs/20170729/45e049b6-025d-11e7-89cc-8a71cf89e713.png?size=medium 1.5x, /2017/07/python-face-recognition/imgs/20170729/45e049b6-025d-11e7-89cc-8a71cf89e713.png?size=large 2x" data-title="/2017/07/python-face-recognition/imgs/20170729/45e049b6-025d-11e7-89cc-8a71cf89e713.png" style="--width: 496px;--aspect-ratio: 496 / 268;background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">face_recognition</span>
+</span></span><span class="line"><span class="cl"><span class="n">known_image</span> <span class="o">=</span> <span class="n">face_recognition</span><span class="o">.</span><span class="n">load_image_file</span><span class="p">(</span><span class="s2">&#34;biden.jpg&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">unknown_image</span> <span class="o">=</span> <span class="n">face_recognition</span><span class="o">.</span><span class="n">load_image_file</span><span class="p">(</span><span class="s2">&#34;unknown.jpg&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">biden_encoding</span> <span class="o">=</span> <span class="n">face_recognition</span><span class="o">.</span><span class="n">face_encodings</span><span class="p">(</span><span class="n">known_image</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">unknown_encoding</span> <span class="o">=</span> <span class="n">face_recognition</span><span class="o">.</span><span class="n">face_encodings</span><span class="p">(</span><span class="n">unknown_image</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">results</span> <span class="o">=</span> <span class="n">face_recognition</span><span class="o">.</span><span class="n">compare_faces</span><span class="p">([</span><span class="n">biden_encoding</span><span class="p">],</span> <span class="n">unknown_encoding</span><span class="p">)</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>更多请查看项目主页：</p>
+<p><a href="https://github.com/ageitgey/face_recognition#face-recognition"target="_blank" rel="external nofollow noopener noreferrer">https://github.com/ageitgey/face_recognition#face-recognition</a></p>
+</div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="更新于 2017-07-30 10:41:00">更新于 2017-07-30&nbsp;</span>
+      </div><div class="post-info-license">
+            <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
+          </div></div><div class="post-info-line">
+        <div class="post-info-md"><span><a href="https://github.com/hugo-fixit/docs/blob/main/main/posts%5cpython%5cpython-face-recognition%5cindex.md?plain=1" title="查看源码"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-source">查看源码</a></span><span><a href="https://github.com/hugo-fixit/docs/edit/main/main/posts%5cpython%5cpython-face-recognition%5cindex.md" title="编辑此页"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-edit">编辑此页</a></span><span><a href="https://github.com/hugo-fixit/docs/issues/new?title=[BUG]%20%E5%9F%BA%E4%BA%8E&#43;Python&#43;%E7%9A%84%E5%BC%80%E6%BA%90%E4%BA%BA%E8%84%B8%E8%AF%86%E5%88%AB%E5%BA%93&amp;body=%7cField%7cValue%7c%0A%7c-%7c-%7c%0A%7cTitle%7c%E5%9F%BA%E4%BA%8E&#43;Python&#43;%E7%9A%84%E5%BC%80%E6%BA%90%E4%BA%BA%E8%84%B8%E8%AF%86%E5%88%AB%E5%BA%93%7c%0A%7cURL%7chttps://hellofinger.tech/2017/07/python-face-recognition/%7c%0A%7cFilename%7chttps://github.com/hugo-fixit/docs/blob/main/main/posts%5cpython%5cpython-face-recognition%5cindex.md?plain=1%7c" title="报告问题"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-report">报告问题</a></span></div>
+        <div class="post-info-share">
+          <span><a href="javascript:void(0);" title="分享到 X" data-sharer="twitter" data-url="https://hellofinger.tech/2017/07/python-face-recognition/" data-title="基于 Python 的开源人脸识别库" data-hashtags="Python"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://hellofinger.tech/2017/07/python-face-recognition/" data-hashtag="Python"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://hellofinger.tech/2017/07/python-face-recognition/" data-title="基于 Python 的开源人脸识别库"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+        </div>
+      </div></div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href="/tags/python/" class="post-tag" title="标签 - Python">Python</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+    </section>
+  </div><div class="post-nav"><a href="/2017/07/database-sharding/" class="post-nav-item" rel="prev" title="数据库分库分表"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>数据库分库分表</a>
+      <a href="/2017/08/elasticsearch-dsl-with-python-usage-1/" class="post-nav-item" rel="next" title="Python Elasticsearch DSL 使用笔记(一)">Python Elasticsearch DSL 使用笔记(一)<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article>
+
+  <aside class="toc" id="toc-auto" aria-label="目录"><h2 class="toc-title">目录&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2017 - 2024</span><span class="author" itemprop="copyrightHolder">
+              <a href="/">Finger</a></span><span class="license footer-divider"><a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="回到顶部"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">该网站在启用 JavaScript 的情况下效果最佳。</div>
+  </noscript>
+</div><link rel="preload" href="/lib/katex/katex.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/katex/katex.min.css"></noscript><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script src="/lib/autocomplete/autocomplete.min.js" defer></script><script src="/lib/fuse/fuse.min.js" defer></script><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/copy-tex.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="/js/flyfish.js" defer></script><script>window.config={"code":{"copyTitle":"复制到剪贴板","editLockTitle":"锁定可编辑代码块","editUnLockTitle":"解锁可编辑代码块","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"同意","link":"了解更多","message":"本网站使用 Cookies 来改善您的浏览体验。"},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"distance":100,"findAllMatches":false,"highlightTag":"em","ignoreFieldNorm":false,"ignoreLocation":false,"isCaseSensitive":false,"location":0,"maxResultLength":10,"minMatchCharLength":2,"noResultsFound":"没有找到结果","snippetLength":30,"threshold":0.3,"useExtendedSearch":false},"version":"v0.3.10-c936e541"};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>Pandas基础 - Finger&#39;s Blog</title><meta name="author" content="Finger">
+<meta name="author-link" content="">
+<meta name="description" content="原文地址：https://www.jiqizhixin.com/articles/2018-07-18-3
+介绍Pandas是基于Numpy构建的库，在数据处理方面可以把它理解为numpy加强版。不同于numpy的是，pandas拥有种数据结构：Series和DataFrame：
+用代码生成一个简单的Series对象
+1 2 3 4 5 6 7 8 9 &gt;&gt;&gt; from pandas import Series, DataFrame &gt;&gt;&gt; import pandas as pd &gt;&gt;&gt; data = Series([1,2,3,4],index = [&#39;a&#39;,&#39;b&#39;,&#39;c&#39;,&#39;d&#39;]) &gt;&gt;&gt; data a 1 b 2 c 3 d 4 dtype: int64 Series是一种类似一维数组的数据结构，由一组数据和与之相关的index组成，这个结构一看似乎与dict字典差不多，我们知道字典是一种无序的数据结构，而pandas中的Series的数据结构不一样，它相当于定长有序的字典，并且它的index和value之间是独立的，两者的索引还是有区别的，Series的index是可变的，而dict字典的key值是不可变的。
+用代码生成一个简单的DataFrame对象
+1 2 3 4 5 6 7 &gt;&gt;&gt; data = {&#39;a&#39;:[1,2,3],&#39;b&#39;:[&#39;we&#39;,&#39;you&#39;,&#39;they&#39;],&#39;c&#39;:[&#39;btc&#39;,&#39;eos&#39;,&#39;ae&#39;]} &gt;&gt;&gt; df = DataFrame(data) &gt;&gt;&gt; df a b c 0 1 we btc 1 2 you eos 2 3 they ae DataFrame这种数据结构我们可以把它看作是一张二维表，DataFrame长得跟我们平时使用的Excel表格差不多，DataFrame的横行称为columns，竖列和Series一样称为index，DataFrame每一列可以是不同类型的值集合，所以DataFrame你也可以把它视为不同数据类型同一index的Series集合。" /><meta name="keywords" content='Python, Pandas' />
+  <meta itemprop="name" content="Pandas基础">
+  <meta itemprop="description" content="原文地址：https://www.jiqizhixin.com/articles/2018-07-18-3
+介绍Pandas是基于Numpy构建的库，在数据处理方面可以把它理解为numpy加强版。不同于numpy的是，pandas拥有种数据结构：Series和DataFrame：
+用代码生成一个简单的Series对象
+1 2 3 4 5 6 7 8 9 &gt;&gt;&gt; from pandas import Series, DataFrame &gt;&gt;&gt; import pandas as pd &gt;&gt;&gt; data = Series([1,2,3,4],index = [&#39;a&#39;,&#39;b&#39;,&#39;c&#39;,&#39;d&#39;]) &gt;&gt;&gt; data a 1 b 2 c 3 d 4 dtype: int64 Series是一种类似一维数组的数据结构，由一组数据和与之相关的index组成，这个结构一看似乎与dict字典差不多，我们知道字典是一种无序的数据结构，而pandas中的Series的数据结构不一样，它相当于定长有序的字典，并且它的index和value之间是独立的，两者的索引还是有区别的，Series的index是可变的，而dict字典的key值是不可变的。
+用代码生成一个简单的DataFrame对象
+1 2 3 4 5 6 7 &gt;&gt;&gt; data = {&#39;a&#39;:[1,2,3],&#39;b&#39;:[&#39;we&#39;,&#39;you&#39;,&#39;they&#39;],&#39;c&#39;:[&#39;btc&#39;,&#39;eos&#39;,&#39;ae&#39;]} &gt;&gt;&gt; df = DataFrame(data) &gt;&gt;&gt; df a b c 0 1 we btc 1 2 you eos 2 3 they ae DataFrame这种数据结构我们可以把它看作是一张二维表，DataFrame长得跟我们平时使用的Excel表格差不多，DataFrame的横行称为columns，竖列和Series一样称为index，DataFrame每一列可以是不同类型的值集合，所以DataFrame你也可以把它视为不同数据类型同一index的Series集合。">
+  <meta itemprop="datePublished" content="2018-08-24T22:19:00+00:00">
+  <meta itemprop="dateModified" content="2018-08-24T22:19:00+00:00">
+  <meta itemprop="wordCount" content="778">
+  <meta itemprop="keywords" content="Python,Pandas"><meta property="og:url" content="https://hellofinger.tech/2018/08/pandas-basis/">
+  <meta property="og:site_name" content="Finger&#39;s Blog">
+  <meta property="og:title" content="Pandas基础">
+  <meta property="og:description" content="原文地址：https://www.jiqizhixin.com/articles/2018-07-18-3
+介绍Pandas是基于Numpy构建的库，在数据处理方面可以把它理解为numpy加强版。不同于numpy的是，pandas拥有种数据结构：Series和DataFrame：
+用代码生成一个简单的Series对象
+1 2 3 4 5 6 7 8 9 &gt;&gt;&gt; from pandas import Series, DataFrame &gt;&gt;&gt; import pandas as pd &gt;&gt;&gt; data = Series([1,2,3,4],index = [&#39;a&#39;,&#39;b&#39;,&#39;c&#39;,&#39;d&#39;]) &gt;&gt;&gt; data a 1 b 2 c 3 d 4 dtype: int64 Series是一种类似一维数组的数据结构，由一组数据和与之相关的index组成，这个结构一看似乎与dict字典差不多，我们知道字典是一种无序的数据结构，而pandas中的Series的数据结构不一样，它相当于定长有序的字典，并且它的index和value之间是独立的，两者的索引还是有区别的，Series的index是可变的，而dict字典的key值是不可变的。
+用代码生成一个简单的DataFrame对象
+1 2 3 4 5 6 7 &gt;&gt;&gt; data = {&#39;a&#39;:[1,2,3],&#39;b&#39;:[&#39;we&#39;,&#39;you&#39;,&#39;they&#39;],&#39;c&#39;:[&#39;btc&#39;,&#39;eos&#39;,&#39;ae&#39;]} &gt;&gt;&gt; df = DataFrame(data) &gt;&gt;&gt; df a b c 0 1 we btc 1 2 you eos 2 3 they ae DataFrame这种数据结构我们可以把它看作是一张二维表，DataFrame长得跟我们平时使用的Excel表格差不多，DataFrame的横行称为columns，竖列和Series一样称为index，DataFrame每一列可以是不同类型的值集合，所以DataFrame你也可以把它视为不同数据类型同一index的Series集合。">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2018-08-24T22:19:00+00:00">
+    <meta property="article:modified_time" content="2018-08-24T22:19:00+00:00">
+    <meta property="article:tag" content="Python">
+    <meta property="article:tag" content="Pandas">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Pandas基础">
+  <meta name="twitter:description" content="原文地址：https://www.jiqizhixin.com/articles/2018-07-18-3
+介绍Pandas是基于Numpy构建的库，在数据处理方面可以把它理解为numpy加强版。不同于numpy的是，pandas拥有种数据结构：Series和DataFrame：
+用代码生成一个简单的Series对象
+1 2 3 4 5 6 7 8 9 &gt;&gt;&gt; from pandas import Series, DataFrame &gt;&gt;&gt; import pandas as pd &gt;&gt;&gt; data = Series([1,2,3,4],index = [&#39;a&#39;,&#39;b&#39;,&#39;c&#39;,&#39;d&#39;]) &gt;&gt;&gt; data a 1 b 2 c 3 d 4 dtype: int64 Series是一种类似一维数组的数据结构，由一组数据和与之相关的index组成，这个结构一看似乎与dict字典差不多，我们知道字典是一种无序的数据结构，而pandas中的Series的数据结构不一样，它相当于定长有序的字典，并且它的index和value之间是独立的，两者的索引还是有区别的，Series的index是可变的，而dict字典的key值是不可变的。
+用代码生成一个简单的DataFrame对象
+1 2 3 4 5 6 7 &gt;&gt;&gt; data = {&#39;a&#39;:[1,2,3],&#39;b&#39;:[&#39;we&#39;,&#39;you&#39;,&#39;they&#39;],&#39;c&#39;:[&#39;btc&#39;,&#39;eos&#39;,&#39;ae&#39;]} &gt;&gt;&gt; df = DataFrame(data) &gt;&gt;&gt; df a b c 0 1 we btc 1 2 you eos 2 3 they ae DataFrame这种数据结构我们可以把它看作是一张二维表，DataFrame长得跟我们平时使用的Excel表格差不多，DataFrame的横行称为columns，竖列和Series一样称为index，DataFrame每一列可以是不同类型的值集合，所以DataFrame你也可以把它视为不同数据类型同一index的Series集合。">
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://hellofinger.tech/2018/08/pandas-basis/" /><link rel="prev" href="https://hellofinger.tech/2018/08/numpy-basis/" /><link rel="next" href="https://hellofinger.tech/2018/09/aws-serverless-with-nodejs/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Pandas基础",
+    "inLanguage": "zh-CN",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/hellofinger.tech\/2018\/08\/pandas-basis\/"
+    },"genre": "posts","keywords": "Python, Pandas","wordcount":  778 ,
+    "url": "https:\/\/hellofinger.tech\/2018\/08\/pandas-basis\/","datePublished": "2018-08-24T22:19:00+00:00","dateModified": "2018-08-24T22:19:00+00:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Finger"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/about/"
+                
+                
+              ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item delimiter"></li><li class="menu-item search" id="search-desktop">
+            <input type="text" placeholder="搜索文章标题或内容……" id="search-input-desktop">
+            <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+              <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+            </a>
+            <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+              <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+            </a>
+            <span class="search-button search-loading" id="search-loading-desktop">
+              <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+            </span>
+          </li><li class="menu-item theme-switch" title="切换主题">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li class="search-wrapper">
+            <div class="search mobile" id="search-mobile">
+              <input type="text" placeholder="搜索文章标题或内容……" id="search-input-mobile">
+              <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+              </a>
+              <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+              </a>
+              <span class="search-button search-loading" id="search-loading-mobile">
+                <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+              </span>
+            </div>
+            <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+              取消
+            </a>
+          </li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/about/"
+                  
+                  
+                ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="切换主题"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+  </div>
+  <div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+  </div><main class="container"><aside class="aside-collection animate__animated animate__fadeIn animate__faster" aria-label="合集"></aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>Pandas基础</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><span class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+      Finger</span></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/python/" class="post-category" title="分类 - Python"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Python</a></span></div><div class="post-meta-line"><span title="发布于 2018-08-24 22:19:00"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2018-08-24">2018-08-24</time></span>&nbsp;<span title="778 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 800 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 4 分钟</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>目录</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><p>原文地址：https://www.jiqizhixin.com/articles/2018-07-18-3</p>
+<h4 id="介绍" class="heading-element"><span>介绍</span>
+  <a href="#%e4%bb%8b%e7%bb%8d" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p>Pandas是基于Numpy构建的库，在数据处理方面可以把它理解为numpy加强版。不同于numpy的是，pandas拥有种数据结构：<strong>Series和DataFrame</strong>：</p>
+<p><img loading="lazy" src="/imgs/20180824/pandas-series.jpg" alt="/imgs/20180824/pandas-series.jpg" srcset="/imgs/20180824/pandas-series.jpg?size=small, /imgs/20180824/pandas-series.jpg?size=medium 1.5x, /imgs/20180824/pandas-series.jpg?size=large 2x" data-title="/imgs/20180824/pandas-series.jpg" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p>用代码生成一个简单的Series对象</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; from pandas import Series, DataFrame
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; import pandas as pd
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; data = Series([1,2,3,4],index = [&#39;a&#39;,&#39;b&#39;,&#39;c&#39;,&#39;d&#39;])
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; data
+</span></span><span class="line"><span class="cl">a    1
+</span></span><span class="line"><span class="cl">b    2
+</span></span><span class="line"><span class="cl">c    3
+</span></span><span class="line"><span class="cl">d    4
+</span></span><span class="line"><span class="cl">dtype: int64</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Series是一种类似一维数组的数据结构，由一组数据和与之相关的index组成，这个结构一看似乎与dict字典差不多，我们知道字典是一种无序的数据结构，而pandas中的Series的数据结构不一样，它相当于定长有序的字典，并且它的index和value之间是独立的，两者的索引还是有区别的，Series的index是可变的，而dict字典的key值是不可变的。</p>
+<p><img loading="lazy" src="/imgs/20180824/pandas-dataframe.jpg" alt="/imgs/20180824/pandas-dataframe.jpg" srcset="/imgs/20180824/pandas-dataframe.jpg?size=small, /imgs/20180824/pandas-dataframe.jpg?size=medium 1.5x, /imgs/20180824/pandas-dataframe.jpg?size=large 2x" data-title="/imgs/20180824/pandas-dataframe.jpg" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p>用代码生成一个简单的DataFrame对象</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; data = {&#39;a&#39;:[1,2,3],&#39;b&#39;:[&#39;we&#39;,&#39;you&#39;,&#39;they&#39;],&#39;c&#39;:[&#39;btc&#39;,&#39;eos&#39;,&#39;ae&#39;]}
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; df = DataFrame(data)
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; df
+</span></span><span class="line"><span class="cl">   a     b    c
+</span></span><span class="line"><span class="cl">0  1    we  btc
+</span></span><span class="line"><span class="cl">1  2   you  eos
+</span></span><span class="line"><span class="cl">2  3  they   ae</span></span></code></pre></td></tr></table>
+</div>
+</div><p>DataFrame这种数据结构我们可以把它看作是一张二维表，DataFrame长得跟我们平时使用的Excel表格差不多，DataFrame的横行称为columns，竖列和Series一样称为index，DataFrame每一列可以是不同类型的值集合，所以DataFrame你也可以把它视为不同数据类型同一index的Series集合。</p>
+<h4 id="series" class="heading-element"><span>Series</span>
+  <a href="#series" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><h5 id="series的两种生成方式" class="heading-element"><span>Series的两种生成方式</span>
+  <a href="#series%e7%9a%84%e4%b8%a4%e7%a7%8d%e7%94%9f%e6%88%90%e6%96%b9%e5%bc%8f" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; data = Series([222,&#39;btc&#39;,234,&#39;eos&#39;])
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; data
+</span></span><span class="line"><span class="cl">0    222
+</span></span><span class="line"><span class="cl">1    btc
+</span></span><span class="line"><span class="cl">2    234
+</span></span><span class="line"><span class="cl">3    eos
+</span></span><span class="line"><span class="cl">dtype: object</span></span></code></pre></td></tr></table>
+</div>
+</div><p>虽然我们在生成的时候没有设置index值，但Series还是会自动帮我们生成index，这种方式生成的Series结构跟list列表差不多，可以把这种形式的Series理解为竖起来的list列表。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; data = Series([1,2,3,4],index = [&#39;a&#39;,&#39;b&#39;,&#39;c&#39;,&#39;d&#39;])
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; data
+</span></span><span class="line"><span class="cl">a    1
+</span></span><span class="line"><span class="cl">b    2
+</span></span><span class="line"><span class="cl">c    3
+</span></span><span class="line"><span class="cl">d    4
+</span></span><span class="line"><span class="cl">dtype: int64</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这种形式的Series可以理解为numpy的array外面披了一件index的马甲，所以array的相关操作，Series同样也是支持的。结构非常相似的dict字典同样也是可以转化为Series格式的：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; dic = {&#39;a&#39;:1,&#39;b&#39;:2,&#39;c&#39;:&#39;as&#39;}
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; dicSeries = Series(dic)
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; dicSeries
+</span></span><span class="line"><span class="cl">a     1
+</span></span><span class="line"><span class="cl">b     2
+</span></span><span class="line"><span class="cl">c    as
+</span></span><span class="line"><span class="cl">dtype: object</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="查看series的相关信息" class="heading-element"><span>查看Series的相关信息</span>
+  <a href="#%e6%9f%a5%e7%9c%8bseries%e7%9a%84%e7%9b%b8%e5%85%b3%e4%bf%a1%e6%81%af" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; data.index
+</span></span><span class="line"><span class="cl">Index([&#39;a&#39;, &#39;b&#39;, &#39;c&#39;, &#39;d&#39;], dtype=&#39;object&#39;)
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; data.values
+</span></span><span class="line"><span class="cl">array([1, 2, 3, 4], dtype=int64)
+</span></span><span class="line"><span class="cl"># in方法默认判断的是index值
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; &#39;a&#39; in data
+</span></span><span class="line"><span class="cl">True</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="series的nan生成" class="heading-element"><span>Series的NaN生成</span>
+  <a href="#series%e7%9a%84nan%e7%94%9f%e6%88%90" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; index1 = [ &#39;a&#39;,&#39;b&#39;,&#39;c&#39;,&#39;d&#39;]
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; dic = {&#39;b&#39;:1,&#39;c&#39;:1,&#39;d&#39;:1}
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; data2 = Series(dic,index=index1)
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; data2
+</span></span><span class="line"><span class="cl">a    NaN
+</span></span><span class="line"><span class="cl">b    1.0
+</span></span><span class="line"><span class="cl">c    1.0
+</span></span><span class="line"><span class="cl">d    1.0
+</span></span><span class="line"><span class="cl">dtype: float64</span></span></code></pre></td></tr></table>
+</div>
+</div><p>从这里我们可以看出Series的生成依据的是index值，index‘a’在字典dic的key中并不存在，Series自然也找不到’a’的对应value值，这种情况下Pandas就会自动生成NaN(not a number)来填补缺失值，这里还有个有趣的现象，原本dtype是int类型，生成NaN后就变成了float类型了，因为NaN的官方定义就是float类型。</p>
+<h5 id="nan的相关查询" class="heading-element"><span>NaN的相关查询</span>
+  <a href="#nan%e7%9a%84%e7%9b%b8%e5%85%b3%e6%9f%a5%e8%af%a2" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; data2.isnull()
+</span></span><span class="line"><span class="cl">a     True
+</span></span><span class="line"><span class="cl">b    False
+</span></span><span class="line"><span class="cl">c    False
+</span></span><span class="line"><span class="cl">d    False
+</span></span><span class="line"><span class="cl">dtype: bool
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; data2.notnull()
+</span></span><span class="line"><span class="cl">a    False
+</span></span><span class="line"><span class="cl">b     True
+</span></span><span class="line"><span class="cl">c     True
+</span></span><span class="line"><span class="cl">d     True
+</span></span><span class="line"><span class="cl">dtype: bool
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 嵌套查询NaN
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; data2[data2.isnull()==True]
+</span></span><span class="line"><span class="cl">a   NaN
+</span></span><span class="line"><span class="cl">dtype: float64
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 统计非NaN个数
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; data2.count()
+</span></span><span class="line"><span class="cl">3</span></span></code></pre></td></tr></table>
+</div>
+</div><p>切记切记，查询NaN值切记不要使用np.nan==np.nan这种形式来作为判断条件，结果永远是False，==是用作值判断的，而NaN并没有值，如果你不想使用上方的判断方法，你可以使用is作为判断方法，is是对象引用判断，np.nan is np.nan，结果就是你要的True。</p>
+<h5 id="series的name属性" class="heading-element"><span>Series的name属性</span>
+  <a href="#series%e7%9a%84name%e5%b1%9e%e6%80%a7" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; data.index.name = &#39;abc&#39;
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; data.name = &#39;test&#39;
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; data
+</span></span><span class="line"><span class="cl">abc
+</span></span><span class="line"><span class="cl">a    1
+</span></span><span class="line"><span class="cl">b    2
+</span></span><span class="line"><span class="cl">c    3
+</span></span><span class="line"><span class="cl">d    4
+</span></span><span class="line"><span class="cl">Name: test, dtype: int64</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Series对象本身及其索引index都有一个name属性，name属性主要发挥作用是在DataFrame中，当我们把一个Series对象放进DataFrame中，新的列将根据我们的name属性对该列进行命名，如果我们没有给Series命名，DataFrame则会自动帮我们命名为0。</p>
+<h4 id="dataframe" class="heading-element"><span>DataFrame</span>
+  <a href="#dataframe" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; data = {&#39;name&#39;: [&#39;BTC&#39;, &#39;ETH&#39;, &#39;EOS&#39;], &#39;price&#39;:[50000, 4000, 150]}
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; data = DataFrame(data)
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; data
+</span></span><span class="line"><span class="cl">  name  price
+</span></span><span class="line"><span class="cl">0  BTC  50000
+</span></span><span class="line"><span class="cl">1  ETH   4000
+</span></span><span class="line"><span class="cl">2  EOS    150</span></span></code></pre></td></tr></table>
+</div>
+</div><p>DataFrame的生成与Series差不多，你可以自己指定index，也可不指定，DataFrame会自动帮你补上。</p>
+<h5 id="查看dataframe的相关信息" class="heading-element"><span>查看DataFrame的相关信息</span>
+  <a href="#%e6%9f%a5%e7%9c%8bdataframe%e7%9a%84%e7%9b%b8%e5%85%b3%e4%bf%a1%e6%81%af" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; data.index
+</span></span><span class="line"><span class="cl">RangeIndex(start=0, stop=3, step=1)
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; data.values
+</span></span><span class="line"><span class="cl">array([[&#39;BTC&#39;, 50000],
+</span></span><span class="line"><span class="cl">       [&#39;ETH&#39;, 4000],
+</span></span><span class="line"><span class="cl">       [&#39;EOS&#39;, 150]], dtype=object)
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; data.columns
+</span></span><span class="line"><span class="cl">Index([&#39;name&#39;, &#39;price&#39;], dtype=&#39;object&#39;)</span></span></code></pre></td></tr></table>
+</div>
+</div><h5 id="dataframe索引" class="heading-element"><span>DataFrame索引</span>
+  <a href="#dataframe%e7%b4%a2%e5%bc%95" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h5><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; data.name
+</span></span><span class="line"><span class="cl">0    BTC
+</span></span><span class="line"><span class="cl">1    ETH
+</span></span><span class="line"><span class="cl">2    EOS
+</span></span><span class="line"><span class="cl">Name: name, dtype: object
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; data[&#39;name&#39;]
+</span></span><span class="line"><span class="cl">0    BTC
+</span></span><span class="line"><span class="cl">1    ETH
+</span></span><span class="line"><span class="cl">2    EOS
+</span></span><span class="line"><span class="cl">Name: name, dtype: object
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># loc[&#39;name&#39;]查询的是行标签
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; data.iloc[1]
+</span></span><span class="line"><span class="cl">name      ETH
+</span></span><span class="line"><span class="cl">price    4000
+</span></span><span class="line"><span class="cl">Name: 1, dtype: object</span></span></code></pre></td></tr></table>
+</div>
+</div><p>其实行索引，除了iloc，loc还有个ix，ix既可以进行行标签索引，也可以进行行号索引，但这也大大增加了它的不确定性，有时会出现一些奇怪的问题，所以pandas在0.20.0版本的时候就把ix给弃用了。</p>
+<h5 id="dataframe的常用操作" class="heading-element"><span>DataFrame的常用操作</span>
+  <a href="#dataframe%e7%9a%84%e5%b8%b8%e7%94%a8%e6%93%8d%e4%bd%9c" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h5><h6 id="简单地增加行列" class="heading-element"><span>简单地增加行、列</span>
+  <a href="#%e7%ae%80%e5%8d%95%e5%9c%b0%e5%a2%9e%e5%8a%a0%e8%a1%8c%e5%88%97" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h6><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; data[&#39;type&#39;] = &#39;token&#39;
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; data
+</span></span><span class="line"><span class="cl">  name  price   type
+</span></span><span class="line"><span class="cl">0  BTC  50000  token
+</span></span><span class="line"><span class="cl">1  ETH   4000  token
+</span></span><span class="line"><span class="cl">2  EOS    150  token
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; data.loc[&#39;3&#39;] = [&#39;ae&#39;,200,&#39;token&#39;]
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; data
+</span></span><span class="line"><span class="cl">  name  price   type
+</span></span><span class="line"><span class="cl">0  BTC  50000  token
+</span></span><span class="line"><span class="cl">1  ETH   4000  token
+</span></span><span class="line"><span class="cl">2  EOS    150  token
+</span></span><span class="line"><span class="cl">3   ae    200  token</span></span></code></pre></td></tr></table>
+</div>
+</div><h6 id="删除行列操作" class="heading-element"><span>删除行、列操作</span>
+  <a href="#%e5%88%a0%e9%99%a4%e8%a1%8c%e5%88%97%e6%93%8d%e4%bd%9c" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h6><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; del data[&#39;type&#39;]
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; data
+</span></span><span class="line"><span class="cl">  name  price
+</span></span><span class="line"><span class="cl">0  BTC  50000
+</span></span><span class="line"><span class="cl">1  ETH   4000
+</span></span><span class="line"><span class="cl">2  EOS    150
+</span></span><span class="line"><span class="cl">3   ae    200
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; data.drop([2])
+</span></span><span class="line"><span class="cl">  name  price
+</span></span><span class="line"><span class="cl">0  BTC  50000
+</span></span><span class="line"><span class="cl">1  ETH   4000
+</span></span><span class="line"><span class="cl">3   ae    200
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; data
+</span></span><span class="line"><span class="cl">  name  price
+</span></span><span class="line"><span class="cl">0  BTC  50000
+</span></span><span class="line"><span class="cl">1  ETH   4000
+</span></span><span class="line"><span class="cl">2  EOS    150
+</span></span><span class="line"><span class="cl">3   ae    200</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这里需要注意的是，使用drop（）方法返回的是Copy而不是视图，要想真正在原数据里删除行，就要设置inplace=True</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; data.drop([2],inplace=True)
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; data
+</span></span><span class="line"><span class="cl">  name  price
+</span></span><span class="line"><span class="cl">0  BTC  50000
+</span></span><span class="line"><span class="cl">1  ETH   4000
+</span></span><span class="line"><span class="cl">3   ae    200</span></span></code></pre></td></tr></table>
+</div>
+</div><h6 id="设置某一列为index" class="heading-element"><span>设置某一列为index</span>
+  <a href="#%e8%ae%be%e7%bd%ae%e6%9f%90%e4%b8%80%e5%88%97%e4%b8%baindex" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h6><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; data.set_index([&#39;name&#39;],inplace=True)
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; data
+</span></span><span class="line"><span class="cl">      price
+</span></span><span class="line"><span class="cl">name
+</span></span><span class="line"><span class="cl">BTC   50000
+</span></span><span class="line"><span class="cl">ETH    4000
+</span></span><span class="line"><span class="cl">ae      200
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 将index返回回dataframe中
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; data.reset_index(inplace=True)
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; data
+</span></span><span class="line"><span class="cl">  name  price
+</span></span><span class="line"><span class="cl">0  BTC  50000
+</span></span><span class="line"><span class="cl">1  ETH   4000
+</span></span><span class="line"><span class="cl">2   ae    200</span></span></code></pre></td></tr></table>
+</div>
+</div><h6 id="处理缺失值" class="heading-element"><span>处理缺失值</span>
+  <a href="#%e5%a4%84%e7%90%86%e7%bc%ba%e5%a4%b1%e5%80%bc" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h6><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">data.dropna()    # 丢弃含有缺失值的行
+</span></span><span class="line"><span class="cl">data.fillna(0)    # 填充缺失值数据为0</span></span></code></pre></td></tr></table>
+</div>
+</div><p>还是需要注意：这些方法返回的是copy而不是视图，如果想在原数据上改变，别忘了inplace=True。</p>
+<h6 id="数据合并" class="heading-element"><span>数据合并</span>
+  <a href="#%e6%95%b0%e6%8d%ae%e5%90%88%e5%b9%b6" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h6><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; data
+</span></span><span class="line"><span class="cl">  name  price
+</span></span><span class="line"><span class="cl">0  BTC  50000
+</span></span><span class="line"><span class="cl">1  ETH   4000
+</span></span><span class="line"><span class="cl">2   ae    200
+</span></span><span class="line"><span class="cl">3  eos    eos
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; data1
+</span></span><span class="line"><span class="cl">  name other
+</span></span><span class="line"><span class="cl">0  BTC     a
+</span></span><span class="line"><span class="cl">1  ETH     b
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 以name为key进行左连接
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; pd.merge(data,data1,on=&#39;name&#39;,how=&#39;left&#39;)
+</span></span><span class="line"><span class="cl">  name  price other
+</span></span><span class="line"><span class="cl">0  BTC  50000     a
+</span></span><span class="line"><span class="cl">1  ETH   4000     b
+</span></span><span class="line"><span class="cl">2   ae    200   NaN
+</span></span><span class="line"><span class="cl">3  eos    eos   NaN</span></span></code></pre></td></tr></table>
+</div>
+</div><p>平时进行数据合并操作，更多的会出一种情况，那就是出现重复值，DataFrame也为我们提供了简便的方法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">data.drop_duplicates(inplace=True)</span></span></code></pre></td></tr></table>
+</div>
+</div><h6 id="数据的简单保存与读取" class="heading-element"><span>数据的简单保存与读取</span>
+  <a href="#%e6%95%b0%e6%8d%ae%e7%9a%84%e7%ae%80%e5%8d%95%e4%bf%9d%e5%ad%98%e4%b8%8e%e8%af%bb%e5%8f%96" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h6><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; data.to_csv(&#39;test.csv&#39;)
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; pd.read_csv(&#39;test.csv&#39;)
+</span></span><span class="line"><span class="cl">   Unnamed: 0 name  price
+</span></span><span class="line"><span class="cl">0           0  BTC  50000
+</span></span><span class="line"><span class="cl">1           1  ETH   4000
+</span></span><span class="line"><span class="cl">2           2   ae    200
+</span></span><span class="line"><span class="cl">3           3  eos    eos</span></span></code></pre></td></tr></table>
+</div>
+</div><p>为什么会出现这种情况呢，从头看到尾的同学可能就看出来了，增加第三行时，我用的是loc[‘3’]行标签来增加的，而read_csv方法是默认index是从0开始增长的，此时只需要我们设置下index参数就ok了</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># 不保存行索引
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; data.to_csv(&#39;test.csv&#39;,index=None)
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; pd.read_csv(&#39;test.csv&#39;)
+</span></span><span class="line"><span class="cl">  name  price
+</span></span><span class="line"><span class="cl">0  BTC  50000
+</span></span><span class="line"><span class="cl">1  ETH   4000
+</span></span><span class="line"><span class="cl">2   ae    200
+</span></span><span class="line"><span class="cl">3  eos    eos</span></span></code></pre></td></tr></table>
+</div>
+</div><p>其他的还有header参数，这些参数都是我们在保存数据时需要注意的。</p>
+</div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="更新于 2018-08-24 22:19:00">更新于 2018-08-24&nbsp;</span>
+      </div><div class="post-info-license">
+            <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
+          </div></div><div class="post-info-line">
+        <div class="post-info-md"><span><a href="https://github.com/hugo-fixit/docs/blob/main/main/posts%5cpython%5cpandas-basis.md?plain=1" title="查看源码"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-source">查看源码</a></span><span><a href="https://github.com/hugo-fixit/docs/edit/main/main/posts%5cpython%5cpandas-basis.md" title="编辑此页"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-edit">编辑此页</a></span><span><a href="https://github.com/hugo-fixit/docs/issues/new?title=[BUG]%20Pandas%E5%9F%BA%E7%A1%80&amp;body=%7cField%7cValue%7c%0A%7c-%7c-%7c%0A%7cTitle%7cPandas%E5%9F%BA%E7%A1%80%7c%0A%7cURL%7chttps://hellofinger.tech/2018/08/pandas-basis/%7c%0A%7cFilename%7chttps://github.com/hugo-fixit/docs/blob/main/main/posts%5cpython%5cpandas-basis.md?plain=1%7c" title="报告问题"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-report">报告问题</a></span></div>
+        <div class="post-info-share">
+          <span><a href="javascript:void(0);" title="分享到 X" data-sharer="twitter" data-url="https://hellofinger.tech/2018/08/pandas-basis/" data-title="Pandas基础" data-hashtags="Python,Pandas"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://hellofinger.tech/2018/08/pandas-basis/" data-hashtag="Python"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://hellofinger.tech/2018/08/pandas-basis/" data-title="Pandas基础"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+        </div>
+      </div></div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href="/tags/python/" class="post-tag" title="标签 - Python">Python</a><a href="/tags/pandas/" class="post-tag" title="标签 - Pandas">Pandas</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+    </section>
+  </div><div class="post-nav"><a href="/2018/08/numpy-basis/" class="post-nav-item" rel="prev" title="Numpy基础"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>Numpy基础</a>
+      <a href="/2018/09/aws-serverless-with-nodejs/" class="post-nav-item" rel="next" title="AWS Serverless - NodeJs实践">AWS Serverless - NodeJs实践<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article>
+
+  <aside class="toc" id="toc-auto" aria-label="目录"><h2 class="toc-title">目录&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2017 - 2024</span><span class="author" itemprop="copyrightHolder">
+              <a href="/">Finger</a></span><span class="license footer-divider"><a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="回到顶部"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">该网站在启用 JavaScript 的情况下效果最佳。</div>
+  </noscript>
+</div><link rel="preload" href="/lib/katex/katex.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/katex/katex.min.css"></noscript><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script src="/lib/autocomplete/autocomplete.min.js" defer></script><script src="/lib/fuse/fuse.min.js" defer></script><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/copy-tex.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="/js/flyfish.js" defer></script><script>window.config={"code":{"copyTitle":"复制到剪贴板","editLockTitle":"锁定可编辑代码块","editUnLockTitle":"解锁可编辑代码块","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"同意","link":"了解更多","message":"本网站使用 Cookies 来改善您的浏览体验。"},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"distance":100,"findAllMatches":false,"highlightTag":"em","ignoreFieldNorm":false,"ignoreLocation":false,"isCaseSensitive":false,"location":0,"maxResultLength":10,"minMatchCharLength":2,"noResultsFound":"没有找到结果","snippetLength":30,"threshold":0.3,"useExtendedSearch":false},"version":"v0.3.10-c936e541"};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

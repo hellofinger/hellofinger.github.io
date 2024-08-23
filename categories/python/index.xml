@@ -1,0 +1,128 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>Python - 分类 - Finger&#39;s Blog</title>
+    <link>https://hellofinger.tech/categories/python/</link>
+    <description>Python - 分类 | Finger&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Thu, 11 Jul 2019 07:31:00 &#43;0000</lastBuildDate><atom:link href="https://hellofinger.tech/categories/python/" rel="self" type="application/rss+xml" /><item>
+  <title>Python 杂记(一)</title>
+  <link>https://hellofinger.tech/2019/07/python-notes-1/</link>
+  <pubDate>Thu, 11 Jul 2019 07:31:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2019/07/python-notes-1/</guid>
+  <description><![CDATA[使用 slots__slots__变量是用来限制class能添加的属性
+例如
+1 2 3 &gt;&gt;&gt; class Student(object): ... __slots__ = (&#39;name&#39;, &#39;age&#39;) # 用tuple定义允许绑定的属性名称 ... 1 2 3 4 5 6 7 &gt;&gt;&gt; s = Student() # 创建新的实例 &gt;&gt;&gt; s.name = &#39;Michael&#39; # 绑定属性&#39;name&#39; &gt;&gt;&gt; s.age = 25 # 绑定属性&#39;age&#39; &gt;&gt;&gt; s.score = 99 # 绑定属性&#39;score&#39; Traceback (most recent call last): File &#34;&lt;stdin&gt;&#34;, line 1, in &lt;module&gt; AttributeError: &#39;Student&#39; object has no attribute &#39;score&#39; 从上面代码示例我们可以看到由于score没有被放到__slots__中，所以不能绑定score属性，试图绑定score将得到AttributeError的错误。 使用__slots__要注意，__slots__定义的属性仅对当前类起作用，对继承的子类是不起作用的：
+1 2 3 4 5 &gt;&gt;&gt; class GraduateStudent(Student): .]]></description>
+</item>
+<item>
+  <title>使用PyCryptodome替代pyscrypto</title>
+  <link>https://hellofinger.tech/2019/07/pycryptodome-usage/</link>
+  <pubDate>Thu, 04 Jul 2019 07:11:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2019/07/pycryptodome-usage/</guid>
+  <description><![CDATA[pycrypto 在Windows系统上安装比较麻烦，会出现意想不到的各种问题。因为pycrypto-2.6.1 之后就不在维护。因此系统兼容性就不那么友好。推荐PyCryptodome作为替代工具包。官方地址为：https://www.pycryptodome.org/en/latest/
+1 2 # 1、Windows pip install pycryptodomex # 2、Linux/Mac pip install pycryptodome 举个例子：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 #!usr/bin/env python3 # -*- coding:utf-8 _*- import base64 import hashlib import json import platform if platform.system() != &#39;Windows&#39;: from Crypto.]]></description>
+</item>
+<item>
+  <title>Flask-APScheduler 笔记</title>
+  <link>https://hellofinger.tech/2019/03/flask-apscheduler-usage/</link>
+  <pubDate>Sat, 23 Mar 2019 23:14:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2019/03/flask-apscheduler-usage/</guid>
+  <description><![CDATA[简介Flask-APScheduler是Flask扩展，增加了对APScheduler的支持。
+支持从Flask配置加载调度程序配置以及任务定义。 支持WEB程序和调度程序共存。提供REST API管理任务调度。并为REST API提供身份验证。目前只支持Basic-Auth认证。 官方地址：https://github.com/viniciuschiele/flask-apscheduler
+使用1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 from flask import Flask from flask_apscheduler import APScheduler class Config(object): JOBS = [ { &#39;id&#39;: &#39;job1&#39;, &#39;func&#39;: &#39;jobs:job1&#39;, &#39;args&#39;: (1, 2), &#39;trigger&#39;: &#39;interval&#39;, &#39;seconds&#39;: 10 } ] SCHEDULER_API_ENABLED = True def job1(a, b): print(str(a) + &#39; &#39; + str(b)) if __name__ == &#39;__main__&#39;: app = Flask(__name__) app.]]></description>
+</item>
+<item>
+  <title>APScheduler 笔记</title>
+  <link>https://hellofinger.tech/2019/03/apscheduler-usage/</link>
+  <pubDate>Sat, 23 Mar 2019 14:13:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2019/03/apscheduler-usage/</guid>
+  <description><![CDATA[简介APScheduler是类似Quartz的一个Python定时任务框架，实现了Quartz的所有功能，使用起来十分方便。提供了基于日期、固定时间间隔以及crontab类型的任务，并且可以持久化任务。如果将任务持久化到数据库中，那么它们也将在调度程序在重新启动后继续运行并保持其状态。重启启动调度程序后，它将运行它在脱机时运行的所有任务。
+除此之外，APScheduler还可以用作特定于平台的调度程序（如cron守护程序或Windows任务调度程序）的跨平台，特定于应用程序的替代程序。但请注意，APScheduler本身不是守护程序或服务，也不附带任何命令行工具。它主要用于在现有应用程序中运行。也就是说，APScheduler确实为我们提供了一些构建块来构建调度程序服务或运行专用的调度程序进程。
+官方地址：https://github.com/agronholm/apscheduler
+使用简单例子1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 #!usr/bin/env python3 # -*- coding:utf-8 _*- from datetime import datetime import time import os from apscheduler.schedulers.background import BackgroundScheduler def tick(): print(&#39;Tick! The time is: %s&#39; % datetime.now()) if __name__ == &#39;__main__&#39;: # 1、创建后台执行的 schedulers scheduler = BackgroundScheduler() # 2、添加调度任务，触发器选择 interval(间隔)，每隔3秒执行一次 scheduler.]]></description>
+</item>
+<item>
+  <title>Pandas基础</title>
+  <link>https://hellofinger.tech/2018/08/pandas-basis/</link>
+  <pubDate>Fri, 24 Aug 2018 22:19:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2018/08/pandas-basis/</guid>
+  <description><![CDATA[原文地址：https://www.jiqizhixin.com/articles/2018-07-18-3
+介绍Pandas是基于Numpy构建的库，在数据处理方面可以把它理解为numpy加强版。不同于numpy的是，pandas拥有种数据结构：Series和DataFrame：
+用代码生成一个简单的Series对象
+1 2 3 4 5 6 7 8 9 &gt;&gt;&gt; from pandas import Series, DataFrame &gt;&gt;&gt; import pandas as pd &gt;&gt;&gt; data = Series([1,2,3,4],index = [&#39;a&#39;,&#39;b&#39;,&#39;c&#39;,&#39;d&#39;]) &gt;&gt;&gt; data a 1 b 2 c 3 d 4 dtype: int64 Series是一种类似一维数组的数据结构，由一组数据和与之相关的index组成，这个结构一看似乎与dict字典差不多，我们知道字典是一种无序的数据结构，而pandas中的Series的数据结构不一样，它相当于定长有序的字典，并且它的index和value之间是独立的，两者的索引还是有区别的，Series的index是可变的，而dict字典的key值是不可变的。
+用代码生成一个简单的DataFrame对象
+1 2 3 4 5 6 7 &gt;&gt;&gt; data = {&#39;a&#39;:[1,2,3],&#39;b&#39;:[&#39;we&#39;,&#39;you&#39;,&#39;they&#39;],&#39;c&#39;:[&#39;btc&#39;,&#39;eos&#39;,&#39;ae&#39;]} &gt;&gt;&gt; df = DataFrame(data) &gt;&gt;&gt; df a b c 0 1 we btc 1 2 you eos 2 3 they ae DataFrame这种数据结构我们可以把它看作是一张二维表，DataFrame长得跟我们平时使用的Excel表格差不多，DataFrame的横行称为columns，竖列和Series一样称为index，DataFrame每一列可以是不同类型的值集合，所以DataFrame你也可以把它视为不同数据类型同一index的Series集合。]]></description>
+</item>
+<item>
+  <title>Numpy基础</title>
+  <link>https://hellofinger.tech/2018/08/numpy-basis/</link>
+  <pubDate>Thu, 23 Aug 2018 22:19:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2018/08/numpy-basis/</guid>
+  <description><![CDATA[原文地址：https://www.jiqizhixin.com/articles/2018-07-18-2
+介绍numpy是专门为科学计算设计的一个python扩展包，为python提供高效率的多维数组，也被称为面向阵列计算（array oriented computing），同时numpy也是github上的一个开源项目：numpy，numpy是基于c语言开发，所以这使得numpy的运行速度很快，高效率运行就是numpy的一大优势。
+用numpy生成一维数组
+1 2 3 4 &gt;&gt;&gt; import numpy as np &gt;&gt;&gt; a = np.array([[1,2,3]], dtype=np.int32) &gt;&gt;&gt; a array([[1, 2, 3]]) numpy中定义的最重要的数据结构是称为ndarray的n维数组类型，这个结构引用了两个对象，一块用于保存数据的存储区域和一个用于描述元素类型的dtype对象：
+性能二维数组的生成在python中我们还可以用到list列表，如果用list来表示[1,2,3]，由于list中的元素可以是任何对象，所以list中保存的是对象的指针，如果要保存[1,2,3]就需要三个指针和三个整数对象，是比较浪费内存资源和cpu计算时间的，而ndarray是一种保存单一数据类型的多维数组结构，在数据处理上比list列表要快上很多。
+使用生成一个3x3的矩阵1 2 3 4 5 6 7 8 9 10 11 12 13 &gt;&gt;&gt; import numpy as np &gt;&gt;&gt; data = np.array([[1,2,3],[4,5,6],[7,8,9]]) &gt;&gt;&gt; data array([[1, 2, 3], [4, 5, 6], [7, 8, 9]]) # 等价于data=np.arange(1，10).reshape(3,3) &gt;&gt;&gt; data = np.arange(1,10).reshape(3,3) &gt;&gt;&gt; data array([[1, 2, 3], [4, 5, 6], [7, 8, 9]]) 查看矩阵信息1 2 3 4 5 6 7 8 9 10 11 # 返回元组，表示n行n列 &gt;&gt;&gt; data.]]></description>
+</item>
+<item>
+  <title>位运算的最佳实践</title>
+  <link>https://hellofinger.tech/2018/07/a-best-practice-of-bitwise-operation/</link>
+  <pubDate>Sun, 15 Jul 2018 14:30:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2018/07/a-best-practice-of-bitwise-operation/</guid>
+  <description><![CDATA[问：假设 S由a, b, c三个数值组成, S的大小为2个字节(Byte)。已知S的值。求解a, b, c分别是多少？ 其中a = 4 Bit, b = 4 Bit, c = 8 Bit。(a &gt;= 0, b &gt;= 0, c &gt;= 0)
+解：
+如图所示： a 为前4 Bit，则a = S &raquo; 12 b 为a后4 Bit，则b = S &raquo; 8 &amp; 0b1111 c 为最后8 Bit, 则c = S &amp; 0b11111111 假定S = 10086，则：
+1 2 3 4 5 6 &gt;&gt;&gt; S = 10086 &gt;&gt;&gt; a = S &gt;&gt; 12 &gt;&gt;&gt; b = S &gt;&gt; 8 &amp; 0b1111 &gt;&gt;&gt; c = S &amp; 0b11111111 &gt;&gt;&gt; print(a, b, c) 2 7 102 验证一下：]]></description>
+</item>
+<item>
+  <title>使用斐波拉契数列来做加密解密</title>
+  <link>https://hellofinger.tech/2018/07/using-fibonacci-sequence-to-encrypt/</link>
+  <pubDate>Sat, 14 Jul 2018 22:23:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2018/07/using-fibonacci-sequence-to-encrypt/</guid>
+  <description><![CDATA[一、斐波那契数列定义斐波那契数列（Fibonacci sequence），又称黄金分割数列、因数学家列昂纳多·斐波那契（Leonardoda Fibonacci）以兔子繁殖为例子而引入，故又称为“兔子数列”，指的是这样一个数列：1、1、2、3、5、8、13、21、34、……
+数学表达式： F(1)=1，F(2)=1, F(n)=F(n-1)+F(n-2)（n&gt;=2，n∈N*）
+1 fib = lambda n: n if n &lt;= 2 else fib(n - 1) + fib(n - 2) 二、异或运算规则：如果a、b两个值不相同，则异或结果为1。如果a、b两个值相同，异或结果为0。 特性：同一变量与另一变量和其异或值异或等于另一个数，如（a ^ b）^ b = a。
+1 2 3 4 5 &gt;&gt;&gt; a = 2 &gt;&gt;&gt; b = 3 &gt;&gt;&gt; c = a ^ b &gt;&gt;&gt; c ^ b 2 三、加密解密逻辑1、定义斐波那契数列，用来做密码表。 2、将秘钥字符串与斐波拉契数列做关联，进行加密计算得到新的密码表。 3、加密，需要加密的原始字符串与加密计算后的新密码表进行异或，得到加密之后的字符串。 4、解密，把加密后的字符串与加密计算后的新密码表再进行异或就得到原始字符串 四、代码实现1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 # [1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144.]]></description>
+</item>
+<item>
+  <title>用Numpy求矩阵的逆</title>
+  <link>https://hellofinger.tech/2018/06/inverse-matrix-with-numpy/</link>
+  <pubDate>Sun, 24 Jun 2018 19:02:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2018/06/inverse-matrix-with-numpy/</guid>
+  <description><![CDATA[定义一个n阶方阵A称为可逆的，或非奇异的，如果存在一个n阶方阵B，使得
+AB = BA = E
+并称B是A的一个逆矩阵。A的逆矩阵记作A^-1。
+百度逆矩阵
+特性若|A|≠0，则矩阵A可逆，且
+其中，A*为矩阵A的伴随矩阵。
+求解假定矩阵A为:
+根据公式:
+因A可逆，则有A的伴随矩阵特性 A* = A^T
+根据三阶行列式特性（对角线法）|A| = (1 x 1) - (-1 x 1)
+代入公式：
+用Numpy求矩阵的逆numpy.linalg中的inv()函数就是用来求矩阵的逆。
+1 2 3 4 5 6 7 8 &gt;&gt;&gt; A = np.mat(&#34;1 -1; 1 1&#34;) &gt;&gt;&gt; A matrix([[ 1, -1], [ 1, 1]]) &gt;&gt;&gt; inverse = np.linalg.inv(A) &gt;&gt;&gt; inverse matrix([[ 0.5, 0.5], [-0.5, 0.5]]) 感觉是不是很简单。]]></description>
+</item>
+<item>
+  <title>用Numpy解线性方程组</title>
+  <link>https://hellofinger.tech/2018/06/solution-of-linear-equations-with-numpy/</link>
+  <pubDate>Sun, 24 Jun 2018 10:02:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2018/06/solution-of-linear-equations-with-numpy/</guid>
+  <description><![CDATA[矩阵可以通过线性方式把一个向量变换成另一个向量，因此从数值计算的角度看， 这种操作对应于一个线性方程组。Numpy.linalg中的 solve() 子例程可以求解类似 Ax=b 这种形式的线性方程组，其中A是一个矩阵，b是一维或者二维数组，二x是未知量。下面介绍如何使用 dot() 函数来计算两个浮点型数组的点积(dot product)。
+这里举例说明解线性方程组的过程，具体步骤如下所示：
+1、创建矩阵A和数组b1 2 3 4 5 6 7 8 9 &gt;&gt;&gt; import numpy as np &gt;&gt;&gt; A = np.mat(&#34;1 -2 1; 0 2 -8; -4 5 9&#34;) # mat函数可以将目标数据的类型转换为矩阵（matrix） &gt;&gt;&gt; A matrix([[ 1, -2, 1], [ 0, 2, -8], [-4, 5, 9]]) &gt;&gt;&gt; b = np.array([0, 8, -9]) &gt;&gt;&gt; b array([ 0, 8, -9]) 2、调用solve()函数1 2 3 &gt;&gt;&gt; x = np.]]></description>
+</item>
+</channel>
+</rss>

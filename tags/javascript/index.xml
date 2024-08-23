@@ -1,0 +1,17 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>Javascript - 标签 - Finger&#39;s Blog</title>
+    <link>https://hellofinger.tech/tags/javascript/</link>
+    <description>Javascript - 标签 | Finger&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Fri, 27 Jan 2017 20:40:00 &#43;0000</lastBuildDate><atom:link href="https://hellofinger.tech/tags/javascript/" rel="self" type="application/rss+xml" /><item>
+  <title>Cocos2dx－上传Google Play遇到的问题</title>
+  <link>https://hellofinger.tech/2017/01/cocos2dx-upload-google-play/</link>
+  <pubDate>Fri, 27 Jan 2017 20:40:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2017/01/cocos2dx-upload-google-play/</guid>
+  <description><![CDATA[一、OpenSSL版本有多个安全漏洞，建议您尽快更新 OpenSSL因为项目使用的是cocos2d-x 3.3版本。因此cocos2d-x第三方库比较旧。上传Google Play 后台时被rejected。邮件原文如下：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 Vulnerability ----------------------------------------------------------- **OpenSSL** The vulnerabilities were addressed in OpenSSL 1.0.2f/1.0.1r. To confirm your OpenSSL version, you can do a grep search for: \$ unzip -p YourApp.apk | strings | grep &#34;OpenSSL&#34; You can find more information and next steps in this Google Help Center article.]]></description>
+</item>
+</channel>
+</rss>

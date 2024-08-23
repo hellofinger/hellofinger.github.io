@@ -1,0 +1,22 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>Hexo - 标签 - Finger&#39;s Blog</title>
+    <link>https://hellofinger.tech/tags/hexo/</link>
+    <description>Hexo - 标签 | Finger&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Fri, 27 Jan 2017 20:40:00 &#43;0000</lastBuildDate><atom:link href="https://hellofinger.tech/tags/hexo/" rel="self" type="application/rss+xml" /><item>
+  <title>Hexo使用笔记</title>
+  <link>https://hellofinger.tech/2017/01/hexo-usage/</link>
+  <pubDate>Fri, 27 Jan 2017 20:40:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2017/01/hexo-usage/</guid>
+  <description><![CDATA[中文文档：https://hexo.io/zh-cn/docs/index.html
+参考博客： http://blog.csdn.net/poem_of_sunshine/article/details/29369785/ http://www.jianshu.com/p/465830080ea9# http://www.jianshu.com/p/a2023a601ceb
+Github配置： https://help.github.com/articles/generating-an-ssh-key/ https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/
+常用命令1 2 3 4 hexo server | s --debug hexo clean hexo generate | g hexo deploy 绑定阿里云域名： http://quantumman.me/blog/setting-up-a-domain-with-gitHub-pages.html
+后端管理插件hexo-admin1 2 3 npm install --save hexo-admin hexo server -d open http://localhost:4000/admin/ 设置后台密码 修改站点配置文件，就是网站根目录下的 _config.yml文件:
+1 2 3 4 admin: username: finger password_hash: $2a$1$Cof3VuvY8nKKIUjeCNBSE.HjcrCKQ1P80GEegP//SLDFWZoGzm4pa secret: a secret something username：后端登录用户名 password_hash：后端登录用户密码对应的md5 hash值 secret：用于保证cookie安全 密码生成 hexo-admin密码是bcrypt编码。因此需要安装bcrypt-nodejs模块
+1 2 3 4 $ node &gt; const bcrypt = require(&#39;bcrypt-nodejs&#39;) &gt; bcrypt.]]></description>
+</item>
+</channel>
+</rss>

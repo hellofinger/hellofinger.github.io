@@ -1,0 +1,72 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>Categories - 分类 - Finger&#39;s Blog</title>
+    <link>https://hellofinger.tech/categories/</link>
+    <description>Categories - 分类 | Finger&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Tue, 16 Jun 2020 15:02:52 &#43;0800</lastBuildDate><atom:link href="https://hellofinger.tech/categories/" rel="self" type="application/rss+xml" /><item>
+  <title>Database</title>
+  <link>https://hellofinger.tech/categories/database/</link>
+  <pubDate>Tue, 16 Jun 2020 15:02:52 &#43;0800</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/categories/database/</guid>
+  <description><![CDATA[]]></description>
+</item>
+<item>
+  <title>Storage</title>
+  <link>https://hellofinger.tech/categories/storage/</link>
+  <pubDate>Tue, 16 Jun 2020 15:02:52 &#43;0800</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/categories/storage/</guid>
+  <description><![CDATA[]]></description>
+</item>
+<item>
+  <title>IAC</title>
+  <link>https://hellofinger.tech/categories/iac/</link>
+  <pubDate>Mon, 03 Feb 2020 09:22:52 &#43;0800</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/categories/iac/</guid>
+  <description><![CDATA[]]></description>
+</item>
+<item>
+  <title>Python</title>
+  <link>https://hellofinger.tech/categories/python/</link>
+  <pubDate>Thu, 11 Jul 2019 07:31:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/categories/python/</guid>
+  <description><![CDATA[]]></description>
+</item>
+<item>
+  <title>AWS</title>
+  <link>https://hellofinger.tech/categories/aws/</link>
+  <pubDate>Sat, 15 Sep 2018 11:37:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/categories/aws/</guid>
+  <description><![CDATA[]]></description>
+</item>
+<item>
+  <title>ElasticSearch</title>
+  <link>https://hellofinger.tech/categories/elasticsearch/</link>
+  <pubDate>Sat, 26 Aug 2017 10:23:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/categories/elasticsearch/</guid>
+  <description><![CDATA[]]></description>
+</item>
+<item>
+  <title>Note</title>
+  <link>https://hellofinger.tech/categories/note/</link>
+  <pubDate>Fri, 27 Jan 2017 20:56:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/categories/note/</guid>
+  <description><![CDATA[]]></description>
+</item>
+<item>
+  <title>Stroage</title>
+  <link>https://hellofinger.tech/categories/stroage/</link>
+  <pubDate>Tue, 03 Jan 2017 10:43:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/categories/stroage/</guid>
+  <description><![CDATA[]]></description>
+</item>
+</channel>
+</rss>

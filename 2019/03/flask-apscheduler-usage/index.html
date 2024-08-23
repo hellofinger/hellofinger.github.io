@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>Flask-APScheduler 笔记 - Finger&#39;s Blog</title><meta name="author" content="Finger">
+<meta name="author-link" content="">
+<meta name="description" content="简介Flask-APScheduler是Flask扩展，增加了对APScheduler的支持。
+支持从Flask配置加载调度程序配置以及任务定义。 支持WEB程序和调度程序共存。提供REST API管理任务调度。并为REST API提供身份验证。目前只支持Basic-Auth认证。 官方地址：https://github.com/viniciuschiele/flask-apscheduler
+使用1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 from flask import Flask from flask_apscheduler import APScheduler class Config(object): JOBS = [ { &#39;id&#39;: &#39;job1&#39;, &#39;func&#39;: &#39;jobs:job1&#39;, &#39;args&#39;: (1, 2), &#39;trigger&#39;: &#39;interval&#39;, &#39;seconds&#39;: 10 } ] SCHEDULER_API_ENABLED = True def job1(a, b): print(str(a) &#43; &#39; &#39; &#43; str(b)) if __name__ == &#39;__main__&#39;: app = Flask(__name__) app." /><meta name="keywords" content='Python, APScheduler, Flask, Flask-APScheduler' />
+  <meta itemprop="name" content="Flask-APScheduler 笔记">
+  <meta itemprop="description" content="简介Flask-APScheduler是Flask扩展，增加了对APScheduler的支持。
+支持从Flask配置加载调度程序配置以及任务定义。 支持WEB程序和调度程序共存。提供REST API管理任务调度。并为REST API提供身份验证。目前只支持Basic-Auth认证。 官方地址：https://github.com/viniciuschiele/flask-apscheduler
+使用1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 from flask import Flask from flask_apscheduler import APScheduler class Config(object): JOBS = [ { &#39;id&#39;: &#39;job1&#39;, &#39;func&#39;: &#39;jobs:job1&#39;, &#39;args&#39;: (1, 2), &#39;trigger&#39;: &#39;interval&#39;, &#39;seconds&#39;: 10 } ] SCHEDULER_API_ENABLED = True def job1(a, b): print(str(a) &#43; &#39; &#39; &#43; str(b)) if __name__ == &#39;__main__&#39;: app = Flask(__name__) app.">
+  <meta itemprop="datePublished" content="2019-03-23T23:14:00+00:00">
+  <meta itemprop="dateModified" content="2019-03-23T23:14:00+00:00">
+  <meta itemprop="wordCount" content="516">
+  <meta itemprop="keywords" content="Python,APScheduler,Flask,Flask-APScheduler"><meta property="og:url" content="https://hellofinger.tech/2019/03/flask-apscheduler-usage/">
+  <meta property="og:site_name" content="Finger&#39;s Blog">
+  <meta property="og:title" content="Flask-APScheduler 笔记">
+  <meta property="og:description" content="简介Flask-APScheduler是Flask扩展，增加了对APScheduler的支持。
+支持从Flask配置加载调度程序配置以及任务定义。 支持WEB程序和调度程序共存。提供REST API管理任务调度。并为REST API提供身份验证。目前只支持Basic-Auth认证。 官方地址：https://github.com/viniciuschiele/flask-apscheduler
+使用1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 from flask import Flask from flask_apscheduler import APScheduler class Config(object): JOBS = [ { &#39;id&#39;: &#39;job1&#39;, &#39;func&#39;: &#39;jobs:job1&#39;, &#39;args&#39;: (1, 2), &#39;trigger&#39;: &#39;interval&#39;, &#39;seconds&#39;: 10 } ] SCHEDULER_API_ENABLED = True def job1(a, b): print(str(a) &#43; &#39; &#39; &#43; str(b)) if __name__ == &#39;__main__&#39;: app = Flask(__name__) app.">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2019-03-23T23:14:00+00:00">
+    <meta property="article:modified_time" content="2019-03-23T23:14:00+00:00">
+    <meta property="article:tag" content="Python">
+    <meta property="article:tag" content="APScheduler">
+    <meta property="article:tag" content="Flask">
+    <meta property="article:tag" content="Flask-APScheduler">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Flask-APScheduler 笔记">
+  <meta name="twitter:description" content="简介Flask-APScheduler是Flask扩展，增加了对APScheduler的支持。
+支持从Flask配置加载调度程序配置以及任务定义。 支持WEB程序和调度程序共存。提供REST API管理任务调度。并为REST API提供身份验证。目前只支持Basic-Auth认证。 官方地址：https://github.com/viniciuschiele/flask-apscheduler
+使用1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 from flask import Flask from flask_apscheduler import APScheduler class Config(object): JOBS = [ { &#39;id&#39;: &#39;job1&#39;, &#39;func&#39;: &#39;jobs:job1&#39;, &#39;args&#39;: (1, 2), &#39;trigger&#39;: &#39;interval&#39;, &#39;seconds&#39;: 10 } ] SCHEDULER_API_ENABLED = True def job1(a, b): print(str(a) &#43; &#39; &#39; &#43; str(b)) if __name__ == &#39;__main__&#39;: app = Flask(__name__) app.">
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://hellofinger.tech/2019/03/flask-apscheduler-usage/" /><link rel="prev" href="https://hellofinger.tech/2019/03/apscheduler-usage/" /><link rel="next" href="https://hellofinger.tech/2019/07/pycryptodome-usage/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Flask-APScheduler 笔记",
+    "inLanguage": "zh-CN",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/hellofinger.tech\/2019\/03\/flask-apscheduler-usage\/"
+    },"genre": "posts","keywords": "Python, APScheduler, Flask, Flask-APScheduler","wordcount":  516 ,
+    "url": "https:\/\/hellofinger.tech\/2019\/03\/flask-apscheduler-usage\/","datePublished": "2019-03-23T23:14:00+00:00","dateModified": "2019-03-23T23:14:00+00:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Finger"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/about/"
+                
+                
+              ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item delimiter"></li><li class="menu-item search" id="search-desktop">
+            <input type="text" placeholder="搜索文章标题或内容……" id="search-input-desktop">
+            <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+              <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+            </a>
+            <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+              <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+            </a>
+            <span class="search-button search-loading" id="search-loading-desktop">
+              <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+            </span>
+          </li><li class="menu-item theme-switch" title="切换主题">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li class="search-wrapper">
+            <div class="search mobile" id="search-mobile">
+              <input type="text" placeholder="搜索文章标题或内容……" id="search-input-mobile">
+              <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+              </a>
+              <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+              </a>
+              <span class="search-button search-loading" id="search-loading-mobile">
+                <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+              </span>
+            </div>
+            <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+              取消
+            </a>
+          </li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/about/"
+                  
+                  
+                ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="切换主题"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+  </div>
+  <div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+  </div><main class="container"><aside class="aside-collection animate__animated animate__fadeIn animate__faster" aria-label="合集"></aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>Flask-APScheduler 笔记</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><span class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+      Finger</span></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/python/" class="post-category" title="分类 - Python"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Python</a></span></div><div class="post-meta-line"><span title="发布于 2019-03-23 23:14:00"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2019-03-23">2019-03-23</time></span>&nbsp;<span title="516 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 600 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 3 分钟</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>目录</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#简介">简介</a></li>
+        <li><a href="#使用">使用</a></li>
+        <li><a href="#flask-config-属性配置">Flask Config 属性配置</a></li>
+        <li><a href="#rest-api-接口">REST API 接口</a></li>
+        <li><a href="#配置api认证">配置API认证</a></li>
+        <li><a href="#使用过程遇到的问题">使用过程遇到的问题</a></li>
+        <li><a href="#扩展">扩展</a></li>
+        <li><a href="#参考">参考</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><h3 id="简介" class="heading-element"><span>简介</span>
+  <a href="#%e7%ae%80%e4%bb%8b" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>Flask-APScheduler是Flask扩展，增加了对APScheduler的支持。</p>
+<ul>
+<li>支持从Flask配置加载调度程序配置以及任务定义。</li>
+<li>支持WEB程序和调度程序共存。提供REST API管理任务调度。并为REST API提供身份验证。目前只支持Basic-Auth认证。</li>
+</ul>
+<p>官方地址：https://github.com/viniciuschiele/flask-apscheduler</p>
+<h3 id="使用" class="heading-element"><span>使用</span>
+  <a href="#%e4%bd%bf%e7%94%a8" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">from flask import Flask
+</span></span><span class="line"><span class="cl">from flask_apscheduler import APScheduler
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">class Config(object):
+</span></span><span class="line"><span class="cl">    JOBS = [
+</span></span><span class="line"><span class="cl">        {
+</span></span><span class="line"><span class="cl">            &#39;id&#39;: &#39;job1&#39;,
+</span></span><span class="line"><span class="cl">            &#39;func&#39;: &#39;jobs:job1&#39;,
+</span></span><span class="line"><span class="cl">            &#39;args&#39;: (1, 2),
+</span></span><span class="line"><span class="cl">            &#39;trigger&#39;: &#39;interval&#39;,
+</span></span><span class="line"><span class="cl">            &#39;seconds&#39;: 10
+</span></span><span class="line"><span class="cl">        }
+</span></span><span class="line"><span class="cl">    ]
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    SCHEDULER_API_ENABLED = True
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">def job1(a, b):
+</span></span><span class="line"><span class="cl">    print(str(a) + &#39; &#39; + str(b))
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">if __name__ == &#39;__main__&#39;:
+</span></span><span class="line"><span class="cl">    app = Flask(__name__)
+</span></span><span class="line"><span class="cl">    app.config.from_object(Config())
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    scheduler = APScheduler()
+</span></span><span class="line"><span class="cl">    # it is also possible to enable the API directly
+</span></span><span class="line"><span class="cl">    # scheduler.api_enabled = True
+</span></span><span class="line"><span class="cl">    scheduler.init_app(app)
+</span></span><span class="line"><span class="cl">    scheduler.start()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    app.run()</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="flask-config-属性配置" class="heading-element"><span>Flask Config 属性配置</span>
+  <a href="#flask-config-%e5%b1%9e%e6%80%a7%e9%85%8d%e7%bd%ae" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">SCHEDULER_JOBSTORES         # 配置存储任务存储器
+</span></span><span class="line"><span class="cl">SCHEDULER_EXECUTORS         # 配置执行器
+</span></span><span class="line"><span class="cl">SCHEDULER_JOB_DEFAULTS      # 配置调度默认属性
+</span></span><span class="line"><span class="cl">SCHEDULER_TIMEZONE          # 配置时区
+</span></span><span class="line"><span class="cl">SCHEDULER_AUTH              # 配置认证中心
+</span></span><span class="line"><span class="cl">SCHEDULER_API_ENABLED       # 配置是否开启API
+</span></span><span class="line"><span class="cl">SCHEDULER_API_PREFIX        # 配置API路由前缀
+</span></span><span class="line"><span class="cl">SCHEDULER_ENDPOINT_PREFIX   # 配置API路由后缀
+</span></span><span class="line"><span class="cl">SCHEDULER_ALLOWED_HOSTS     # 配置访问白名单</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="rest-api-接口" class="heading-element"><span>REST API 接口</span>
+  <a href="#rest-api-%e6%8e%a5%e5%8f%a3" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&#34;&#34;&#34;
+</span></span><span class="line"><span class="cl">Add the routes for the scheduler API.
+</span></span><span class="line"><span class="cl">&#34;&#34;&#34;
+</span></span><span class="line"><span class="cl">self._add_url_route(&#39;get_scheduler_info&#39;, &#39;&#39;, api.get_scheduler_info, &#39;GET&#39;)
+</span></span><span class="line"><span class="cl">self._add_url_route(&#39;add_job&#39;, &#39;/jobs&#39;, api.add_job, &#39;POST&#39;)
+</span></span><span class="line"><span class="cl">self._add_url_route(&#39;get_job&#39;, &#39;/jobs/&lt;job_id&gt;&#39;, api.get_job, &#39;GET&#39;)
+</span></span><span class="line"><span class="cl">self._add_url_route(&#39;get_jobs&#39;, &#39;/jobs&#39;, api.get_jobs, &#39;GET&#39;)
+</span></span><span class="line"><span class="cl">self._add_url_route(&#39;delete_job&#39;, &#39;/jobs/&lt;job_id&gt;&#39;, api.delete_job, &#39;DELETE&#39;)
+</span></span><span class="line"><span class="cl">self._add_url_route(&#39;update_job&#39;, &#39;/jobs/&lt;job_id&gt;&#39;, api.update_job, &#39;PATCH&#39;)
+</span></span><span class="line"><span class="cl">self._add_url_route(&#39;pause_job&#39;, &#39;/jobs/&lt;job_id&gt;/pause&#39;, api.pause_job, &#39;POST&#39;)
+</span></span><span class="line"><span class="cl">self._add_url_route(&#39;resume_job&#39;, &#39;/jobs/&lt;job_id&gt;/resume&#39;, api.resume_job, &#39;POST&#39;)
+</span></span><span class="line"><span class="cl">self._add_url_route(&#39;run_job&#39;, &#39;/jobs/&lt;job_id&gt;/run&#39;, api.run_job, &#39;POST&#39;)</span></span></code></pre></td></tr></table>
+</div>
+</div><p>访问地址为：http://localhost:5000/scheduler/jobs</p>
+<p>如果配置了 <code>SCHEDULER_API_PREFIX = &quot;/api/v1/scheduler&quot;</code>，则访问地址为: http://localhost:5000/api/v1/scheduler/jobs</p>
+<h3 id="配置api认证" class="heading-element"><span>配置API认证</span>
+  <a href="#%e9%85%8d%e7%bd%aeapi%e8%ae%a4%e8%af%81" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">SCHEDULER_AUTH = HTTPBasicAuth()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">@scheduler.authenticate
+</span></span><span class="line"><span class="cl">def authenticate(auth):
+</span></span><span class="line"><span class="cl">    return auth[&#39;username&#39;] == &#39;guest&#39; and auth[&#39;password&#39;] == &#39;guest&#39;</span></span></code></pre></td></tr></table>
+</div>
+</div><p>完整示例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">from flask import Flask
+</span></span><span class="line"><span class="cl">from flask_apscheduler import APScheduler
+</span></span><span class="line"><span class="cl">from flask_apscheduler.auth import HTTPBasicAuth
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">class Config(object):
+</span></span><span class="line"><span class="cl">    JOBS = [
+</span></span><span class="line"><span class="cl">        {
+</span></span><span class="line"><span class="cl">            &#39;id&#39;: &#39;job1&#39;,
+</span></span><span class="line"><span class="cl">            &#39;func&#39;: &#39;__main__:job1&#39;,
+</span></span><span class="line"><span class="cl">            &#39;args&#39;: (1, 2),
+</span></span><span class="line"><span class="cl">            &#39;trigger&#39;: &#39;interval&#39;,
+</span></span><span class="line"><span class="cl">            &#39;seconds&#39;: 10
+</span></span><span class="line"><span class="cl">        }
+</span></span><span class="line"><span class="cl">    ]
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    SCHEDULER_API_ENABLED = True
+</span></span><span class="line"><span class="cl">    SCHEDULER_AUTH = HTTPBasicAuth()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">def job1(a, b):
+</span></span><span class="line"><span class="cl">    print(str(a) + &#39; &#39; + str(b))
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">if __name__ == &#39;__main__&#39;:
+</span></span><span class="line"><span class="cl">    app = Flask(__name__)
+</span></span><span class="line"><span class="cl">    app.config.from_object(Config())
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    scheduler = APScheduler()
+</span></span><span class="line"><span class="cl">    # it is also possible to set the authentication directly
+</span></span><span class="line"><span class="cl">    # scheduler.auth = HTTPBasicAuth()
+</span></span><span class="line"><span class="cl">    scheduler.init_app(app)
+</span></span><span class="line"><span class="cl">    scheduler.start()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    @scheduler.authenticate
+</span></span><span class="line"><span class="cl">    def authenticate(auth):
+</span></span><span class="line"><span class="cl">        return auth[&#39;username&#39;] == &#39;guest&#39; and auth[&#39;password&#39;] == &#39;guest&#39;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    app.run()</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="使用过程遇到的问题" class="heading-element"><span>使用过程遇到的问题</span>
+  <a href="#%e4%bd%bf%e7%94%a8%e8%bf%87%e7%a8%8b%e9%81%87%e5%88%b0%e7%9a%84%e9%97%ae%e9%a2%98" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><h4 id="debug启动过程中重复运行的问题" class="heading-element"><span>Debug启动过程中重复运行的问题</span>
+  <a href="#debug%e5%90%af%e5%8a%a8%e8%bf%87%e7%a8%8b%e4%b8%ad%e9%87%8d%e5%a4%8d%e8%bf%90%e8%a1%8c%e7%9a%84%e9%97%ae%e9%a2%98" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="c1"># Bug: APScheduler in Flask executes twice</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># https://github.com/viniciuschiele/flask-apscheduler/issues/58</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="n">True</span><span class="p">,</span> <span class="n">use_reloader</span><span class="o">=</span><span class="n">False</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># or </span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">manager</span><span class="o">.</span><span class="n">add_command</span><span class="p">(</span><span class="s2">&#34;runserver&#34;</span><span class="p">,</span> <span class="n">Server</span><span class="p">(</span><span class="n">use_debugger</span><span class="o">=</span><span class="n">False</span><span class="p">,</span> <span class="n">use_reloader</span><span class="o">=</span><span class="n">False</span><span class="p">))</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="多进程中apscheduler重复运行的问题" class="heading-element"><span>多进程中APScheduler重复运行的问题</span>
+  <a href="#%e5%a4%9a%e8%bf%9b%e7%a8%8b%e4%b8%adapscheduler%e9%87%8d%e5%a4%8d%e8%bf%90%e8%a1%8c%e7%9a%84%e9%97%ae%e9%a2%98" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># Fix Multiple instances of scheduler problem
+</span></span><span class="line"><span class="cl"># https://github.com/viniciuschiele/flask-apscheduler/issues/51
+</span></span><span class="line"><span class="cl">import platform
+</span></span><span class="line"><span class="cl">import atexit
+</span></span><span class="line"><span class="cl">if platform.system() != &#39;Windows&#39;:
+</span></span><span class="line"><span class="cl">    fcntl = __import__(&#34;fcntl&#34;)
+</span></span><span class="line"><span class="cl">    f = open(&#34;scheduler.lock&#34;, &#34;wb&#34;)
+</span></span><span class="line"><span class="cl">    try:
+</span></span><span class="line"><span class="cl">        fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+</span></span><span class="line"><span class="cl">        scheduler.start()
+</span></span><span class="line"><span class="cl">        logger.debug(&#34;Scheduler Started...&#34;)
+</span></span><span class="line"><span class="cl">    except Exception as e:
+</span></span><span class="line"><span class="cl">        logger.error(&#39;Exit the scheduler, error - {}&#39;.format(e))
+</span></span><span class="line"><span class="cl">        scheduler.shutdown()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    def unlock():
+</span></span><span class="line"><span class="cl">        fcntl.flock(f, fcntl.LOCK_UN)
+</span></span><span class="line"><span class="cl">        f.close()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    atexit.register(unlock)
+</span></span><span class="line"><span class="cl">else:
+</span></span><span class="line"><span class="cl">    msvcrt = __import__(&#34;msvcrt&#34;)
+</span></span><span class="line"><span class="cl">    f = open(&#34;scheduler.lock&#34;, &#34;wb&#34;)
+</span></span><span class="line"><span class="cl">    try:
+</span></span><span class="line"><span class="cl">        msvcrt.locking(f.fileno(), msvcrt.LK_NBLCK, 1)
+</span></span><span class="line"><span class="cl">        scheduler.start()
+</span></span><span class="line"><span class="cl">        logger.debug(&#34;Scheduler Started...&#34;)
+</span></span><span class="line"><span class="cl">    except Exception as e:
+</span></span><span class="line"><span class="cl">        logger.error(&#39;Exit the scheduler, error - {}&#39;.format(e))
+</span></span><span class="line"><span class="cl">        scheduler.shutdown()
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    def _unlock_file():
+</span></span><span class="line"><span class="cl">        try:
+</span></span><span class="line"><span class="cl">            f.seek(0)
+</span></span><span class="line"><span class="cl">            msvcrt.locking(f.fileno(), msvcrt.LK_UNLCK, 1)
+</span></span><span class="line"><span class="cl">        except IOError:
+</span></span><span class="line"><span class="cl">            raise
+</span></span><span class="line"><span class="cl">    atexit.register(_unlock_file)</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="扩展" class="heading-element"><span>扩展</span>
+  <a href="#%e6%89%a9%e5%b1%95" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>Flask-APScheduler缺少可视化任务调度和监控界面，需要使用者自己根据REST API扩展实现。</p>
+<h3 id="参考" class="heading-element"><span>参考</span>
+  <a href="#%e5%8f%82%e8%80%83" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><ul>
+<li><a href="https://stackoverflow.com/questions/25504149/why-does-running-the-flask-dev-server-run-itself-twice"target="_blank" rel="external nofollow noopener noreferrer">https://stackoverflow.com/questions/25504149/why-does-running-the-flask-dev-server-run-itself-twice</a></li>
+<li><a href="https://blog.csdn.net/Raptor/article/details/69218271"target="_blank" rel="external nofollow noopener noreferrer">https://blog.csdn.net/Raptor/article/details/69218271</a></li>
+</ul>
+</div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="更新于 2019-03-23 23:14:00">更新于 2019-03-23&nbsp;</span>
+      </div><div class="post-info-license">
+            <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
+          </div></div><div class="post-info-line">
+        <div class="post-info-md"><span><a href="https://github.com/hugo-fixit/docs/blob/main/main/posts%5cpython%5cflask-apscheduler-usage.md?plain=1" title="查看源码"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-source">查看源码</a></span><span><a href="https://github.com/hugo-fixit/docs/edit/main/main/posts%5cpython%5cflask-apscheduler-usage.md" title="编辑此页"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-edit">编辑此页</a></span><span><a href="https://github.com/hugo-fixit/docs/issues/new?title=[BUG]%20Flask-APScheduler&#43;%E7%AC%94%E8%AE%B0&amp;body=%7cField%7cValue%7c%0A%7c-%7c-%7c%0A%7cTitle%7cFlask-APScheduler&#43;%E7%AC%94%E8%AE%B0%7c%0A%7cURL%7chttps://hellofinger.tech/2019/03/flask-apscheduler-usage/%7c%0A%7cFilename%7chttps://github.com/hugo-fixit/docs/blob/main/main/posts%5cpython%5cflask-apscheduler-usage.md?plain=1%7c" title="报告问题"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-report">报告问题</a></span></div>
+        <div class="post-info-share">
+          <span><a href="javascript:void(0);" title="分享到 X" data-sharer="twitter" data-url="https://hellofinger.tech/2019/03/flask-apscheduler-usage/" data-title="Flask-APScheduler 笔记" data-hashtags="Python,APScheduler,Flask,Flask-APScheduler"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://hellofinger.tech/2019/03/flask-apscheduler-usage/" data-hashtag="Python"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://hellofinger.tech/2019/03/flask-apscheduler-usage/" data-title="Flask-APScheduler 笔记"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+        </div>
+      </div></div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href="/tags/python/" class="post-tag" title="标签 - Python">Python</a><a href="/tags/apscheduler/" class="post-tag" title="标签 - APScheduler">APScheduler</a><a href="/tags/flask/" class="post-tag" title="标签 - Flask">Flask</a><a href="/tags/flask-apscheduler/" class="post-tag" title="标签 - Flask-APScheduler">Flask-APScheduler</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+    </section>
+  </div><div class="post-nav"><a href="/2019/03/apscheduler-usage/" class="post-nav-item" rel="prev" title="APScheduler 笔记"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>APScheduler 笔记</a>
+      <a href="/2019/07/pycryptodome-usage/" class="post-nav-item" rel="next" title="使用PyCryptodome替代pyscrypto">使用PyCryptodome替代pyscrypto<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article>
+
+  <aside class="toc" id="toc-auto" aria-label="目录"><h2 class="toc-title">目录&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2017 - 2024</span><span class="author" itemprop="copyrightHolder">
+              <a href="/">Finger</a></span><span class="license footer-divider"><a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="回到顶部"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">该网站在启用 JavaScript 的情况下效果最佳。</div>
+  </noscript>
+</div><link rel="preload" href="/lib/katex/katex.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/katex/katex.min.css"></noscript><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script src="/lib/autocomplete/autocomplete.min.js" defer></script><script src="/lib/fuse/fuse.min.js" defer></script><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/copy-tex.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="/js/flyfish.js" defer></script><script>window.config={"code":{"copyTitle":"复制到剪贴板","editLockTitle":"锁定可编辑代码块","editUnLockTitle":"解锁可编辑代码块","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"同意","link":"了解更多","message":"本网站使用 Cookies 来改善您的浏览体验。"},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"distance":100,"findAllMatches":false,"highlightTag":"em","ignoreFieldNorm":false,"ignoreLocation":false,"isCaseSensitive":false,"location":0,"maxResultLength":10,"minMatchCharLength":2,"noResultsFound":"没有找到结果","snippetLength":30,"threshold":0.3,"useExtendedSearch":false},"version":"v0.3.10-c936e541"};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

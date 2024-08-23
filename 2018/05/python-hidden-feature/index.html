@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>Python中的10个隐藏特性 - Finger&#39;s Blog</title><meta name="author" content="Finger">
+<meta name="author-link" content="">
+<meta name="description" content="1、函数参数解包(unpack)1 2 3 4 5 6 7 8 9 &gt;&gt;&gt; def foo(x, y): print(x, y) ... &gt;&gt;&gt; alist = [1,2] &gt;&gt;&gt; adict = {&#39;x&#39;: 1, &#39;y&#39;: 2} &gt;&gt;&gt; foo(*alist) 1 2 &gt;&gt;&gt; foo(**adict) 1 2 &gt;&gt;&gt; 2、python3中的元组unpack1 2 3 4 5 6 7 8 &gt;&gt;&gt; a, b, *rest = range(10) &gt;&gt;&gt; a 0 &gt;&gt;&gt; b 1 &gt;&gt;&gt; rest [2, 3, 4, 5, 6, 7, 8, 9] &gt;&gt;&gt; 也可以取最后一个：" /><meta name="keywords" content='Python' />
+  <meta itemprop="name" content="Python中的10个隐藏特性">
+  <meta itemprop="description" content="1、函数参数解包(unpack)1 2 3 4 5 6 7 8 9 &gt;&gt;&gt; def foo(x, y): print(x, y) ... &gt;&gt;&gt; alist = [1,2] &gt;&gt;&gt; adict = {&#39;x&#39;: 1, &#39;y&#39;: 2} &gt;&gt;&gt; foo(*alist) 1 2 &gt;&gt;&gt; foo(**adict) 1 2 &gt;&gt;&gt; 2、python3中的元组unpack1 2 3 4 5 6 7 8 &gt;&gt;&gt; a, b, *rest = range(10) &gt;&gt;&gt; a 0 &gt;&gt;&gt; b 1 &gt;&gt;&gt; rest [2, 3, 4, 5, 6, 7, 8, 9] &gt;&gt;&gt; 也可以取最后一个：">
+  <meta itemprop="datePublished" content="2018-05-24T11:10:00+00:00">
+  <meta itemprop="dateModified" content="2018-05-24T11:10:00+00:00">
+  <meta itemprop="wordCount" content="431">
+  <meta itemprop="keywords" content="Python"><meta property="og:url" content="https://hellofinger.tech/2018/05/python-hidden-feature/">
+  <meta property="og:site_name" content="Finger&#39;s Blog">
+  <meta property="og:title" content="Python中的10个隐藏特性">
+  <meta property="og:description" content="1、函数参数解包(unpack)1 2 3 4 5 6 7 8 9 &gt;&gt;&gt; def foo(x, y): print(x, y) ... &gt;&gt;&gt; alist = [1,2] &gt;&gt;&gt; adict = {&#39;x&#39;: 1, &#39;y&#39;: 2} &gt;&gt;&gt; foo(*alist) 1 2 &gt;&gt;&gt; foo(**adict) 1 2 &gt;&gt;&gt; 2、python3中的元组unpack1 2 3 4 5 6 7 8 &gt;&gt;&gt; a, b, *rest = range(10) &gt;&gt;&gt; a 0 &gt;&gt;&gt; b 1 &gt;&gt;&gt; rest [2, 3, 4, 5, 6, 7, 8, 9] &gt;&gt;&gt; 也可以取最后一个：">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2018-05-24T11:10:00+00:00">
+    <meta property="article:modified_time" content="2018-05-24T11:10:00+00:00">
+    <meta property="article:tag" content="Python">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Python中的10个隐藏特性">
+  <meta name="twitter:description" content="1、函数参数解包(unpack)1 2 3 4 5 6 7 8 9 &gt;&gt;&gt; def foo(x, y): print(x, y) ... &gt;&gt;&gt; alist = [1,2] &gt;&gt;&gt; adict = {&#39;x&#39;: 1, &#39;y&#39;: 2} &gt;&gt;&gt; foo(*alist) 1 2 &gt;&gt;&gt; foo(**adict) 1 2 &gt;&gt;&gt; 2、python3中的元组unpack1 2 3 4 5 6 7 8 &gt;&gt;&gt; a, b, *rest = range(10) &gt;&gt;&gt; a 0 &gt;&gt;&gt; b 1 &gt;&gt;&gt; rest [2, 3, 4, 5, 6, 7, 8, 9] &gt;&gt;&gt; 也可以取最后一个：">
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://hellofinger.tech/2018/05/python-hidden-feature/" /><link rel="prev" href="https://hellofinger.tech/2018/05/python3.6-cool-feature/" /><link rel="next" href="https://hellofinger.tech/2018/06/simple-bigdata-search-with-python/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Python中的10个隐藏特性",
+    "inLanguage": "zh-CN",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/hellofinger.tech\/2018\/05\/python-hidden-feature\/"
+    },"genre": "posts","keywords": "Python","wordcount":  431 ,
+    "url": "https:\/\/hellofinger.tech\/2018\/05\/python-hidden-feature\/","datePublished": "2018-05-24T11:10:00+00:00","dateModified": "2018-05-24T11:10:00+00:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Finger"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/about/"
+                
+                
+              ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item delimiter"></li><li class="menu-item search" id="search-desktop">
+            <input type="text" placeholder="搜索文章标题或内容……" id="search-input-desktop">
+            <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+              <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+            </a>
+            <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+              <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+            </a>
+            <span class="search-button search-loading" id="search-loading-desktop">
+              <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+            </span>
+          </li><li class="menu-item theme-switch" title="切换主题">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li class="search-wrapper">
+            <div class="search mobile" id="search-mobile">
+              <input type="text" placeholder="搜索文章标题或内容……" id="search-input-mobile">
+              <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+              </a>
+              <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+              </a>
+              <span class="search-button search-loading" id="search-loading-mobile">
+                <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+              </span>
+            </div>
+            <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+              取消
+            </a>
+          </li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/about/"
+                  
+                  
+                ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="切换主题"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+  </div>
+  <div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+  </div><main class="container"><aside class="aside-collection animate__animated animate__fadeIn animate__faster" aria-label="合集"></aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>Python中的10个隐藏特性</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><span class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+      Finger</span></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/python/" class="post-category" title="分类 - Python"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Python</a></span></div><div class="post-meta-line"><span title="发布于 2018-05-24 11:10:00"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2018-05-24">2018-05-24</time></span>&nbsp;<span title="431 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 500 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 3 分钟</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>目录</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><h4 id="1函数参数解包unpack" class="heading-element"><span>1、函数参数解包(unpack)</span>
+  <a href="#1%e5%87%bd%e6%95%b0%e5%8f%82%e6%95%b0%e8%a7%a3%e5%8c%85unpack" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; def foo(x, y): print(x, y)
+</span></span><span class="line"><span class="cl">... 
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; alist = [1,2]
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; adict = {&#39;x&#39;: 1, &#39;y&#39;: 2}
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; foo(*alist)
+</span></span><span class="line"><span class="cl">1 2
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; foo(**adict)
+</span></span><span class="line"><span class="cl">1 2
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; </span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="2python3中的元组unpack" class="heading-element"><span>2、python3中的元组unpack</span>
+  <a href="#2python3%e4%b8%ad%e7%9a%84%e5%85%83%e7%bb%84unpack" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; a, b, *rest = range(10)
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; a
+</span></span><span class="line"><span class="cl">0
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; b
+</span></span><span class="line"><span class="cl">1
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; rest
+</span></span><span class="line"><span class="cl">[2, 3, 4, 5, 6, 7, 8, 9]
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt;</span></span></code></pre></td></tr></table>
+</div>
+</div><p>也可以取最后一个：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; first, second, *rest, last = range(10)
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; first
+</span></span><span class="line"><span class="cl">0
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; second
+</span></span><span class="line"><span class="cl">1
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; last
+</span></span><span class="line"><span class="cl">9
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; rest
+</span></span><span class="line"><span class="cl">[2, 3, 4, 5, 6, 7, 8]</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="3链式比较操作符" class="heading-element"><span>3、链式比较操作符</span>
+  <a href="#3%e9%93%be%e5%bc%8f%e6%af%94%e8%be%83%e6%93%8d%e4%bd%9c%e7%ac%a6" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; 1 &lt; x &lt; 2
+</span></span><span class="line"><span class="cl">False
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; 4 &gt; x &gt;= 3
+</span></span><span class="line"><span class="cl">True
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt;</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="4列表切片操作" class="heading-element"><span>4、列表切片操作</span>
+  <a href="#4%e5%88%97%e8%a1%a8%e5%88%87%e7%89%87%e6%93%8d%e4%bd%9c" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># 按步长2取列表数据
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; a = [1,2,3,4,5]
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; a[::2] 
+</span></span><span class="line"><span class="cl">[1, 3, 5]
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 用步长-1来反转列表
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; a[::-1]
+</span></span><span class="line"><span class="cl">[5, 4, 3, 2, 1]
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 用切片来删除列表的某一段
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; a = [1,2,3,4,5]
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; a[1:3] = []
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; a
+</span></span><span class="line"><span class="cl">[1, 4, 5]
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"># 也可以用 del a[1:3]
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; a = [1,2,3,4,5]
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; del a[1:3]
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; a
+</span></span><span class="line"><span class="cl">[1, 4, 5]</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="5嵌套的列表推导式" class="heading-element"><span>5、嵌套的列表推导式</span>
+  <a href="#5%e5%b5%8c%e5%a5%97%e7%9a%84%e5%88%97%e8%a1%a8%e6%8e%a8%e5%af%bc%e5%bc%8f" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; [(i, j) for i in range(3) for j in range(i)]
+</span></span><span class="line"><span class="cl">[(1, 0), (2, 0), (2, 1)]</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="6字典里的无限递归" class="heading-element"><span>6、字典里的无限递归</span>
+  <a href="#6%e5%ad%97%e5%85%b8%e9%87%8c%e7%9a%84%e6%97%a0%e9%99%90%e9%80%92%e5%bd%92" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; a, b = {}, {}
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; a[&#39;b&#39;] = b
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; b[&#39;a&#39;] = a
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; a
+</span></span><span class="line"><span class="cl">{&#39;b&#39;: {&#39;a&#39;: {...}}}</span></span></code></pre></td></tr></table>
+</div>
+</div><p>当然列表也可以</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; a, b = [], []
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; a.append(b)
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; b.append(a)
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; a
+</span></span><span class="line"><span class="cl">[[[...]]]</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="7下划线_" class="heading-element"><span>7、下划线&quot;_&quot;</span>
+  <a href="#7%e4%b8%8b%e5%88%92%e7%ba%bf_" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># _ 在Python解析器上返回上一次的值
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; 1 + 1
+</span></span><span class="line"><span class="cl">2
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; _
+</span></span><span class="line"><span class="cl">2</span></span></code></pre></td></tr></table>
+</div>
+</div><p>另外 Python中的&quot;_&ldquo;也经常用在未使用的变量命名</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; pos = (1, 2)
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; x, _ = pos</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="8注意函数的默认参数" class="heading-element"><span>8、注意函数的默认参数</span>
+  <a href="#8%e6%b3%a8%e6%84%8f%e5%87%bd%e6%95%b0%e7%9a%84%e9%bb%98%e8%ae%a4%e5%8f%82%e6%95%b0" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; def foo(x=[]):
+</span></span><span class="line"><span class="cl">...     x.append(1)
+</span></span><span class="line"><span class="cl">...     print x
+</span></span><span class="line"><span class="cl">...
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; foo()
+</span></span><span class="line"><span class="cl">[1]
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; foo()
+</span></span><span class="line"><span class="cl">[1, 1]</span></span></code></pre></td></tr></table>
+</div>
+</div><p>更安全的做法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; def foo(x=None):
+</span></span><span class="line"><span class="cl">...     if x is None:
+</span></span><span class="line"><span class="cl">...         x = []
+</span></span><span class="line"><span class="cl">...     x.append(1)
+</span></span><span class="line"><span class="cl">...     print x
+</span></span><span class="line"><span class="cl">...
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; foo()
+</span></span><span class="line"><span class="cl">[1]
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; foo()
+</span></span><span class="line"><span class="cl">[1]
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt;</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="9另一种字符串连接" class="heading-element"><span>9、另一种字符串连接</span>
+  <a href="#9%e5%8f%a6%e4%b8%80%e7%a7%8d%e5%ad%97%e7%ac%a6%e4%b8%b2%e8%bf%9e%e6%8e%a5" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; name = &#34;Hello&#34; &#34;World&#34;
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; name
+</span></span><span class="line"><span class="cl">&#39;HelloWorld&#39;</span></span></code></pre></td></tr></table>
+</div>
+</div><p>连接多行：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; name = &#34;Hello&#34; \
+</span></span><span class="line"><span class="cl">...     &#34;World&#34;
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; name
+</span></span><span class="line"><span class="cl">&#39;HelloWorld&#39;</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="10不能访问到的属性" class="heading-element"><span>10、不能访问到的属性</span>
+  <a href="#10%e4%b8%8d%e8%83%bd%e8%ae%bf%e9%97%ae%e5%88%b0%e7%9a%84%e5%b1%9e%e6%80%a7" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; class Foo(object): pass
+</span></span><span class="line"><span class="cl">...
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; obj = Foo()
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; setattr(o, &#39;hello world&#39;, 1)
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; o.hello world
+</span></span><span class="line"><span class="cl">  File &#34;&lt;stdin&gt;&#34;, line 1
+</span></span><span class="line"><span class="cl">    o.hello world
+</span></span><span class="line"><span class="cl">                ^
+</span></span><span class="line"><span class="cl">SyntaxError: invalid syntax</span></span></code></pre></td></tr></table>
+</div>
+</div><p>不过，能用 <code>setattr</code> 设置属性，就可以用 <code>getattr</code> 取出</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; getattr(o, &#39;hello world&#39;)
+</span></span><span class="line"><span class="cl">1</span></span></code></pre></td></tr></table>
+</div>
+</div></div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="更新于 2018-05-24 11:10:00">更新于 2018-05-24&nbsp;</span>
+      </div><div class="post-info-license">
+            <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
+          </div></div><div class="post-info-line">
+        <div class="post-info-md"><span><a href="https://github.com/hugo-fixit/docs/blob/main/main/posts%5cpython%5cpython-hidden-feature.md?plain=1" title="查看源码"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-source">查看源码</a></span><span><a href="https://github.com/hugo-fixit/docs/edit/main/main/posts%5cpython%5cpython-hidden-feature.md" title="编辑此页"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-edit">编辑此页</a></span><span><a href="https://github.com/hugo-fixit/docs/issues/new?title=[BUG]%20Python%E4%B8%AD%E7%9A%8410%E4%B8%AA%E9%9A%90%E8%97%8F%E7%89%B9%E6%80%A7&amp;body=%7cField%7cValue%7c%0A%7c-%7c-%7c%0A%7cTitle%7cPython%E4%B8%AD%E7%9A%8410%E4%B8%AA%E9%9A%90%E8%97%8F%E7%89%B9%E6%80%A7%7c%0A%7cURL%7chttps://hellofinger.tech/2018/05/python-hidden-feature/%7c%0A%7cFilename%7chttps://github.com/hugo-fixit/docs/blob/main/main/posts%5cpython%5cpython-hidden-feature.md?plain=1%7c" title="报告问题"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-report">报告问题</a></span></div>
+        <div class="post-info-share">
+          <span><a href="javascript:void(0);" title="分享到 X" data-sharer="twitter" data-url="https://hellofinger.tech/2018/05/python-hidden-feature/" data-title="Python中的10个隐藏特性" data-hashtags="Python"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://hellofinger.tech/2018/05/python-hidden-feature/" data-hashtag="Python"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://hellofinger.tech/2018/05/python-hidden-feature/" data-title="Python中的10个隐藏特性"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+        </div>
+      </div></div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href="/tags/python/" class="post-tag" title="标签 - Python">Python</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+    </section>
+  </div><div class="post-nav"><a href="/2018/05/python3.6-cool-feature/" class="post-nav-item" rel="prev" title="Python3.6中那些很酷的特性"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>Python3.6中那些很酷的特性</a>
+      <a href="/2018/06/simple-bigdata-search-with-python/" class="post-nav-item" rel="next" title="用Python实现一个大数据搜索引擎">用Python实现一个大数据搜索引擎<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article>
+
+  <aside class="toc" id="toc-auto" aria-label="目录"><h2 class="toc-title">目录&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2017 - 2024</span><span class="author" itemprop="copyrightHolder">
+              <a href="/">Finger</a></span><span class="license footer-divider"><a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="回到顶部"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">该网站在启用 JavaScript 的情况下效果最佳。</div>
+  </noscript>
+</div><link rel="preload" href="/lib/katex/katex.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/katex/katex.min.css"></noscript><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script src="/lib/autocomplete/autocomplete.min.js" defer></script><script src="/lib/fuse/fuse.min.js" defer></script><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/copy-tex.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="/js/flyfish.js" defer></script><script>window.config={"code":{"copyTitle":"复制到剪贴板","editLockTitle":"锁定可编辑代码块","editUnLockTitle":"解锁可编辑代码块","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"同意","link":"了解更多","message":"本网站使用 Cookies 来改善您的浏览体验。"},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"distance":100,"findAllMatches":false,"highlightTag":"em","ignoreFieldNorm":false,"ignoreLocation":false,"isCaseSensitive":false,"location":0,"maxResultLength":10,"minMatchCharLength":2,"noResultsFound":"没有找到结果","snippetLength":30,"threshold":0.3,"useExtendedSearch":false},"version":"v0.3.10-c936e541"};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

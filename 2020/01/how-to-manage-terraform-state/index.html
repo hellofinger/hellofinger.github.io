@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>如何管理Terraform状态 - Finger&#39;s Blog</title><meta name="author" content="Finger">
+<meta name="author-link" content="">
+<meta name="description" content="一、Terraform 状态文件每次我们运行 Terraform 命令时，它都会在 Terraform 状态文件中记录关于它创建的基础设施的信息。默认情况下，会在您的当前工作目录下创建一个Terraform.tfstate文件。该文件内容是一个JSON字符串。它记录了从Terraform 模板资源定义到云平台实际资源的映射。
+例如：我们用 Terraform 模板定义一个EC2实例。
+1 2 3 4 5 6 7 8 9 resource &#34;aws_instance&#34; &#34;example&#34; { ami = &#34;ami-061eb2b23f9f8839c&#34; instance_type = &#34;t2.micro&#34; tags = { Name = &#34;Example by ChangSha DevOps Union&#34; Terraform = true } } 运行 Terraform apply 之后，查看Terraform.tfstate内容：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 &#34;instances&#34;: [ { &#34;index_key&#34;: 0, &#34;schema_version&#34;: 1, &#34;attributes&#34;: { &#34;ami&#34;: &#34;ami-061eb2b23f9f8839c&#34;, &#34;associate_public_ip_address&#34;: true, &#34;availability_zone&#34;: &#34;ap-southeast-1b&#34;, &#34;cpu_core_count&#34;: 1, &#34;cpu_threads_per_core&#34;: 1, &#34;id&#34;: &#34;i-088137f4282ab6167&#34;, &#34;instance_state&#34;: &#34;running&#34;, &#34;instance_type&#34;: &#34;t2." /><meta name="keywords" content='Terraform, IAC' />
+  <meta itemprop="name" content="如何管理Terraform状态">
+  <meta itemprop="description" content="一、Terraform 状态文件每次我们运行 Terraform 命令时，它都会在 Terraform 状态文件中记录关于它创建的基础设施的信息。默认情况下，会在您的当前工作目录下创建一个Terraform.tfstate文件。该文件内容是一个JSON字符串。它记录了从Terraform 模板资源定义到云平台实际资源的映射。
+例如：我们用 Terraform 模板定义一个EC2实例。
+1 2 3 4 5 6 7 8 9 resource &#34;aws_instance&#34; &#34;example&#34; { ami = &#34;ami-061eb2b23f9f8839c&#34; instance_type = &#34;t2.micro&#34; tags = { Name = &#34;Example by ChangSha DevOps Union&#34; Terraform = true } } 运行 Terraform apply 之后，查看Terraform.tfstate内容：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 &#34;instances&#34;: [ { &#34;index_key&#34;: 0, &#34;schema_version&#34;: 1, &#34;attributes&#34;: { &#34;ami&#34;: &#34;ami-061eb2b23f9f8839c&#34;, &#34;associate_public_ip_address&#34;: true, &#34;availability_zone&#34;: &#34;ap-southeast-1b&#34;, &#34;cpu_core_count&#34;: 1, &#34;cpu_threads_per_core&#34;: 1, &#34;id&#34;: &#34;i-088137f4282ab6167&#34;, &#34;instance_state&#34;: &#34;running&#34;, &#34;instance_type&#34;: &#34;t2.">
+  <meta itemprop="datePublished" content="2020-01-15T01:02:52+08:00">
+  <meta itemprop="dateModified" content="2020-01-15T01:02:52+08:00">
+  <meta itemprop="wordCount" content="415">
+  <meta itemprop="keywords" content="Terraform,IAC"><meta property="og:url" content="http://localhost:1313/2020/01/how-to-manage-terraform-state/">
+  <meta property="og:site_name" content="Finger&#39;s Blog">
+  <meta property="og:title" content="如何管理Terraform状态">
+  <meta property="og:description" content="一、Terraform 状态文件每次我们运行 Terraform 命令时，它都会在 Terraform 状态文件中记录关于它创建的基础设施的信息。默认情况下，会在您的当前工作目录下创建一个Terraform.tfstate文件。该文件内容是一个JSON字符串。它记录了从Terraform 模板资源定义到云平台实际资源的映射。
+例如：我们用 Terraform 模板定义一个EC2实例。
+1 2 3 4 5 6 7 8 9 resource &#34;aws_instance&#34; &#34;example&#34; { ami = &#34;ami-061eb2b23f9f8839c&#34; instance_type = &#34;t2.micro&#34; tags = { Name = &#34;Example by ChangSha DevOps Union&#34; Terraform = true } } 运行 Terraform apply 之后，查看Terraform.tfstate内容：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 &#34;instances&#34;: [ { &#34;index_key&#34;: 0, &#34;schema_version&#34;: 1, &#34;attributes&#34;: { &#34;ami&#34;: &#34;ami-061eb2b23f9f8839c&#34;, &#34;associate_public_ip_address&#34;: true, &#34;availability_zone&#34;: &#34;ap-southeast-1b&#34;, &#34;cpu_core_count&#34;: 1, &#34;cpu_threads_per_core&#34;: 1, &#34;id&#34;: &#34;i-088137f4282ab6167&#34;, &#34;instance_state&#34;: &#34;running&#34;, &#34;instance_type&#34;: &#34;t2.">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2020-01-15T01:02:52+08:00">
+    <meta property="article:modified_time" content="2020-01-15T01:02:52+08:00">
+    <meta property="article:tag" content="Terraform">
+    <meta property="article:tag" content="IAC">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="如何管理Terraform状态">
+  <meta name="twitter:description" content="一、Terraform 状态文件每次我们运行 Terraform 命令时，它都会在 Terraform 状态文件中记录关于它创建的基础设施的信息。默认情况下，会在您的当前工作目录下创建一个Terraform.tfstate文件。该文件内容是一个JSON字符串。它记录了从Terraform 模板资源定义到云平台实际资源的映射。
+例如：我们用 Terraform 模板定义一个EC2实例。
+1 2 3 4 5 6 7 8 9 resource &#34;aws_instance&#34; &#34;example&#34; { ami = &#34;ami-061eb2b23f9f8839c&#34; instance_type = &#34;t2.micro&#34; tags = { Name = &#34;Example by ChangSha DevOps Union&#34; Terraform = true } } 运行 Terraform apply 之后，查看Terraform.tfstate内容：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 &#34;instances&#34;: [ { &#34;index_key&#34;: 0, &#34;schema_version&#34;: 1, &#34;attributes&#34;: { &#34;ami&#34;: &#34;ami-061eb2b23f9f8839c&#34;, &#34;associate_public_ip_address&#34;: true, &#34;availability_zone&#34;: &#34;ap-southeast-1b&#34;, &#34;cpu_core_count&#34;: 1, &#34;cpu_threads_per_core&#34;: 1, &#34;id&#34;: &#34;i-088137f4282ab6167&#34;, &#34;instance_state&#34;: &#34;running&#34;, &#34;instance_type&#34;: &#34;t2.">
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="http://localhost:1313/2020/01/how-to-manage-terraform-state/" /><link rel="prev" href="http://localhost:1313/2020/01/what-is-terraform/" /><link rel="next" href="http://localhost:1313/2020/02/terraform-basic/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "如何管理Terraform状态",
+    "inLanguage": "zh-CN",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "http:\/\/localhost:1313\/2020\/01\/how-to-manage-terraform-state\/"
+    },"genre": "posts","keywords": "Terraform, IAC","wordcount":  415 ,
+    "url": "http:\/\/localhost:1313\/2020\/01\/how-to-manage-terraform-state\/","datePublished": "2020-01-15T01:02:52+08:00","dateModified": "2020-01-15T01:02:52+08:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Finger"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/about/"
+                
+                
+              ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item delimiter"></li><li class="menu-item search" id="search-desktop">
+            <input type="text" placeholder="搜索文章标题或内容……" id="search-input-desktop">
+            <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+              <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+            </a>
+            <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+              <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+            </a>
+            <span class="search-button search-loading" id="search-loading-desktop">
+              <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+            </span>
+          </li><li class="menu-item theme-switch" title="切换主题">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li class="search-wrapper">
+            <div class="search mobile" id="search-mobile">
+              <input type="text" placeholder="搜索文章标题或内容……" id="search-input-mobile">
+              <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+              </a>
+              <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+              </a>
+              <span class="search-button search-loading" id="search-loading-mobile">
+                <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+              </span>
+            </div>
+            <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+              取消
+            </a>
+          </li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/about/"
+                  
+                  
+                ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="切换主题"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+  </div>
+  <div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+  </div><main class="container"><aside class="aside-collection animate__animated animate__fadeIn animate__faster" aria-label="合集"></aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>如何管理Terraform状态</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><span class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+      Finger</span></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/iac/" class="post-category" title="分类 - IAC"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> IAC</a></span></div><div class="post-meta-line"><span title="发布于 2020-01-15 01:02:52"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2020-01-15">2020-01-15</time></span>&nbsp;<span title="415 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 500 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 2 分钟</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>目录</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#一terraform-状态文件">一、Terraform 状态文件</a></li>
+    <li><a href="#二terraform-状态文件存储">二、Terraform 状态文件存储</a>
+      <ul>
+        <li><a href="#21共享状态文件">2.1、共享状态文件</a></li>
+        <li><a href="#22锁定状态文件">2.2、锁定状态文件</a></li>
+        <li><a href="#23隔离状态文件">2.3、隔离状态文件</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><h2 id="一terraform-状态文件" class="heading-element"><span>一、Terraform 状态文件</span>
+  <a href="#%e4%b8%80terraform-%e7%8a%b6%e6%80%81%e6%96%87%e4%bb%b6" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>每次我们运行 Terraform 命令时，它都会在 Terraform 状态文件中记录关于它创建的基础设施的信息。默认情况下，会在您的当前工作目录下创建一个Terraform.tfstate文件。该文件内容是一个JSON字符串。它记录了从Terraform 模板资源定义到云平台实际资源的映射。</p>
+<p>例如：我们用 Terraform 模板定义一个EC2实例。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">resource <span class="s2">&#34;aws_instance&#34;</span> <span class="s2">&#34;example&#34;</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">ami</span>           <span class="o">=</span> <span class="s2">&#34;ami-061eb2b23f9f8839c&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">instance_type</span> <span class="o">=</span> <span class="s2">&#34;t2.micro&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nv">tags</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">Name</span> <span class="o">=</span> <span class="s2">&#34;Example by ChangSha DevOps Union&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">Terraform</span> <span class="o">=</span> <span class="nb">true</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>运行 Terraform apply 之后，查看Terraform.tfstate内容：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"> <span class="s2">&#34;instances&#34;</span>: <span class="o">[</span>
+</span></span><span class="line"><span class="cl">  <span class="o">{</span>
+</span></span><span class="line"><span class="cl">     <span class="s2">&#34;index_key&#34;</span>: 0,
+</span></span><span class="line"><span class="cl">     <span class="s2">&#34;schema_version&#34;</span>: 1,
+</span></span><span class="line"><span class="cl">     <span class="s2">&#34;attributes&#34;</span>: <span class="o">{</span>
+</span></span><span class="line"><span class="cl">         <span class="s2">&#34;ami&#34;</span>: <span class="s2">&#34;ami-061eb2b23f9f8839c&#34;</span>,
+</span></span><span class="line"><span class="cl">         <span class="s2">&#34;associate_public_ip_address&#34;</span>: true,
+</span></span><span class="line"><span class="cl">         <span class="s2">&#34;availability_zone&#34;</span>: <span class="s2">&#34;ap-southeast-1b&#34;</span>,
+</span></span><span class="line"><span class="cl">         <span class="s2">&#34;cpu_core_count&#34;</span>: 1,
+</span></span><span class="line"><span class="cl">         <span class="s2">&#34;cpu_threads_per_core&#34;</span>: 1,
+</span></span><span class="line"><span class="cl">         <span class="s2">&#34;id&#34;</span>: <span class="s2">&#34;i-088137f4282ab6167&#34;</span>,
+</span></span><span class="line"><span class="cl">         <span class="s2">&#34;instance_state&#34;</span>: <span class="s2">&#34;running&#34;</span>,
+</span></span><span class="line"><span class="cl">         <span class="s2">&#34;instance_type&#34;</span>: <span class="s2">&#34;t2.micro&#34;</span>
+</span></span><span class="line"><span class="cl">         ...
+</span></span><span class="line"><span class="cl">     <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}]</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>我们可以很清晰的从这个JSON字符串中了解到实际创建EC2的详细信息。例如：&ldquo;id&rdquo; : &ldquo;i-088137f4282ab6167&rdquo;。Terraform 在AWS创建了实例ID为 i-088137f4282ab6167 的EC2虚拟机，它的实例类型是 t2.micro(1 vCPUs，1g RAM)。</p>
+<p>每次运行 Terraform命令，它会从AWS获取到到EC2的最新信息。并将其与 Terraform模板定义内容进行比较。以确定是否需要更改。如果有更改执行apply plan命令会进行高亮显示。执行 Terraform apply则会将更改生效。</p>
+<h2 id="二terraform-状态文件存储" class="heading-element"><span>二、Terraform 状态文件存储</span>
+  <a href="#%e4%ba%8cterraform-%e7%8a%b6%e6%80%81%e6%96%87%e4%bb%b6%e5%ad%98%e5%82%a8" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>如果只是你一个人使用Terraform，可以将状态文件存在本地。但是如果是一个团队使用Terraform。你需要考虑以下几个问题：</p>
+<p>1、如何共享状态</p>
+<p>团队成员维护同一个基础设施资源。每个成员都可能需要更新基础设施。那么必定需要访问相同的 Terraform状态文件。否则会以每个成员的Terraform模板创建各自的资源，产生多份状态文件。</p>
+<p>2、如何锁定状态文件</p>
+<p>一旦状态文件被共享，如果团队中多个成员同时运行Terraform。就会遇到指令竞争。因为多个Terraform命令会对状态文件进行并发更新。从而导致冲突，造成数据丢失和状态文件损坏。</p>
+<p>3、如何隔离状态文件</p>
+<p>我们可能有多个基础设施环境(dev/stg/prod)。如果在同一个环境构建基础设施，由于人为的失误删除了状态文件或者Terraform的一个罕见Bug，造成Terraform状态文件损坏。则会给线上环境造成不可挽救的破坏。</p>
+<p>接下来，我们将深入讨论这些问题，并展示 Terraform提供的解决办法。</p>
+<h3 id="21共享状态文件" class="heading-element"><span>2.1、共享状态文件</span>
+  <a href="#21%e5%85%b1%e4%ba%ab%e7%8a%b6%e6%80%81%e6%96%87%e4%bb%b6" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>共享状态文件，最常见的做法就是使用Git进行版本控制，但是这样做还是会有以下问题：
+1、团队成员本地很难同时保存最新的Terraform模板和状态文件，如果其中一个成员忘记Pull最新的更改或者运行了Terraform命令，忘记Push最新的状态文件到版本控制，都会造成资源混乱。</p>
+<p>2、状态文件包含敏感信息。Terraform构建资源，可能需要存放敏感数据。例如创建数据库，会将数据库用户名和密码以明文存在状态文件。</p>
+<p><img loading="lazy" src="imgs/terraform-s3.png" alt="imgs/terraform-s3.png" srcset="imgs/terraform-s3.png?size=small, imgs/terraform-s3.png?size=medium 1.5x, imgs/terraform-s3.png?size=large 2x" data-title="imgs/terraform-s3.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p>关于共享状态文件，Terraform提供了对远程状态存储的支持。如：Amazon S3。
+Amazon S3存储支持版本控制，回滚，文件加密，而且还便宜。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-terraform" data-lang="terraform"><span class="line"><span class="cl"><span class="kr">resource</span> <span class="s2">&#34;aws_s3_bucket&#34;</span> <span class="s2">&#34;terraform_state&#34;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="na">bucket</span> = <span class="s2">&#34;terraform-state-store&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">versioning</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="na">enabled</span> = <span class="kc">true</span> 
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">lifecycle</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="na">prevent_destroy</span> = <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="na">tags</span> = <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="na">Name</span> = <span class="s2">&#34;S3 Remote Terraform State Store&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-terraform" data-lang="terraform"><span class="line"><span class="cl"><span class="nx">terraform</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">backend</span> <span class="s2">&#34;s3&#34;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="na">bucket</span>          = <span class="s2">&#34;terraform-state-store&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="na">key</span>             = <span class="s2">&#34;example/terraform.tfstate&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="na">region</span>          = <span class="s2">&#34;ap-southeast-1&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="na">encrypt</span>         = <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img loading="lazy" src="imgs/aws-s3-state.png" alt="imgs/aws-s3-state.png" srcset="imgs/aws-s3-state.png?size=small, imgs/aws-s3-state.png?size=medium 1.5x, imgs/aws-s3-state.png?size=large 2x" data-title="imgs/aws-s3-state.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<h3 id="22锁定状态文件" class="heading-element"><span>2.2、锁定状态文件</span>
+  <a href="#22%e9%94%81%e5%ae%9a%e7%8a%b6%e6%80%81%e6%96%87%e4%bb%b6" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>使用远程状态存储(S3)可以解决多人共享状态文件的问题，但还是存在：
+多人协作时在同一个状态文件同时执行terraform命令，产生指令竞争的情况。</p>
+<p>Terraform支持Amazon DynamoDB锁定状态。DynamoDB会将Terraform状态存储路径和文件名称作为唯一主键ID进行锁定。每次在执行Terraform Apply 命令之前先从DynamoDB获取锁，执行完之后释放锁。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-terraform" data-lang="terraform"><span class="line"><span class="cl"><span class="nx">terraform</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">backend</span> <span class="s2">&#34;s3&#34;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="na">bucket</span>          = <span class="s2">&#34;terraform-state-store&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="na">key</span>             = <span class="s2">&#34;example/terraform.tfstate&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="na">region</span>          = <span class="s2">&#34;ap-southeast-1&#34;</span>
+</span></span><span class="line"><span class="cl">		<span class="na">encrypt</span>         = <span class="kc">true</span><span class="c1">
+</span></span></span><span class="line"><span class="cl"><span class="c1">		
+</span></span></span><span class="line"><span class="cl"><span class="c1">		# 使用DynamoDB锁定状态
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="na">dynamodb_table</span>  = <span class="s2">&#34;dev-terraform-state-lock&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img loading="lazy" src="imgs/terraform-lock.png" alt="imgs/terraform-lock.png" srcset="imgs/terraform-lock.png?size=small, imgs/terraform-lock.png?size=medium 1.5x, imgs/terraform-lock.png?size=large 2x" data-title="imgs/terraform-lock.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p><img loading="lazy" src="imgs/aws-dynamodb-lock.png" alt="imgs/aws-dynamodb-lock.png" srcset="imgs/aws-dynamodb-lock.png?size=small, imgs/aws-dynamodb-lock.png?size=medium 1.5x, imgs/aws-dynamodb-lock.png?size=large 2x" data-title="imgs/aws-dynamodb-lock.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<h3 id="23隔离状态文件" class="heading-element"><span>2.3、隔离状态文件</span>
+  <a href="#23%e9%9a%94%e7%a6%bb%e7%8a%b6%e6%80%81%e6%96%87%e4%bb%b6" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>通过共享状态文件存储和状态文件锁定，多人协作不再是问题。但是，仍然存在另一个问题：环境隔离。你在dev环境做测试，但是不小心中断了操作或者Terraform某个Bug，损坏了状态文件。这将导致prod环境受到影响。</p>
+<p>有两种方法可以隔离状态文件：
+1、通过工作空间隔离
+2、通过文件布局隔离</p>
+<h4 id="231通过工作空间隔离" class="heading-element"><span>2.3.1、通过工作空间隔离</span>
+  <a href="#231%e9%80%9a%e8%bf%87%e5%b7%a5%e4%bd%9c%e7%a9%ba%e9%97%b4%e9%9a%94%e7%a6%bb" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p>Terraform默认工作空间为：default</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ terraform workspace show
+</span></span><span class="line"><span class="cl">default</span></span></code></pre></td></tr></table>
+</div>
+</div><p>创建新的工作空间：dev 和 prod</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ terraform workspace new dev
+</span></span><span class="line"><span class="cl">Created and switched to workspace &#34;dev&#34;!
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">You&#39;re now on a new, empty workspace. Workspaces isolate their state,
+</span></span><span class="line"><span class="cl">so if you run &#34;terraform plan&#34; Terraform will not see any existing state
+</span></span><span class="line"><span class="cl">for this configuration.</span></span></code></pre></td></tr></table>
+</div>
+</div><p>S3存储桶将会创建名为 env：的文件夹。env：文件夹里会分别创建dev和prod子目录</p>
+<p><img loading="lazy" src="imgs/terraform-workspace.png" alt="imgs/terraform-workspace.png" srcset="imgs/terraform-workspace.png?size=small, imgs/terraform-workspace.png?size=medium 1.5x, imgs/terraform-workspace.png?size=large 2x" data-title="imgs/terraform-workspace.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p><img loading="lazy" src="imgs/terraform-workspace2.png" alt="imgs/terraform-workspace2.png" srcset="imgs/terraform-workspace2.png?size=small, imgs/terraform-workspace2.png?size=medium 1.5x, imgs/terraform-workspace2.png?size=large 2x" data-title="imgs/terraform-workspace2.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p>查询所有的工作空间</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ terraform workspace list
+</span></span><span class="line"><span class="cl">  default
+</span></span><span class="line"><span class="cl">  dev
+</span></span><span class="line"><span class="cl">* prod</span></span></code></pre></td></tr></table>
+</div>
+</div><p>通过 workspace select 命令来切换当前工作空间</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ terraform workspace <span class="k">select</span> dev
+</span></span><span class="line"><span class="cl">Switched to workspace <span class="s2">&#34;dev&#34;</span>.
+</span></span><span class="line"><span class="cl">$ terraform workspace list
+</span></span><span class="line"><span class="cl">  default
+</span></span><span class="line"><span class="cl">* dev
+</span></span><span class="line"><span class="cl">  prod</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="232通过文件布局隔离" class="heading-element"><span>2.3.2、通过文件布局隔离</span>
+  <a href="#232%e9%80%9a%e8%bf%87%e6%96%87%e4%bb%b6%e5%b8%83%e5%b1%80%e9%9a%94%e7%a6%bb" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">.
+</span></span><span class="line"><span class="cl">├── dev
+</span></span><span class="line"><span class="cl">│   ├── ec2
+</span></span><span class="line"><span class="cl">│   │   ├── main.tf
+</span></span><span class="line"><span class="cl">│   │   ├── outputs.tf
+</span></span><span class="line"><span class="cl">│   │   └── variables.tf
+</span></span><span class="line"><span class="cl">│   └── vpc
+</span></span><span class="line"><span class="cl">│       ├── main.tf
+</span></span><span class="line"><span class="cl">│       ├── outputs.tf
+</span></span><span class="line"><span class="cl">│       └── variables.tf
+</span></span><span class="line"><span class="cl">├── prod
+</span></span><span class="line"><span class="cl">│   ├── data-storage
+</span></span><span class="line"><span class="cl">│   │   ├── mysql
+</span></span><span class="line"><span class="cl">│   │   └── redis
+</span></span><span class="line"><span class="cl">│   ├── ec2
+</span></span><span class="line"><span class="cl">│   └── vpc
+</span></span><span class="line"><span class="cl">└── stg</span></span></code></pre></td></tr></table>
+</div>
+</div></div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="更新于 2020-01-15 01:02:52">更新于 2020-01-15&nbsp;</span>
+      </div><div class="post-info-license">
+            <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
+          </div></div><div class="post-info-line">
+        <div class="post-info-md"><span><a href="https://github.com/hugo-fixit/docs/blob/main/main/posts%5cterraform%5c03%20%e5%a6%82%e4%bd%95%e7%ae%a1%e7%90%86Terraform%e7%8a%b6%e6%80%81%5cindex.md?plain=1" title="查看源码"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-source">查看源码</a></span><span><a href="https://github.com/hugo-fixit/docs/edit/main/main/posts%5cterraform%5c03%20%e5%a6%82%e4%bd%95%e7%ae%a1%e7%90%86Terraform%e7%8a%b6%e6%80%81%5cindex.md" title="编辑此页"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-edit">编辑此页</a></span><span><a href="https://github.com/hugo-fixit/docs/issues/new?title=[BUG]%20%E5%A6%82%E4%BD%95%E7%AE%A1%E7%90%86Terraform%E7%8A%B6%E6%80%81&amp;body=%7cField%7cValue%7c%0A%7c-%7c-%7c%0A%7cTitle%7c%E5%A6%82%E4%BD%95%E7%AE%A1%E7%90%86Terraform%E7%8A%B6%E6%80%81%7c%0A%7cURL%7chttp://localhost:1313/2020/01/how-to-manage-terraform-state/%7c%0A%7cFilename%7chttps://github.com/hugo-fixit/docs/blob/main/main/posts%5cterraform%5c03%20%e5%a6%82%e4%bd%95%e7%ae%a1%e7%90%86Terraform%e7%8a%b6%e6%80%81%5cindex.md?plain=1%7c" title="报告问题"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-report">报告问题</a></span></div>
+        <div class="post-info-share">
+          <span><a href="javascript:void(0);" title="分享到 X" data-sharer="twitter" data-url="http://localhost:1313/2020/01/how-to-manage-terraform-state/" data-title="如何管理Terraform状态" data-hashtags="Terraform,IAC"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="http://localhost:1313/2020/01/how-to-manage-terraform-state/" data-hashtag="Terraform"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="http://localhost:1313/2020/01/how-to-manage-terraform-state/" data-title="如何管理Terraform状态"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+        </div>
+      </div></div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href="/tags/terraform/" class="post-tag" title="标签 - Terraform">Terraform</a><a href="/tags/iac/" class="post-tag" title="标签 - IAC">IAC</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+    </section>
+  </div><div class="post-nav"><a href="/2020/01/what-is-terraform/" class="post-nav-item" rel="prev" title="Terraform 是什么？"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>Terraform 是什么？</a>
+      <a href="/2020/02/terraform-basic/" class="post-nav-item" rel="next" title="Terraform的基本语法">Terraform的基本语法<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article>
+
+  <aside class="toc" id="toc-auto" aria-label="目录"><h2 class="toc-title">目录&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2017 - 2024</span><span class="author" itemprop="copyrightHolder">
+              <a href="/">Finger</a></span><span class="license footer-divider"><a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="回到顶部"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">该网站在启用 JavaScript 的情况下效果最佳。</div>
+  </noscript>
+</div><link rel="preload" href="/lib/katex/katex.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/katex/katex.min.css"></noscript><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script src="/lib/autocomplete/autocomplete.min.js" defer></script><script src="/lib/fuse/fuse.min.js" defer></script><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/copy-tex.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="/js/flyfish.js" defer></script><script>window.config={"code":{"copyTitle":"复制到剪贴板","editLockTitle":"锁定可编辑代码块","editUnLockTitle":"解锁可编辑代码块","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"同意","link":"了解更多","message":"本网站使用 Cookies 来改善您的浏览体验。"},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"distance":100,"findAllMatches":false,"highlightTag":"em","ignoreFieldNorm":false,"ignoreLocation":false,"isCaseSensitive":false,"location":0,"maxResultLength":10,"minMatchCharLength":2,"noResultsFound":"没有找到结果","snippetLength":30,"threshold":0.3,"useExtendedSearch":false},"version":"v0.3.10-c936e541"};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

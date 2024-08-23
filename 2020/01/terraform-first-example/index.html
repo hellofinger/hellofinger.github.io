@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>Terraform，从一个简单的例子开始 - Finger&#39;s Blog</title><meta name="author" content="Finger">
+<meta name="author-link" content="">
+<meta name="description" content="安装Terraform1 2 3 4 5 # Step1, 下载适合您系统的Terraform安装包 wget https://releases.hashicorp.com/terraform/0.12.18/terraform_0.12.18_linux_amd64.zip # Step2, 解压该包，是一个名为terraform的二进制文件，可以在当前目录直接运行命令: terraform 1 2 # Step3, 将terraform加到环境变量。 export PATH=$PATH:/home/ubuntu/terraform:$PATH 1 2 $ terraform version Terraform v0.12.18 编写第一个Terraform例子我们在aws的新加坡(ap-southeast-1)区域创建一台实例类型为t2.micro的EC2，并标记一下Tag。
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 # main.tf provider &#34;aws&#34; { region = &#34;ap-southeast-1&#34; } resource &#34;aws_instance&#34; &#34;example-instance&#34; { ami = &#34;ami-061eb2b23f9f8839c&#34; instance_type = &#34;t2.micro&#34; tags = { Name = &#34;Example by ChangSha DevOps Union &#34; Terraform = true } } 1 2 3 4 5 6 ~/terraform-guide/example1$ tree ." /><meta name="keywords" content='Terraform, IAC' />
+  <meta itemprop="name" content="Terraform，从一个简单的例子开始">
+  <meta itemprop="description" content="安装Terraform1 2 3 4 5 # Step1, 下载适合您系统的Terraform安装包 wget https://releases.hashicorp.com/terraform/0.12.18/terraform_0.12.18_linux_amd64.zip # Step2, 解压该包，是一个名为terraform的二进制文件，可以在当前目录直接运行命令: terraform 1 2 # Step3, 将terraform加到环境变量。 export PATH=$PATH:/home/ubuntu/terraform:$PATH 1 2 $ terraform version Terraform v0.12.18 编写第一个Terraform例子我们在aws的新加坡(ap-southeast-1)区域创建一台实例类型为t2.micro的EC2，并标记一下Tag。
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 # main.tf provider &#34;aws&#34; { region = &#34;ap-southeast-1&#34; } resource &#34;aws_instance&#34; &#34;example-instance&#34; { ami = &#34;ami-061eb2b23f9f8839c&#34; instance_type = &#34;t2.micro&#34; tags = { Name = &#34;Example by ChangSha DevOps Union &#34; Terraform = true } } 1 2 3 4 5 6 ~/terraform-guide/example1$ tree .">
+  <meta itemprop="datePublished" content="2020-01-04T11:44:52+08:00">
+  <meta itemprop="dateModified" content="2020-01-04T11:44:52+08:00">
+  <meta itemprop="wordCount" content="164">
+  <meta itemprop="keywords" content="Terraform,IAC"><meta property="og:url" content="https://hellofinger.tech/2020/01/terraform-first-example/">
+  <meta property="og:site_name" content="Finger&#39;s Blog">
+  <meta property="og:title" content="Terraform，从一个简单的例子开始">
+  <meta property="og:description" content="安装Terraform1 2 3 4 5 # Step1, 下载适合您系统的Terraform安装包 wget https://releases.hashicorp.com/terraform/0.12.18/terraform_0.12.18_linux_amd64.zip # Step2, 解压该包，是一个名为terraform的二进制文件，可以在当前目录直接运行命令: terraform 1 2 # Step3, 将terraform加到环境变量。 export PATH=$PATH:/home/ubuntu/terraform:$PATH 1 2 $ terraform version Terraform v0.12.18 编写第一个Terraform例子我们在aws的新加坡(ap-southeast-1)区域创建一台实例类型为t2.micro的EC2，并标记一下Tag。
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 # main.tf provider &#34;aws&#34; { region = &#34;ap-southeast-1&#34; } resource &#34;aws_instance&#34; &#34;example-instance&#34; { ami = &#34;ami-061eb2b23f9f8839c&#34; instance_type = &#34;t2.micro&#34; tags = { Name = &#34;Example by ChangSha DevOps Union &#34; Terraform = true } } 1 2 3 4 5 6 ~/terraform-guide/example1$ tree .">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2020-01-04T11:44:52+08:00">
+    <meta property="article:modified_time" content="2020-01-04T11:44:52+08:00">
+    <meta property="article:tag" content="Terraform">
+    <meta property="article:tag" content="IAC">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Terraform，从一个简单的例子开始">
+  <meta name="twitter:description" content="安装Terraform1 2 3 4 5 # Step1, 下载适合您系统的Terraform安装包 wget https://releases.hashicorp.com/terraform/0.12.18/terraform_0.12.18_linux_amd64.zip # Step2, 解压该包，是一个名为terraform的二进制文件，可以在当前目录直接运行命令: terraform 1 2 # Step3, 将terraform加到环境变量。 export PATH=$PATH:/home/ubuntu/terraform:$PATH 1 2 $ terraform version Terraform v0.12.18 编写第一个Terraform例子我们在aws的新加坡(ap-southeast-1)区域创建一台实例类型为t2.micro的EC2，并标记一下Tag。
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 # main.tf provider &#34;aws&#34; { region = &#34;ap-southeast-1&#34; } resource &#34;aws_instance&#34; &#34;example-instance&#34; { ami = &#34;ami-061eb2b23f9f8839c&#34; instance_type = &#34;t2.micro&#34; tags = { Name = &#34;Example by ChangSha DevOps Union &#34; Terraform = true } } 1 2 3 4 5 6 ~/terraform-guide/example1$ tree .">
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://hellofinger.tech/2020/01/terraform-first-example/" /><link rel="prev" href="https://hellofinger.tech/2019/11/influxdb-basic/" /><link rel="next" href="https://hellofinger.tech/2020/01/what-is-terraform/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Terraform，从一个简单的例子开始",
+    "inLanguage": "zh-CN",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/hellofinger.tech\/2020\/01\/terraform-first-example\/"
+    },"genre": "posts","keywords": "Terraform, IAC","wordcount":  164 ,
+    "url": "https:\/\/hellofinger.tech\/2020\/01\/terraform-first-example\/","datePublished": "2020-01-04T11:44:52+08:00","dateModified": "2020-01-04T11:44:52+08:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Finger"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/about/"
+                
+                
+              ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item delimiter"></li><li class="menu-item search" id="search-desktop">
+            <input type="text" placeholder="搜索文章标题或内容……" id="search-input-desktop">
+            <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+              <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+            </a>
+            <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+              <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+            </a>
+            <span class="search-button search-loading" id="search-loading-desktop">
+              <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+            </span>
+          </li><li class="menu-item theme-switch" title="切换主题">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li class="search-wrapper">
+            <div class="search mobile" id="search-mobile">
+              <input type="text" placeholder="搜索文章标题或内容……" id="search-input-mobile">
+              <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+              </a>
+              <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+              </a>
+              <span class="search-button search-loading" id="search-loading-mobile">
+                <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+              </span>
+            </div>
+            <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+              取消
+            </a>
+          </li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/about/"
+                  
+                  
+                ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="切换主题"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+  </div>
+  <div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+  </div><main class="container"><aside class="aside-collection animate__animated animate__fadeIn animate__faster" aria-label="合集"></aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>Terraform，从一个简单的例子开始</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><span class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+      Finger</span></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/iac/" class="post-category" title="分类 - IAC"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> IAC</a></span></div><div class="post-meta-line"><span title="发布于 2020-01-04 11:44:52"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2020-01-04">2020-01-04</time></span>&nbsp;<span title="164 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 200 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 1 分钟</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>目录</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#安装terraform">安装Terraform</a></li>
+    <li><a href="#编写第一个terraform例子">编写第一个Terraform例子</a></li>
+    <li><a href="#执行terraform命令">执行Terraform命令</a></li>
+    <li><a href="#总结">总结</a></li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><h2 id="安装terraform" class="heading-element"><span>安装Terraform</span>
+  <a href="#%e5%ae%89%e8%a3%85terraform" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># Step1, 下载适合您系统的Terraform安装包</span>
+</span></span><span class="line"><span class="cl">wget https://releases.hashicorp.com/terraform/0.12.18/terraform_0.12.18_linux_amd64.zip
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Step2, 解压该包，是一个名为terraform的二进制文件，可以在当前目录直接运行命令: </span>
+</span></span><span class="line"><span class="cl">terraform</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img loading="lazy" src="imgs/terraform-install.png" alt="imgs/terraform-install.png" srcset="imgs/terraform-install.png?size=small, imgs/terraform-install.png?size=medium 1.5x, imgs/terraform-install.png?size=large 2x" data-title="imgs/terraform-install.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># Step3, 将terraform加到环境变量。</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span>:/home/ubuntu/terraform:<span class="nv">$PATH</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ terraform version
+</span></span><span class="line"><span class="cl">Terraform v0.12.18</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="编写第一个terraform例子" class="heading-element"><span>编写第一个Terraform例子</span>
+  <a href="#%e7%bc%96%e5%86%99%e7%ac%ac%e4%b8%80%e4%b8%aaterraform%e4%be%8b%e5%ad%90" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>我们在aws的新加坡(ap-southeast-1)区域创建一台实例类型为t2.micro的EC2，并标记一下Tag。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-terraform" data-lang="terraform"><span class="line"><span class="cl"><span class="c1"># main.tf
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kr">provider</span> <span class="s2">&#34;aws&#34;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="na">region</span> = <span class="s2">&#34;ap-southeast-1&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kr">
+</span></span></span><span class="line"><span class="cl"><span class="kr">
+</span></span></span><span class="line"><span class="cl"><span class="kr">resource</span> <span class="s2">&#34;aws_instance&#34;</span> <span class="s2">&#34;example-instance&#34;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="na">ami</span>           = <span class="s2">&#34;ami-061eb2b23f9f8839c&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="na">instance_type</span> = <span class="s2">&#34;t2.micro&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="na">tags</span> = <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="na">Name</span> = <span class="s2">&#34;Example by ChangSha DevOps Union &#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="na">Terraform</span> = <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">~/terraform-guide/example1$ tree
+</span></span><span class="line"><span class="cl">.
+</span></span><span class="line"><span class="cl">└── main.tf
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">0 directories, 1 file</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="执行terraform命令" class="heading-element"><span>执行Terraform命令</span>
+  <a href="#%e6%89%a7%e8%a1%8cterraform%e5%91%bd%e4%bb%a4" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">terraform init								</span></span></code></pre></td></tr></table>
+</div>
+</div><p>init 命令会初始化当前目录为执行目录。terraform因此会解析该目录下的*.tf后缀的文件，并会在该目录下生成 <code>.terraform</code>的隐藏目录。并在该隐藏目录下载相关插件。</p>
+<p><img loading="lazy" src="imgs/terraform-init.png" alt="imgs/terraform-init.png" srcset="imgs/terraform-init.png?size=small, imgs/terraform-init.png?size=medium 1.5x, imgs/terraform-init.png?size=large 2x" data-title="imgs/terraform-init.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">terraform plan</span></span></code></pre></td></tr></table>
+</div>
+</div><p>plan 命令用于对terraform定义的资源预览。如果当前目录以及存在对应的state文件，那么将会以最新terraform脚本定义与state文件内容进行比较。如果存在变更，则会高亮显示出来。</p>
+<p><img loading="lazy" src="imgs/terraform-plan.png" alt="imgs/terraform-plan.png" srcset="imgs/terraform-plan.png?size=small, imgs/terraform-plan.png?size=medium 1.5x, imgs/terraform-plan.png?size=large 2x" data-title="imgs/terraform-plan.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p><img loading="lazy" src="imgs/terraform-plan2.png" alt="imgs/terraform-plan2.png" srcset="imgs/terraform-plan2.png?size=small, imgs/terraform-plan2.png?size=medium 1.5x, imgs/terraform-plan2.png?size=large 2x" data-title="imgs/terraform-plan2.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p><img loading="lazy" src="imgs/terraform-plan3.png" alt="imgs/terraform-plan3.png" srcset="imgs/terraform-plan3.png?size=small, imgs/terraform-plan3.png?size=medium 1.5x, imgs/terraform-plan3.png?size=large 2x" data-title="imgs/terraform-plan3.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">terraform apply </span></span></code></pre></td></tr></table>
+</div>
+</div><p>apply 命令用于实际资源的新建和变更操作，为了安全起见，该命令在运行过程中有二次确认，输入yes才会继续。当然也可以增加参数 &ndash;auto-approve来跳过二次确认。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">terraform apply --auto-approve</span></span></code></pre></td></tr></table>
+</div>
+</div><p>apply 命令成功后会在当前目录生成 terraform.tfstate 文件。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">~/terraform-guide/example1$ tree
+</span></span><span class="line"><span class="cl">.
+</span></span><span class="line"><span class="cl">├── main.tf
+</span></span><span class="line"><span class="cl">├── terraform.tfstate
+</span></span><span class="line"><span class="cl">└── terraform.tfstate.backup
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">0 directories, 3 files</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img loading="lazy" src="imgs/terraform-apply.png" alt="imgs/terraform-apply.png" srcset="imgs/terraform-apply.png?size=small, imgs/terraform-apply.png?size=medium 1.5x, imgs/terraform-apply.png?size=large 2x" data-title="imgs/terraform-apply.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p><img loading="lazy" src="imgs/terraform-appy2.png" alt="imgs/terraform-appy2.png" srcset="imgs/terraform-appy2.png?size=small, imgs/terraform-appy2.png?size=medium 1.5x, imgs/terraform-appy2.png?size=large 2x" data-title="imgs/terraform-appy2.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p>登录AWS Consle上我们看到新建的EC2 Instance以及附加的Tag信息。</p>
+<p><img loading="lazy" src="imgs/terraform-apply3.png" alt="imgs/terraform-apply3.png" srcset="imgs/terraform-apply3.png?size=small, imgs/terraform-apply3.png?size=medium 1.5x, imgs/terraform-apply3.png?size=large 2x" data-title="imgs/terraform-apply3.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p><img loading="lazy" src="imgs/terraform-apply4.png" alt="imgs/terraform-apply4.png" srcset="imgs/terraform-apply4.png?size=small, imgs/terraform-apply4.png?size=medium 1.5x, imgs/terraform-apply4.png?size=large 2x" data-title="imgs/terraform-apply4.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">terraform destroy</span></span></code></pre></td></tr></table>
+</div>
+</div><p>destory 命令用于销毁terraform创建的资源，会列出销毁的资源列表。也会有二次确认。需要输入yes才会继续。</p>
+<p><img loading="lazy" src="imgs/terraform-destroy.png" alt="imgs/terraform-destroy.png" srcset="imgs/terraform-destroy.png?size=small, imgs/terraform-destroy.png?size=medium 1.5x, imgs/terraform-destroy.png?size=large 2x" data-title="imgs/terraform-destroy.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p><img loading="lazy" src="imgs/terraform-destroy2.png" alt="imgs/terraform-destroy2.png" srcset="imgs/terraform-destroy2.png?size=small, imgs/terraform-destroy2.png?size=medium 1.5x, imgs/terraform-destroy2.png?size=large 2x" data-title="imgs/terraform-destroy2.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p><img loading="lazy" src="imgs/terraform-destroy3.png" alt="imgs/terraform-destroy3.png" srcset="imgs/terraform-destroy3.png?size=small, imgs/terraform-destroy3.png?size=medium 1.5x, imgs/terraform-destroy3.png?size=large 2x" data-title="imgs/terraform-destroy3.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p>除了上述四个主要命令外，terraform还有其他命令，我们可以通过help命令查找：</p>
+<p><img loading="lazy" src="imgs/terraform-help.png" alt="imgs/terraform-help.png" srcset="imgs/terraform-help.png?size=small, imgs/terraform-help.png?size=medium 1.5x, imgs/terraform-help.png?size=large 2x" data-title="imgs/terraform-help.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<h2 id="总结" class="heading-element"><span>总结</span>
+  <a href="#%e6%80%bb%e7%bb%93" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>通过以上命令操作，我们知道terraform主要的工作流程是从init -&gt; plan -&gt; apply -&gt; destroy。一般情况下init 和 destroy在同一个工作目录下只会执行一次，而plan和apply会因为我们修改terraform脚本而重复执行。</p>
+<p><img loading="lazy" src="imgs/terraform-workflow.png" alt="imgs/terraform-workflow.png" srcset="imgs/terraform-workflow.png?size=small, imgs/terraform-workflow.png?size=medium 1.5x, imgs/terraform-workflow.png?size=large 2x" data-title="imgs/terraform-workflow.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p>最后留个思考题：</p>
+<p>apply命令后生成的terraform.tfstate文件内容是什么？如果删除这个文件会怎么样？</p>
+</div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="更新于 2020-01-04 11:44:52">更新于 2020-01-04&nbsp;</span>
+      </div><div class="post-info-license">
+            <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
+          </div></div><div class="post-info-line">
+        <div class="post-info-md"><span><a href="https://github.com/hugo-fixit/docs/blob/main/main/posts%5cterraform%5c01%20Terraform%e4%bb%8e%e4%b8%80%e4%b8%aa%e7%ae%80%e5%8d%95%e7%9a%84%e4%be%8b%e5%ad%90%e5%bc%80%e5%a7%8b%5cindex.md?plain=1" title="查看源码"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-source">查看源码</a></span><span><a href="https://github.com/hugo-fixit/docs/edit/main/main/posts%5cterraform%5c01%20Terraform%e4%bb%8e%e4%b8%80%e4%b8%aa%e7%ae%80%e5%8d%95%e7%9a%84%e4%be%8b%e5%ad%90%e5%bc%80%e5%a7%8b%5cindex.md" title="编辑此页"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-edit">编辑此页</a></span><span><a href="https://github.com/hugo-fixit/docs/issues/new?title=[BUG]%20Terraform%EF%BC%8C%E4%BB%8E%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E4%BE%8B%E5%AD%90%E5%BC%80%E5%A7%8B&amp;body=%7cField%7cValue%7c%0A%7c-%7c-%7c%0A%7cTitle%7cTerraform%EF%BC%8C%E4%BB%8E%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84%E4%BE%8B%E5%AD%90%E5%BC%80%E5%A7%8B%7c%0A%7cURL%7chttps://hellofinger.tech/2020/01/terraform-first-example/%7c%0A%7cFilename%7chttps://github.com/hugo-fixit/docs/blob/main/main/posts%5cterraform%5c01%20Terraform%e4%bb%8e%e4%b8%80%e4%b8%aa%e7%ae%80%e5%8d%95%e7%9a%84%e4%be%8b%e5%ad%90%e5%bc%80%e5%a7%8b%5cindex.md?plain=1%7c" title="报告问题"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-report">报告问题</a></span></div>
+        <div class="post-info-share">
+          <span><a href="javascript:void(0);" title="分享到 X" data-sharer="twitter" data-url="https://hellofinger.tech/2020/01/terraform-first-example/" data-title="Terraform，从一个简单的例子开始" data-hashtags="Terraform,IAC"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://hellofinger.tech/2020/01/terraform-first-example/" data-hashtag="Terraform"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://hellofinger.tech/2020/01/terraform-first-example/" data-title="Terraform，从一个简单的例子开始"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+        </div>
+      </div></div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href="/tags/terraform/" class="post-tag" title="标签 - Terraform">Terraform</a><a href="/tags/iac/" class="post-tag" title="标签 - IAC">IAC</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+    </section>
+  </div><div class="post-nav"><a href="/2019/11/influxdb-basic/" class="post-nav-item" rel="prev" title="InfluxDB 基础知识"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>InfluxDB 基础知识</a>
+      <a href="/2020/01/what-is-terraform/" class="post-nav-item" rel="next" title="Terraform 是什么？">Terraform 是什么？<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article>
+
+  <aside class="toc" id="toc-auto" aria-label="目录"><h2 class="toc-title">目录&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2017 - 2024</span><span class="author" itemprop="copyrightHolder">
+              <a href="/">Finger</a></span><span class="license footer-divider"><a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="回到顶部"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">该网站在启用 JavaScript 的情况下效果最佳。</div>
+  </noscript>
+</div><link rel="preload" href="/lib/katex/katex.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/katex/katex.min.css"></noscript><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script src="/lib/autocomplete/autocomplete.min.js" defer></script><script src="/lib/fuse/fuse.min.js" defer></script><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/copy-tex.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="/js/flyfish.js" defer></script><script>window.config={"code":{"copyTitle":"复制到剪贴板","editLockTitle":"锁定可编辑代码块","editUnLockTitle":"解锁可编辑代码块","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"同意","link":"了解更多","message":"本网站使用 Cookies 来改善您的浏览体验。"},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"distance":100,"findAllMatches":false,"highlightTag":"em","ignoreFieldNorm":false,"ignoreLocation":false,"isCaseSensitive":false,"location":0,"maxResultLength":10,"minMatchCharLength":2,"noResultsFound":"没有找到结果","snippetLength":30,"threshold":0.3,"useExtendedSearch":false},"version":"v0.3.10-c936e541"};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

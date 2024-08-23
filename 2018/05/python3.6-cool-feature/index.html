@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>Python3.6中那些很酷的特性 - Finger&#39;s Blog</title><meta name="author" content="Finger">
+<meta name="author-link" content="">
+<meta name="description" content="可读性更强的数字字面值Python代码在可读性上做到了极致，被称为是可执行伪代码。然而，它还在不断地改进，比如这个可读性更好的数字字面值语法，就是方便程序员能以一种 “for humans ” 的方式阅读和理解数字。你现在可以给数字添加下划线，并按照你喜欢的方式对它们进行分组 。这对于二进制或十六进制数字或者是大数来说非常方便：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 &gt;&gt;&gt; six_figures = 100_000 &gt;&gt;&gt; six_figures 100000 &gt;&gt;&gt; a = 10_00_0 &gt;&gt;&gt; a 10000 &gt;&gt;&gt; error = 0xbad_c0ffee &gt;&gt;&gt; error 50159747054 &gt;&gt;&gt; flags = 0b_0111_0101_0001_0101 &gt;&gt;&gt; flags 29973 请记住，这种改变只是语法层面上的变化，是一种在源代码中以不同方式表示数字文字的方法而已。在虚拟机编译成字节码的时候不会有任何变化，你可以在 PEP515 中了解到关于它的更多信息。
+新的字符串格式化方法对字符串格式化操作有两种常用的方法，第一个是使用 “%” 操作符，第二个是使用 format 函数。
+“%” 操作符
+1 2 3 &gt;&gt;&gt; s = &#34;%s is %d&#34; % (&#39;two&#39;, 2) &gt;&gt;&gt; s &#39;two is 2&#39; format 函数" /><meta name="keywords" content='Python' />
+  <meta itemprop="name" content="Python3.6中那些很酷的特性">
+  <meta itemprop="description" content="可读性更强的数字字面值Python代码在可读性上做到了极致，被称为是可执行伪代码。然而，它还在不断地改进，比如这个可读性更好的数字字面值语法，就是方便程序员能以一种 “for humans ” 的方式阅读和理解数字。你现在可以给数字添加下划线，并按照你喜欢的方式对它们进行分组 。这对于二进制或十六进制数字或者是大数来说非常方便：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 &gt;&gt;&gt; six_figures = 100_000 &gt;&gt;&gt; six_figures 100000 &gt;&gt;&gt; a = 10_00_0 &gt;&gt;&gt; a 10000 &gt;&gt;&gt; error = 0xbad_c0ffee &gt;&gt;&gt; error 50159747054 &gt;&gt;&gt; flags = 0b_0111_0101_0001_0101 &gt;&gt;&gt; flags 29973 请记住，这种改变只是语法层面上的变化，是一种在源代码中以不同方式表示数字文字的方法而已。在虚拟机编译成字节码的时候不会有任何变化，你可以在 PEP515 中了解到关于它的更多信息。
+新的字符串格式化方法对字符串格式化操作有两种常用的方法，第一个是使用 “%” 操作符，第二个是使用 format 函数。
+“%” 操作符
+1 2 3 &gt;&gt;&gt; s = &#34;%s is %d&#34; % (&#39;two&#39;, 2) &gt;&gt;&gt; s &#39;two is 2&#39; format 函数">
+  <meta itemprop="datePublished" content="2018-05-22T20:40:00+00:00">
+  <meta itemprop="dateModified" content="2018-05-22T20:40:00+00:00">
+  <meta itemprop="wordCount" content="242">
+  <meta itemprop="keywords" content="Python"><meta property="og:url" content="https://hellofinger.tech/2018/05/python3.6-cool-feature/">
+  <meta property="og:site_name" content="Finger&#39;s Blog">
+  <meta property="og:title" content="Python3.6中那些很酷的特性">
+  <meta property="og:description" content="可读性更强的数字字面值Python代码在可读性上做到了极致，被称为是可执行伪代码。然而，它还在不断地改进，比如这个可读性更好的数字字面值语法，就是方便程序员能以一种 “for humans ” 的方式阅读和理解数字。你现在可以给数字添加下划线，并按照你喜欢的方式对它们进行分组 。这对于二进制或十六进制数字或者是大数来说非常方便：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 &gt;&gt;&gt; six_figures = 100_000 &gt;&gt;&gt; six_figures 100000 &gt;&gt;&gt; a = 10_00_0 &gt;&gt;&gt; a 10000 &gt;&gt;&gt; error = 0xbad_c0ffee &gt;&gt;&gt; error 50159747054 &gt;&gt;&gt; flags = 0b_0111_0101_0001_0101 &gt;&gt;&gt; flags 29973 请记住，这种改变只是语法层面上的变化，是一种在源代码中以不同方式表示数字文字的方法而已。在虚拟机编译成字节码的时候不会有任何变化，你可以在 PEP515 中了解到关于它的更多信息。
+新的字符串格式化方法对字符串格式化操作有两种常用的方法，第一个是使用 “%” 操作符，第二个是使用 format 函数。
+“%” 操作符
+1 2 3 &gt;&gt;&gt; s = &#34;%s is %d&#34; % (&#39;two&#39;, 2) &gt;&gt;&gt; s &#39;two is 2&#39; format 函数">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2018-05-22T20:40:00+00:00">
+    <meta property="article:modified_time" content="2018-05-22T20:40:00+00:00">
+    <meta property="article:tag" content="Python">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Python3.6中那些很酷的特性">
+  <meta name="twitter:description" content="可读性更强的数字字面值Python代码在可读性上做到了极致，被称为是可执行伪代码。然而，它还在不断地改进，比如这个可读性更好的数字字面值语法，就是方便程序员能以一种 “for humans ” 的方式阅读和理解数字。你现在可以给数字添加下划线，并按照你喜欢的方式对它们进行分组 。这对于二进制或十六进制数字或者是大数来说非常方便：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 &gt;&gt;&gt; six_figures = 100_000 &gt;&gt;&gt; six_figures 100000 &gt;&gt;&gt; a = 10_00_0 &gt;&gt;&gt; a 10000 &gt;&gt;&gt; error = 0xbad_c0ffee &gt;&gt;&gt; error 50159747054 &gt;&gt;&gt; flags = 0b_0111_0101_0001_0101 &gt;&gt;&gt; flags 29973 请记住，这种改变只是语法层面上的变化，是一种在源代码中以不同方式表示数字文字的方法而已。在虚拟机编译成字节码的时候不会有任何变化，你可以在 PEP515 中了解到关于它的更多信息。
+新的字符串格式化方法对字符串格式化操作有两种常用的方法，第一个是使用 “%” 操作符，第二个是使用 format 函数。
+“%” 操作符
+1 2 3 &gt;&gt;&gt; s = &#34;%s is %d&#34; % (&#39;two&#39;, 2) &gt;&gt;&gt; s &#39;two is 2&#39; format 函数">
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://hellofinger.tech/2018/05/python3.6-cool-feature/" /><link rel="prev" href="https://hellofinger.tech/2018/05/python-dictionary-and-set-comprehensions/" /><link rel="next" href="https://hellofinger.tech/2018/05/python-hidden-feature/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Python3.6中那些很酷的特性",
+    "inLanguage": "zh-CN",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/hellofinger.tech\/2018\/05\/python3.6-cool-feature\/"
+    },"genre": "posts","keywords": "Python","wordcount":  242 ,
+    "url": "https:\/\/hellofinger.tech\/2018\/05\/python3.6-cool-feature\/","datePublished": "2018-05-22T20:40:00+00:00","dateModified": "2018-05-22T20:40:00+00:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Finger"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/about/"
+                
+                
+              ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item delimiter"></li><li class="menu-item search" id="search-desktop">
+            <input type="text" placeholder="搜索文章标题或内容……" id="search-input-desktop">
+            <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+              <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+            </a>
+            <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+              <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+            </a>
+            <span class="search-button search-loading" id="search-loading-desktop">
+              <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+            </span>
+          </li><li class="menu-item theme-switch" title="切换主题">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li class="search-wrapper">
+            <div class="search mobile" id="search-mobile">
+              <input type="text" placeholder="搜索文章标题或内容……" id="search-input-mobile">
+              <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+              </a>
+              <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+              </a>
+              <span class="search-button search-loading" id="search-loading-mobile">
+                <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+              </span>
+            </div>
+            <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+              取消
+            </a>
+          </li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/about/"
+                  
+                  
+                ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="切换主题"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+  </div>
+  <div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+  </div><main class="container"><aside class="aside-collection animate__animated animate__fadeIn animate__faster" aria-label="合集"></aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>Python3.6中那些很酷的特性</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><span class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+      Finger</span></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/python/" class="post-category" title="分类 - Python"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Python</a></span></div><div class="post-meta-line"><span title="发布于 2018-05-22 20:40:00"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2018-05-22">2018-05-22</time></span>&nbsp;<span title="242 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 300 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 2 分钟</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>目录</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><h4 id="可读性更强的数字字面值" class="heading-element"><span>可读性更强的数字字面值</span>
+  <a href="#%e5%8f%af%e8%af%bb%e6%80%a7%e6%9b%b4%e5%bc%ba%e7%9a%84%e6%95%b0%e5%ad%97%e5%ad%97%e9%9d%a2%e5%80%bc" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p>Python代码在可读性上做到了极致，被称为是可执行伪代码。然而，它还在不断地改进，比如这个可读性更好的数字字面值语法，就是方便程序员能以一种 “for humans ” 的方式阅读和理解数字。你现在可以给数字添加下划线，并按照你喜欢的方式对它们进行分组  。这对于二进制或十六进制数字或者是大数来说非常方便：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; six_figures  = 100_000
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; six_figures
+</span></span><span class="line"><span class="cl">100000
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; a = 10_00_0
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; a
+</span></span><span class="line"><span class="cl">10000
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; error  = 0xbad_c0ffee
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; error
+</span></span><span class="line"><span class="cl">50159747054
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; flags  = 0b_0111_0101_0001_0101
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; flags
+</span></span><span class="line"><span class="cl">29973</span></span></code></pre></td></tr></table>
+</div>
+</div><p>请记住，这种改变只是语法层面上的变化，是一种在源代码中以不同方式表示数字文字的方法而已。在虚拟机编译成字节码的时候不会有任何变化，你可以在 PEP515 中了解到关于它的更多信息。</p>
+<h4 id="新的字符串格式化方法" class="heading-element"><span>新的字符串格式化方法</span>
+  <a href="#%e6%96%b0%e7%9a%84%e5%ad%97%e7%ac%a6%e4%b8%b2%e6%a0%bc%e5%bc%8f%e5%8c%96%e6%96%b9%e6%b3%95" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><p>对字符串格式化操作有两种常用的方法，第一个是使用 “%” 操作符，第二个是使用 <code>format</code> 函数。</p>
+<p><strong>“%” 操作符</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; s = &#34;%s is %d&#34; % (&#39;two&#39;, 2)
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; s
+</span></span><span class="line"><span class="cl">&#39;two is 2&#39;</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong><code>format</code> 函数</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; s = &#34;{fruit} is {color}&#34;.format(fruit=&#39;apple&#39;, color=&#39;red&#39;)
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; s
+</span></span><span class="line"><span class="cl">&#39;apple is red&#39;</span></span></code></pre></td></tr></table>
+</div>
+</div><p>显然，format 函数要比 % 操作符的可读性要好，在Python 3.6 增加了第三种格式化字符串方法，称为 <strong>Formatted String Literals</strong> ，简称 <strong>f字符串</strong>。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; name = &#39;Bob&#39;
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; f&#39;Hello, {name}!&#39;
+</span></span><span class="line"><span class="cl">&#39;Hello, Bob!&#39;</span></span></code></pre></td></tr></table>
+</div>
+</div><p>你还可以在字符串内使用嵌入式的 Python 表达式，例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; a = 5
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; b = 10
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; f&#39;Five plus ten is {a + b} and not {2 * (a + b)}.&#39;
+</span></span><span class="line"><span class="cl">&#39;Five plus ten is 15 and not 30.&#39;</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这个看起来很酷，其实这种操作在模版引擎中早就有这样的特性存在，只不过因为用的人多了，就引入到了语言标准中。</p>
+<p>除了这些，还可以操作数字</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># 精度
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; PI = 3.141592653
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; f&#34;Pi is {PI:.2f}&#34;
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; &#39;Pi is 3.14&#39;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; error = 50159747054
+</span></span><span class="line"><span class="cl">#以16进制格式化
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; f&#39;Programmer Error: {error:#x}&#39;
+</span></span><span class="line"><span class="cl">&#39;Programmer Error: 0xbadc0ffee&#39;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">#以二进制格式化
+</span></span><span class="line"><span class="cl">&gt;&gt;&gt; f&#39;Programmer Error: {error:#b}&#39;
+</span></span><span class="line"><span class="cl">&#39;Programmer Error: 0b101110101101110000001111111111101110&#39;</span></span></code></pre></td></tr></table>
+</div>
+</div><p>你可以在 PEP498 中了解更多信息</p>
+<p><strong>变量注释</strong></p>
+<p>“动态语言一时爽，代码重构火葬场”，虽有危言耸听嫌疑，但的确因为动态语言的灵活性也带来代码维护困难的麻烦，我们不得不通过文档注释来对参数进行说明，而有时又因为业务需求的变更导致代码修改后没有同步文档注释造成实际代码和文档不一致的情况，如果能像静态语言一样，让程序员在语法层面就是就被限制在规则范围内做事，就不会出问题了。所以，像Java这样的语言做工程项目是有优势的。</p>
+<p>从Python 3.5开始，可以将类型注解添加到函数和方法中：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">&gt;&gt;&gt; def my_add(a: int, b: int) -&gt; int:
+</span></span><span class="line"><span class="cl">...    return a + b</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这个函数表示，a 和 b 两个参数必须是 int 类型，函数的返回值也是 int。</p>
+<p>在语义方面没有任何改变—CPython解释器只是将类型记录为类型注释，但不做任何方式类型检查。类型检查纯粹是可选的，你需要一个像Mypy这样的工具来帮助你。</p>
+<p>可以在PEP 526中了解更多关于这一变化的信息。</p>
+<p>当然，这个版本不止这么一点点变化，还有：</p>
+<ul>
+<li>异步生成器的语法</li>
+<li>异步推导式语法</li>
+<li>更快的字典结构，内存减少20％到25％</li>
+</ul>
+<p>英文原文：https://dbader.org/blog/cool-new-features-in-python-3-6</p>
+</div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="更新于 2018-05-22 20:40:00">更新于 2018-05-22&nbsp;</span>
+      </div><div class="post-info-license">
+            <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
+          </div></div><div class="post-info-line">
+        <div class="post-info-md"><span><a href="https://github.com/hugo-fixit/docs/blob/main/main/posts%5cpython%5cpython3.6-cool-feature.md?plain=1" title="查看源码"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-source">查看源码</a></span><span><a href="https://github.com/hugo-fixit/docs/edit/main/main/posts%5cpython%5cpython3.6-cool-feature.md" title="编辑此页"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-edit">编辑此页</a></span><span><a href="https://github.com/hugo-fixit/docs/issues/new?title=[BUG]%20Python3.6%E4%B8%AD%E9%82%A3%E4%BA%9B%E5%BE%88%E9%85%B7%E7%9A%84%E7%89%B9%E6%80%A7&amp;body=%7cField%7cValue%7c%0A%7c-%7c-%7c%0A%7cTitle%7cPython3.6%E4%B8%AD%E9%82%A3%E4%BA%9B%E5%BE%88%E9%85%B7%E7%9A%84%E7%89%B9%E6%80%A7%7c%0A%7cURL%7chttps://hellofinger.tech/2018/05/python3.6-cool-feature/%7c%0A%7cFilename%7chttps://github.com/hugo-fixit/docs/blob/main/main/posts%5cpython%5cpython3.6-cool-feature.md?plain=1%7c" title="报告问题"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-report">报告问题</a></span></div>
+        <div class="post-info-share">
+          <span><a href="javascript:void(0);" title="分享到 X" data-sharer="twitter" data-url="https://hellofinger.tech/2018/05/python3.6-cool-feature/" data-title="Python3.6中那些很酷的特性" data-hashtags="Python"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://hellofinger.tech/2018/05/python3.6-cool-feature/" data-hashtag="Python"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://hellofinger.tech/2018/05/python3.6-cool-feature/" data-title="Python3.6中那些很酷的特性"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+        </div>
+      </div></div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href="/tags/python/" class="post-tag" title="标签 - Python">Python</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+    </section>
+  </div><div class="post-nav"><a href="/2018/05/python-dictionary-and-set-comprehensions/" class="post-nav-item" rel="prev" title="Python Dictionary and Set Comprehensions"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>Python Dictionary and Set Comprehensions</a>
+      <a href="/2018/05/python-hidden-feature/" class="post-nav-item" rel="next" title="Python中的10个隐藏特性">Python中的10个隐藏特性<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article>
+
+  <aside class="toc" id="toc-auto" aria-label="目录"><h2 class="toc-title">目录&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2017 - 2024</span><span class="author" itemprop="copyrightHolder">
+              <a href="/">Finger</a></span><span class="license footer-divider"><a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="回到顶部"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">该网站在启用 JavaScript 的情况下效果最佳。</div>
+  </noscript>
+</div><link rel="preload" href="/lib/katex/katex.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/katex/katex.min.css"></noscript><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script src="/lib/autocomplete/autocomplete.min.js" defer></script><script src="/lib/fuse/fuse.min.js" defer></script><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/copy-tex.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="/js/flyfish.js" defer></script><script>window.config={"code":{"copyTitle":"复制到剪贴板","editLockTitle":"锁定可编辑代码块","editUnLockTitle":"解锁可编辑代码块","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"同意","link":"了解更多","message":"本网站使用 Cookies 来改善您的浏览体验。"},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"distance":100,"findAllMatches":false,"highlightTag":"em","ignoreFieldNorm":false,"ignoreLocation":false,"isCaseSensitive":false,"location":0,"maxResultLength":10,"minMatchCharLength":2,"noResultsFound":"没有找到结果","snippetLength":30,"threshold":0.3,"useExtendedSearch":false},"version":"v0.3.10-c936e541"};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

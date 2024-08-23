@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>Terraform的变量详解 - Finger&#39;s Blog</title><meta name="author" content="Finger">
+<meta name="author-link" content="">
+<meta name="description" content="定义变量创建 variables.tf文件，定义变量名为：aws_region。设置默认值：ap-southeast-1。默认值是可选的。如果未设置默认值，则该变量是必需的。
+1 2 3 4 5 # variables.tf variable &#34;aws_region&#34; { default = &#34;ap-southeast-1&#34; } 注意：该文件可以命名为任何名称，因为Terraform加载目录下以*.tf结尾的所有文件。
+使用变量通过使用占位符 ${}和var关键字引用定义的变量名。
+1 2 3 provider &#34;aws&#34; { region = &#34;${var.aws_region}&#34; } 分配变量分配变量有多种方法。以变量的优先级考虑，从高到底的顺序主要的方法如下：
+命令行可以直接在命令行中使用-var标志设置变量 。在该Terraform检查配置的任何命令接受该标志，如apply 和 plan。
+1 2 terraform apply \ -var &#39;aws_region=ap-southeast-1&#39; 注意：以这种方式设置变量不会保存它们，并且在执行命令时必须重复输入它们。
+*.tfvars 文件变量如果想保留变量或者变量是一个固定的值，可以考虑创建后缀为 *.tfvars的文件。文件内容如下：
+1 2 3 # terraform.tfvars aws_region = &#34;ap-southeast-1&#34; 对于当前目录中匹配 terraform.tfvars 或 *.auto.tfvars 存在的所有文件，Terraform会自动加载它们以填充变量。如果文件名为其他名称，则可以-var-file直接使用该标志指定文件。这些文件与Terraform配置文件的语法相同。与Terraform配置文件一样，这些文件也可以是JSON。
+1 terraform apply -var-file=&#34;xxx.tfvars&#34; 注意：不建议将用户名和密码保存到版本控制中，但是可以创建一个本地秘钥变量文件用-var-file加载。
+-var-file 可以使用多次，指定不同的变量文件。例如：" /><meta name="keywords" content='Terraform, IAC' />
+  <meta itemprop="name" content="Terraform的变量详解">
+  <meta itemprop="description" content="定义变量创建 variables.tf文件，定义变量名为：aws_region。设置默认值：ap-southeast-1。默认值是可选的。如果未设置默认值，则该变量是必需的。
+1 2 3 4 5 # variables.tf variable &#34;aws_region&#34; { default = &#34;ap-southeast-1&#34; } 注意：该文件可以命名为任何名称，因为Terraform加载目录下以*.tf结尾的所有文件。
+使用变量通过使用占位符 ${}和var关键字引用定义的变量名。
+1 2 3 provider &#34;aws&#34; { region = &#34;${var.aws_region}&#34; } 分配变量分配变量有多种方法。以变量的优先级考虑，从高到底的顺序主要的方法如下：
+命令行可以直接在命令行中使用-var标志设置变量 。在该Terraform检查配置的任何命令接受该标志，如apply 和 plan。
+1 2 terraform apply \ -var &#39;aws_region=ap-southeast-1&#39; 注意：以这种方式设置变量不会保存它们，并且在执行命令时必须重复输入它们。
+*.tfvars 文件变量如果想保留变量或者变量是一个固定的值，可以考虑创建后缀为 *.tfvars的文件。文件内容如下：
+1 2 3 # terraform.tfvars aws_region = &#34;ap-southeast-1&#34; 对于当前目录中匹配 terraform.tfvars 或 *.auto.tfvars 存在的所有文件，Terraform会自动加载它们以填充变量。如果文件名为其他名称，则可以-var-file直接使用该标志指定文件。这些文件与Terraform配置文件的语法相同。与Terraform配置文件一样，这些文件也可以是JSON。
+1 terraform apply -var-file=&#34;xxx.tfvars&#34; 注意：不建议将用户名和密码保存到版本控制中，但是可以创建一个本地秘钥变量文件用-var-file加载。
+-var-file 可以使用多次，指定不同的变量文件。例如：">
+  <meta itemprop="datePublished" content="2020-02-02T04:23:52+08:00">
+  <meta itemprop="dateModified" content="2020-02-02T04:23:52+08:00">
+  <meta itemprop="wordCount" content="293">
+  <meta itemprop="keywords" content="Terraform,IAC"><meta property="og:url" content="https://hellofinger.tech/2020/02/terraform-variables/">
+  <meta property="og:site_name" content="Finger&#39;s Blog">
+  <meta property="og:title" content="Terraform的变量详解">
+  <meta property="og:description" content="定义变量创建 variables.tf文件，定义变量名为：aws_region。设置默认值：ap-southeast-1。默认值是可选的。如果未设置默认值，则该变量是必需的。
+1 2 3 4 5 # variables.tf variable &#34;aws_region&#34; { default = &#34;ap-southeast-1&#34; } 注意：该文件可以命名为任何名称，因为Terraform加载目录下以*.tf结尾的所有文件。
+使用变量通过使用占位符 ${}和var关键字引用定义的变量名。
+1 2 3 provider &#34;aws&#34; { region = &#34;${var.aws_region}&#34; } 分配变量分配变量有多种方法。以变量的优先级考虑，从高到底的顺序主要的方法如下：
+命令行可以直接在命令行中使用-var标志设置变量 。在该Terraform检查配置的任何命令接受该标志，如apply 和 plan。
+1 2 terraform apply \ -var &#39;aws_region=ap-southeast-1&#39; 注意：以这种方式设置变量不会保存它们，并且在执行命令时必须重复输入它们。
+*.tfvars 文件变量如果想保留变量或者变量是一个固定的值，可以考虑创建后缀为 *.tfvars的文件。文件内容如下：
+1 2 3 # terraform.tfvars aws_region = &#34;ap-southeast-1&#34; 对于当前目录中匹配 terraform.tfvars 或 *.auto.tfvars 存在的所有文件，Terraform会自动加载它们以填充变量。如果文件名为其他名称，则可以-var-file直接使用该标志指定文件。这些文件与Terraform配置文件的语法相同。与Terraform配置文件一样，这些文件也可以是JSON。
+1 terraform apply -var-file=&#34;xxx.tfvars&#34; 注意：不建议将用户名和密码保存到版本控制中，但是可以创建一个本地秘钥变量文件用-var-file加载。
+-var-file 可以使用多次，指定不同的变量文件。例如：">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2020-02-02T04:23:52+08:00">
+    <meta property="article:modified_time" content="2020-02-02T04:23:52+08:00">
+    <meta property="article:tag" content="Terraform">
+    <meta property="article:tag" content="IAC">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Terraform的变量详解">
+  <meta name="twitter:description" content="定义变量创建 variables.tf文件，定义变量名为：aws_region。设置默认值：ap-southeast-1。默认值是可选的。如果未设置默认值，则该变量是必需的。
+1 2 3 4 5 # variables.tf variable &#34;aws_region&#34; { default = &#34;ap-southeast-1&#34; } 注意：该文件可以命名为任何名称，因为Terraform加载目录下以*.tf结尾的所有文件。
+使用变量通过使用占位符 ${}和var关键字引用定义的变量名。
+1 2 3 provider &#34;aws&#34; { region = &#34;${var.aws_region}&#34; } 分配变量分配变量有多种方法。以变量的优先级考虑，从高到底的顺序主要的方法如下：
+命令行可以直接在命令行中使用-var标志设置变量 。在该Terraform检查配置的任何命令接受该标志，如apply 和 plan。
+1 2 terraform apply \ -var &#39;aws_region=ap-southeast-1&#39; 注意：以这种方式设置变量不会保存它们，并且在执行命令时必须重复输入它们。
+*.tfvars 文件变量如果想保留变量或者变量是一个固定的值，可以考虑创建后缀为 *.tfvars的文件。文件内容如下：
+1 2 3 # terraform.tfvars aws_region = &#34;ap-southeast-1&#34; 对于当前目录中匹配 terraform.tfvars 或 *.auto.tfvars 存在的所有文件，Terraform会自动加载它们以填充变量。如果文件名为其他名称，则可以-var-file直接使用该标志指定文件。这些文件与Terraform配置文件的语法相同。与Terraform配置文件一样，这些文件也可以是JSON。
+1 terraform apply -var-file=&#34;xxx.tfvars&#34; 注意：不建议将用户名和密码保存到版本控制中，但是可以创建一个本地秘钥变量文件用-var-file加载。
+-var-file 可以使用多次，指定不同的变量文件。例如：">
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://hellofinger.tech/2020/02/terraform-variables/" /><link rel="prev" href="https://hellofinger.tech/2020/02/terraform-basic/" /><link rel="next" href="https://hellofinger.tech/2020/02/terraform-modules/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Terraform的变量详解",
+    "inLanguage": "zh-CN",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/hellofinger.tech\/2020\/02\/terraform-variables\/"
+    },"genre": "posts","keywords": "Terraform, IAC","wordcount":  293 ,
+    "url": "https:\/\/hellofinger.tech\/2020\/02\/terraform-variables\/","datePublished": "2020-02-02T04:23:52+08:00","dateModified": "2020-02-02T04:23:52+08:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Finger"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/about/"
+                
+                
+              ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item delimiter"></li><li class="menu-item search" id="search-desktop">
+            <input type="text" placeholder="搜索文章标题或内容……" id="search-input-desktop">
+            <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+              <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+            </a>
+            <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+              <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+            </a>
+            <span class="search-button search-loading" id="search-loading-desktop">
+              <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+            </span>
+          </li><li class="menu-item theme-switch" title="切换主题">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li class="search-wrapper">
+            <div class="search mobile" id="search-mobile">
+              <input type="text" placeholder="搜索文章标题或内容……" id="search-input-mobile">
+              <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+              </a>
+              <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+              </a>
+              <span class="search-button search-loading" id="search-loading-mobile">
+                <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+              </span>
+            </div>
+            <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+              取消
+            </a>
+          </li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/about/"
+                  
+                  
+                ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="切换主题"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+  </div>
+  <div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+  </div><main class="container"><aside class="aside-collection animate__animated animate__fadeIn animate__faster" aria-label="合集"></aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>Terraform的变量详解</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><span class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+      Finger</span></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/iac/" class="post-category" title="分类 - IAC"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> IAC</a></span></div><div class="post-meta-line"><span title="发布于 2020-02-02 04:23:52"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2020-02-02">2020-02-02</time></span>&nbsp;<span title="293 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 300 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 2 分钟</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>目录</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#定义变量">定义变量</a></li>
+    <li><a href="#使用变量">使用变量</a></li>
+    <li><a href="#分配变量">分配变量</a>
+      <ul>
+        <li><a href="#命令行">命令行</a></li>
+        <li><a href="#tfvars-文件变量">*.tfvars 文件变量</a></li>
+        <li><a href="#环境变量">环境变量</a></li>
+        <li><a href="#默认值">默认值</a></li>
+      </ul>
+    </li>
+    <li><a href="#变量的类型">变量的类型</a>
+      <ul>
+        <li><a href="#列表lists">列表(Lists)</a></li>
+        <li><a href="#字典map">字典(Map)</a></li>
+      </ul>
+    </li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><h2 id="定义变量" class="heading-element"><span>定义变量</span>
+  <a href="#%e5%ae%9a%e4%b9%89%e5%8f%98%e9%87%8f" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>创建 variables.tf文件，定义变量名为：aws_region。设置默认值：ap-southeast-1。默认值是可选的。如果未设置默认值，则该变量是必需的。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-terraform" data-lang="terraform"><span class="line"><span class="cl"><span class="c1"># variables.tf
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kr">
+</span></span></span><span class="line"><span class="cl"><span class="kr">variable</span> <span class="s2">&#34;aws_region&#34;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="na">default</span> = <span class="s2">&#34;ap-southeast-1&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>注意：该文件可以命名为任何名称，因为Terraform加载目录下以*.tf结尾的所有文件。</p>
+<h2 id="使用变量" class="heading-element"><span>使用变量</span>
+  <a href="#%e4%bd%bf%e7%94%a8%e5%8f%98%e9%87%8f" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>通过使用占位符 ${}和var关键字引用定义的变量名。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-terraform" data-lang="terraform"><span class="line"><span class="cl"><span class="kr">provider</span> <span class="s2">&#34;aws&#34;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="na">region</span>     = <span class="s2">&#34;</span><span class="si">${</span><span class="nb">var</span><span class="p">.</span><span class="nx">aws_region</span><span class="si">}</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="分配变量" class="heading-element"><span>分配变量</span>
+  <a href="#%e5%88%86%e9%85%8d%e5%8f%98%e9%87%8f" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>分配变量有多种方法。以变量的优先级考虑，从高到底的顺序主要的方法如下：</p>
+<p><img loading="lazy" src="imgs/terraform-tfvar.png" alt="imgs/terraform-tfvar.png" srcset="imgs/terraform-tfvar.png?size=small, imgs/terraform-tfvar.png?size=medium 1.5x, imgs/terraform-tfvar.png?size=large 2x" data-title="imgs/terraform-tfvar.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<h3 id="命令行" class="heading-element"><span>命令行</span>
+  <a href="#%e5%91%bd%e4%bb%a4%e8%a1%8c" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>可以直接在命令行中使用-var标志设置变量 。在该Terraform检查配置的任何命令接受该标志，如apply 和 plan。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">terraform apply <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  -var <span class="s1">&#39;aws_region=ap-southeast-1&#39;</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><em>注意：以这种方式设置变量不会保存它们，并且在执行命令时必须重复输入它们。</em></p>
+<h3 id="tfvars-文件变量" class="heading-element"><span>*.tfvars 文件变量</span>
+  <a href="#tfvars-%e6%96%87%e4%bb%b6%e5%8f%98%e9%87%8f" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>如果想保留变量或者变量是一个固定的值，可以考虑创建后缀为 *.tfvars的文件。文件内容如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-terraform" data-lang="terraform"><span class="line"><span class="cl"><span class="c1"># terraform.tfvars
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="na">aws_region</span> = <span class="s2">&#34;ap-southeast-1&#34;</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>对于当前目录中匹配 terraform.tfvars 或 *.auto.tfvars 存在的所有文件，Terraform会自动加载它们以填充变量。如果文件名为其他名称，则可以-var-file直接使用该标志指定文件。这些文件与Terraform配置文件的语法相同。与Terraform配置文件一样，这些文件也可以是JSON。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">terraform apply -var-file<span class="o">=</span><span class="s2">&#34;xxx.tfvars&#34;</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><em>注意：不建议将用户名和密码保存到版本控制中，但是可以创建一个本地秘钥变量文件用-var-file加载。</em></p>
+<p>-var-file 可以使用多次，指定不同的变量文件。例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">terraform apply <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  -var-file<span class="o">=</span><span class="s2">&#34;secret.tfvars&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  -var-file<span class="o">=</span><span class="s2">&#34;production.tfvars&#34;</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="环境变量" class="heading-element"><span>环境变量</span>
+  <a href="#%e7%8e%af%e5%a2%83%e5%8f%98%e9%87%8f" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>Terraform将读取前缀为TF_VAR_*的环境变量。例如，TF_VAR_aws_region 可以将变量设置为设置aws_region变量。</p>
+<p><em>注意：环境变量只能填充字符串类型的变量。列表和映射类型变量必须通过其他机制之一进行填充。</em></p>
+<h3 id="默认值" class="heading-element"><span>默认值</span>
+  <a href="#%e9%bb%98%e8%ae%a4%e5%80%bc" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>如果没有使用以上任何方法传入变量值，则会采用默认值。</p>
+<p>最后，需要注意以下几点：</p>
+<ul>
+<li>模块内命名唯一性</li>
+<li>变量间可以引用</li>
+<li>不能循环引用</li>
+</ul>
+<h2 id="变量的类型" class="heading-element"><span>变量的类型</span>
+  <a href="#%e5%8f%98%e9%87%8f%e7%9a%84%e7%b1%bb%e5%9e%8b" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><h3 id="列表lists" class="heading-element"><span>列表(Lists)</span>
+  <a href="#%e5%88%97%e8%a1%a8lists" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-terraform" data-lang="terraform"><span class="line"><span class="cl"><span class="c1"># 隐式的定义
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kr">variable</span> <span class="s2">&#34;cidrs&#34;</span> <span class="p">{</span> <span class="na">default</span> = <span class="p">[]</span> <span class="p">}</span><span class="c1">
+</span></span></span><span class="line"><span class="cl"><span class="c1">
+</span></span></span><span class="line"><span class="cl"><span class="c1"># 显示的定义
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kr">variable</span> <span class="s2">&#34;cidrs&#34;</span> <span class="p">{</span> <span class="na">type</span> =<span class="nb"> list</span> <span class="p">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>terraform.tfvars 文件内容：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-terraform" data-lang="terraform"><span class="line"><span class="cl"><span class="na">cidrs</span> = <span class="p">[</span> <span class="s2">&#34;10.0.0.0/16&#34;</span><span class="p">,</span> <span class="s2">&#34;10.1.0.0/16&#34;</span> <span class="p">]</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="字典map" class="heading-element"><span>字典(Map)</span>
+  <a href="#%e5%ad%97%e5%85%b8map" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>为了合理分配资源，针对不同的运行环境，我们想创建不同类型的服务器实例。例如：dev环境我们只需要用t2.micro，prod环境我们可以配置高一点，使用t2.large。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-terraform" data-lang="terraform"><span class="line"><span class="cl"><span class="kr">variable</span> <span class="s2">&#34;instance_types&#34;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="na">type</span> = <span class="nb">&#34;map</span><span class="s2">&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">  default = {
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;</span><span class="nx">dev</span><span class="s2">&#34; = &#34;</span><span class="nx">t2</span><span class="p">.</span><span class="nx">micro</span><span class="s2">&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;</span><span class="nx">prod</span><span class="s2">&#34; = &#34;</span><span class="nx">t2</span><span class="p">.</span><span class="nx">large</span><span class="s2">&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">  }
+</span></span></span><span class="line"><span class="cl"><span class="s2">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-terraform" data-lang="terraform"><span class="line"><span class="cl"><span class="kr">variable</span> <span class="s2">&#34;env&#34;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="na">default</span> = <span class="s2">&#34;dev&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kr">
+</span></span></span><span class="line"><span class="cl"><span class="kr">resource</span> <span class="s2">&#34;aws_instance&#34;</span> <span class="s2">&#34;example&#34;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="na">ami</span>           = <span class="s2">&#34;ami-061eb2b23f9f8839c&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="na">instance_type</span> = <span class="s2">&#34;</span><span class="si">${</span><span class="nb">var</span><span class="p">.</span><span class="nx">instance_types</span><span class="p">[</span><span class="nb">var</span><span class="p">.</span><span class="nx">env</span><span class="p">]</span><span class="si">}</span><span class="s2">&#34;</span> 
+</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>在命令行中传值</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"> terraform apply -var <span class="s1">&#39;instance_types={ dev = &#34;t2.micro&#34;, prod = &#34;t2.large&#34; }&#39;</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>在terraform.tfvars 文件定义值：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-terraform" data-lang="terraform"><span class="line"><span class="cl"><span class="na">instance_types</span> = <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;dev&#34;</span>  <span class="o">=</span> <span class="s2">&#34;t2.micro&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;prod&#34;</span> <span class="o">=</span> <span class="s2">&#34;t2.large&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>完整示例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-terraform" data-lang="terraform"><span class="line"><span class="cl"><span class="kr">provider</span> <span class="s2">&#34;aws&#34;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="na">region</span> = <span class="s2">&#34;ap-southeast-1&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kr">
+</span></span></span><span class="line"><span class="cl"><span class="kr">variable</span> <span class="s2">&#34;instance_types&#34;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="na">type</span> = <span class="nb">&#34;map</span><span class="s2">&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">  default = {
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;</span><span class="nx">dev</span><span class="s2">&#34; = &#34;</span><span class="nx">t2</span><span class="p">.</span><span class="nx">micro</span><span class="s2">&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">    &#34;</span><span class="nx">prod</span><span class="s2">&#34;= &#34;</span><span class="nx">t2</span><span class="p">.</span><span class="nx">large</span><span class="s2">&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">  }
+</span></span></span><span class="line"><span class="cl"><span class="s2">}
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">variable &#34;</span><span class="nx">env</span><span class="s2">&#34; {
+</span></span></span><span class="line"><span class="cl"><span class="s2">  default = &#34;</span><span class="nx">dev</span><span class="s2">&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">}
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">resource &#34;</span><span class="nx">aws_instance</span><span class="s2">&#34; &#34;</span><span class="nx">example</span><span class="o">-</span><span class="nx">instance</span><span class="s2">&#34; {
+</span></span></span><span class="line"><span class="cl"><span class="s2">  ami           = &#34;</span><span class="nx">ami</span><span class="m">-061</span><span class="nx">eb2b23f9f8839c</span><span class="s2">&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">  instance_type = &#34;</span><span class="err">$</span><span class="p">{</span><span class="nb">var</span><span class="p">.</span><span class="nx">instance_types</span><span class="p">[</span><span class="nb">var</span><span class="p">.</span><span class="nx">env</span><span class="p">]}</span><span class="s2">&#34; 
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">  tags = {
+</span></span></span><span class="line"><span class="cl"><span class="s2">      Name = &#34;</span><span class="nx">Example</span> <span class="nx">by</span> <span class="nx">ChangSha</span> <span class="nx">Union</span><span class="s2">&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">  }
+</span></span></span><span class="line"><span class="cl"><span class="s2">}
+</span></span></span><span class="line"><span class="cl"><span class="s2">
+</span></span></span><span class="line"><span class="cl"><span class="s2">output &#34;</span><span class="nx">instance_type</span><span class="s2">&#34; {
+</span></span></span><span class="line"><span class="cl"><span class="s2">  value = &#34;</span><span class="err">$</span><span class="p">{</span><span class="nx">aws_instance</span><span class="p">.</span><span class="nx">example</span><span class="o">-</span><span class="nx">instance</span><span class="p">.</span><span class="nx">instance_type</span><span class="p">}</span><span class="s2">&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="参考" class="heading-element"><span>参考</span>
+  <a href="#%e5%8f%82%e8%80%83" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><ul>
+<li><a href="https://learn.hashicorp.com/terraform/getting-started/variables"target="_blank" rel="external nofollow noopener noreferrer">https://learn.hashicorp.com/terraform/getting-started/variables</a></li>
+</ul>
+</div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="更新于 2020-02-02 04:23:52">更新于 2020-02-02&nbsp;</span>
+      </div><div class="post-info-license">
+            <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
+          </div></div><div class="post-info-line">
+        <div class="post-info-md"><span><a href="https://github.com/hugo-fixit/docs/blob/main/main/posts%5cterraform%5c05%20Terraform%e7%9a%84%e5%8f%98%e9%87%8f%e8%af%a6%e8%a7%a3%5cindex.md?plain=1" title="查看源码"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-source">查看源码</a></span><span><a href="https://github.com/hugo-fixit/docs/edit/main/main/posts%5cterraform%5c05%20Terraform%e7%9a%84%e5%8f%98%e9%87%8f%e8%af%a6%e8%a7%a3%5cindex.md" title="编辑此页"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-edit">编辑此页</a></span><span><a href="https://github.com/hugo-fixit/docs/issues/new?title=[BUG]%20Terraform%E7%9A%84%E5%8F%98%E9%87%8F%E8%AF%A6%E8%A7%A3&amp;body=%7cField%7cValue%7c%0A%7c-%7c-%7c%0A%7cTitle%7cTerraform%E7%9A%84%E5%8F%98%E9%87%8F%E8%AF%A6%E8%A7%A3%7c%0A%7cURL%7chttps://hellofinger.tech/2020/02/terraform-variables/%7c%0A%7cFilename%7chttps://github.com/hugo-fixit/docs/blob/main/main/posts%5cterraform%5c05%20Terraform%e7%9a%84%e5%8f%98%e9%87%8f%e8%af%a6%e8%a7%a3%5cindex.md?plain=1%7c" title="报告问题"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-report">报告问题</a></span></div>
+        <div class="post-info-share">
+          <span><a href="javascript:void(0);" title="分享到 X" data-sharer="twitter" data-url="https://hellofinger.tech/2020/02/terraform-variables/" data-title="Terraform的变量详解" data-hashtags="Terraform,IAC"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://hellofinger.tech/2020/02/terraform-variables/" data-hashtag="Terraform"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://hellofinger.tech/2020/02/terraform-variables/" data-title="Terraform的变量详解"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  </span>
+        </div>
+      </div></div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href="/tags/terraform/" class="post-tag" title="标签 - Terraform">Terraform</a><a href="/tags/iac/" class="post-tag" title="标签 - IAC">IAC</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+    </section>
+  </div><div class="post-nav"><a href="/2020/02/terraform-basic/" class="post-nav-item" rel="prev" title="Terraform的基本语法"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>Terraform的基本语法</a>
+      <a href="/2020/02/terraform-modules/" class="post-nav-item" rel="next" title="Terraform模块基础">Terraform模块基础<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+</article>
+
+  <aside class="toc" id="toc-auto" aria-label="目录"><h2 class="toc-title">目录&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2017 - 2024</span><span class="author" itemprop="copyrightHolder">
+              <a href="/">Finger</a></span><span class="license footer-divider"><a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="回到顶部"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">该网站在启用 JavaScript 的情况下效果最佳。</div>
+  </noscript>
+</div><link rel="preload" href="/lib/katex/katex.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/katex/katex.min.css"></noscript><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script src="/lib/autocomplete/autocomplete.min.js" defer></script><script src="/lib/fuse/fuse.min.js" defer></script><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/copy-tex.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="/js/flyfish.js" defer></script><script>window.config={"code":{"copyTitle":"复制到剪贴板","editLockTitle":"锁定可编辑代码块","editUnLockTitle":"解锁可编辑代码块","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"同意","link":"了解更多","message":"本网站使用 Cookies 来改善您的浏览体验。"},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"distance":100,"findAllMatches":false,"highlightTag":"em","ignoreFieldNorm":false,"ignoreLocation":false,"isCaseSensitive":false,"location":0,"maxResultLength":10,"minMatchCharLength":2,"noResultsFound":"没有找到结果","snippetLength":30,"threshold":0.3,"useExtendedSearch":false},"version":"v0.3.10-c936e541"};</script><script src="/js/theme.min.js" defer></script></body>
+</html>
