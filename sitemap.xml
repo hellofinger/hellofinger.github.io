@@ -10,8 +10,21 @@
       <loc>https://hellofinger.tech/posts/</loc><lastmod>2020-06-16T15:02:52&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>https://hellofinger.tech/categories/storage/</loc><lastmod>2020-06-16T15:02:52&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>https://hellofinger.tech/tags/</loc><lastmod>2020-06-16T15:02:52&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
-      <loc>https://hellofinger.tech/tags/iac/</loc><lastmod>2020-02-03T09:22:52&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
-      <loc>https://hellofinger.tech/categories/iac/</loc><lastmod>2020-02-03T09:22:52&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+      <loc>https://hellofinger.tech/tags/git/</loc><lastmod>2020-02-28T18:11:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+      <loc>https://hellofinger.tech/tags/gitlab/</loc><lastmod>2020-02-28T18:11:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+      <loc>https://hellofinger.tech/2020/02/gitlab-integrate-jira/</loc><lastmod>2020-02-28T18:11:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+      <loc>https://hellofinger.tech/tags/iac/</loc><lastmod>2020-02-28T18:11:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+      <loc>https://hellofinger.tech/categories/iac/</loc><lastmod>2020-02-28T18:11:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+      <loc>https://hellofinger.tech/2020/02/gitlab-code-header-include-copyright/</loc><lastmod>2020-02-25T18:11:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+      <loc>https://hellofinger.tech/categories/security/</loc><lastmod>2020-02-25T18:11:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+      <loc>https://hellofinger.tech/2020/02/gitlab-server-using-git-secrets/</loc><lastmod>2020-02-22T18:11:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+      <loc>https://hellofinger.tech/categories/cicd/</loc><lastmod>2020-02-20T18:11:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+      <loc>https://hellofinger.tech/2020/02/gitlab-cicd-pipeline-4/</loc><lastmod>2020-02-20T18:11:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+      <loc>https://hellofinger.tech/2020/02/gitlab-cicd-pipeline-3/</loc><lastmod>2020-02-18T18:11:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+      <loc>https://hellofinger.tech/2020/02/gitlab-cicd-pipeline-2/</loc><lastmod>2020-02-17T18:11:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+      <loc>https://hellofinger.tech/2020/02/gitlab-cicd-pipeline-1/</loc><lastmod>2020-02-16T18:11:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+      <loc>https://hellofinger.tech/2020/02/gitlab-install-and-maintance/</loc><lastmod>2020-02-15T18:11:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+      <loc>https://hellofinger.tech/2020/02/gitlab-install-and-maintance/</loc><lastmod>2020-02-09T18:11:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>https://hellofinger.tech/tags/terraform/</loc><lastmod>2020-02-03T09:22:52&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>https://hellofinger.tech/2020/02/terraform-modules/</loc><lastmod>2020-02-03T09:22:52&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>https://hellofinger.tech/2020/02/terraform-variables/</loc><lastmod>2020-02-02T04:23:52&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
@@ -85,11 +98,11 @@
       <loc>https://hellofinger.tech/tags/hexo/</loc><lastmod>2017-01-27T20:40:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>https://hellofinger.tech/2017/01/hexo-usage/</loc><lastmod>2017-01-27T20:40:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>https://hellofinger.tech/tags/javascript/</loc><lastmod>2017-01-27T20:40:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
-      <loc>https://hellofinger.tech/tags/git/</loc><lastmod>2017-01-13T17:56:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>https://hellofinger.tech/tags/github/</loc><lastmod>2017-01-13T17:56:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>https://hellofinger.tech/2017/01/github-config-usage/</loc><lastmod>2017-01-13T17:56:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>https://hellofinger.tech/tags/database/</loc><lastmod>2017-01-03T10:43:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>https://hellofinger.tech/2017/01/mysql-question/</loc><lastmod>2017-01-03T10:43:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>https://hellofinger.tech/categories/stroage/</loc><lastmod>2017-01-03T10:43:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>https://hellofinger.tech/2017/01/python-different-directories-execute/</loc><lastmod>2017-01-02T10:40:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+      <loc>https://hellofinger.tech/readme/</loc><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>https://hellofinger.tech/about/</loc><lastmod>2024-08-23T18:44:07&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url></urlset>

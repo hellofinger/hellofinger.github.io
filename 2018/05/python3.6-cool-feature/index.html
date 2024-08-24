@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
     <meta name="robots" content="noodp" />
     <title>Python3.6中那些很酷的特性 - Finger&#39;s Blog</title><meta name="author" content="Finger">
-<meta name="author-link" content="">
+<meta name="author-link" content="https://github.com/hellofinger">
 <meta name="description" content="可读性更强的数字字面值Python代码在可读性上做到了极致，被称为是可执行伪代码。然而，它还在不断地改进，比如这个可读性更好的数字字面值语法，就是方便程序员能以一种 “for humans ” 的方式阅读和理解数字。你现在可以给数字添加下划线，并按照你喜欢的方式对它们进行分组 。这对于二进制或十六进制数字或者是大数来说非常方便：
 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 &gt;&gt;&gt; six_figures = 100_000 &gt;&gt;&gt; six_figures 100000 &gt;&gt;&gt; a = 10_00_0 &gt;&gt;&gt; a 10000 &gt;&gt;&gt; error = 0xbad_c0ffee &gt;&gt;&gt; error 50159747054 &gt;&gt;&gt; flags = 0b_0111_0101_0001_0101 &gt;&gt;&gt; flags 29973 请记住，这种改变只是语法层面上的变化，是一种在源代码中以不同方式表示数字文字的方法而已。在虚拟机编译成字节码的时候不会有任何变化，你可以在 PEP515 中了解到关于它的更多信息。
 新的字符串格式化方法对字符串格式化操作有两种常用的方法，第一个是使用 “%” 操作符，第二个是使用 format 函数。
@@ -193,8 +193,8 @@
   <article class="page single">
     <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>Python3.6中那些很酷的特性</span>
       </h1></div><div class="post-meta">
-      <div class="post-meta-line"><span class="post-author"><span class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-      Finger</span></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/python/" class="post-category" title="分类 - Python"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Python</a></span></div><div class="post-meta-line"><span title="发布于 2018-05-22 20:40:00"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2018-05-22">2018-05-22</time></span>&nbsp;<span title="242 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 300 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 2 分钟</span>&nbsp;</div>
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/python/" class="post-category" title="分类 - Python"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Python</a></span></div><div class="post-meta-line"><span title="发布于 2018-05-22 20:40:00"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2018-05-22">2018-05-22</time></span>&nbsp;<span title="242 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 300 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 2 分钟</span>&nbsp;</div>
     </div><div class="details toc" id="toc-static" data-kept="false">
         <div class="details-summary toc-title">
           <span>目录</span>
@@ -369,7 +369,7 @@
       </div><div class="post-info-license">
             <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
           </div></div><div class="post-info-line">
-        <div class="post-info-md"><span><a href="https://github.com/hugo-fixit/docs/blob/main/main/posts%5cpython%5cpython3.6-cool-feature.md?plain=1" title="查看源码"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-source">查看源码</a></span><span><a href="https://github.com/hugo-fixit/docs/edit/main/main/posts%5cpython%5cpython3.6-cool-feature.md" title="编辑此页"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-edit">编辑此页</a></span><span><a href="https://github.com/hugo-fixit/docs/issues/new?title=[BUG]%20Python3.6%E4%B8%AD%E9%82%A3%E4%BA%9B%E5%BE%88%E9%85%B7%E7%9A%84%E7%89%B9%E6%80%A7&amp;body=%7cField%7cValue%7c%0A%7c-%7c-%7c%0A%7cTitle%7cPython3.6%E4%B8%AD%E9%82%A3%E4%BA%9B%E5%BE%88%E9%85%B7%E7%9A%84%E7%89%B9%E6%80%A7%7c%0A%7cURL%7chttps://hellofinger.tech/2018/05/python3.6-cool-feature/%7c%0A%7cFilename%7chttps://github.com/hugo-fixit/docs/blob/main/main/posts%5cpython%5cpython3.6-cool-feature.md?plain=1%7c" title="报告问题"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-report">报告问题</a></span></div>
+        <div class="post-info-md"></div>
         <div class="post-info-share">
           <span><a href="javascript:void(0);" title="分享到 X" data-sharer="twitter" data-url="https://hellofinger.tech/2018/05/python3.6-cool-feature/" data-title="Python3.6中那些很酷的特性" data-hashtags="Python"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a>
   <a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://hellofinger.tech/2018/05/python3.6-cool-feature/" data-hashtag="Python"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
@@ -393,7 +393,7 @@
     <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
         </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
             <span itemprop="copyrightYear">2017 - 2024</span><span class="author" itemprop="copyrightHolder">
-              <a href="/">Finger</a></span><span class="license footer-divider"><a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"></div></div>
+              <a href="https://github.com/hellofinger"target="_blank" rel="external nofollow noopener noreferrer">Finger</a></span><span class="license footer-divider"><a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"></div></div>
   </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="回到顶部"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric">0%</span>
         </div></div><div id="mask"></div><noscript>
     <div class="noscript-warning">该网站在启用 JavaScript 的情况下效果最佳。</div>

@@ -13,9 +13,25 @@
   <description><![CDATA[]]></description>
 </item>
 <item>
+  <title>Git</title>
+  <link>https://hellofinger.tech/tags/git/</link>
+  <pubDate>Fri, 28 Feb 2020 18:11:52 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/tags/git/</guid>
+  <description><![CDATA[]]></description>
+</item>
+<item>
+  <title>GitLab</title>
+  <link>https://hellofinger.tech/tags/gitlab/</link>
+  <pubDate>Fri, 28 Feb 2020 18:11:52 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/tags/gitlab/</guid>
+  <description><![CDATA[]]></description>
+</item>
+<item>
   <title>IAC</title>
   <link>https://hellofinger.tech/tags/iac/</link>
-  <pubDate>Mon, 03 Feb 2020 09:22:52 &#43;0800</pubDate>
+  <pubDate>Fri, 28 Feb 2020 18:11:52 &#43;0000</pubDate>
   <author>Finger</author>
   <guid>https://hellofinger.tech/tags/iac/</guid>
   <description><![CDATA[]]></description>
@@ -66,22 +82,6 @@
   <pubDate>Sat, 23 Mar 2019 23:14:00 &#43;0000</pubDate>
   <author>Finger</author>
   <guid>https://hellofinger.tech/tags/apscheduler/</guid>
-  <description><![CDATA[]]></description>
-</item>
-<item>
-  <title>Flask</title>
-  <link>https://hellofinger.tech/tags/flask/</link>
-  <pubDate>Sat, 23 Mar 2019 23:14:00 &#43;0000</pubDate>
-  <author>Finger</author>
-  <guid>https://hellofinger.tech/tags/flask/</guid>
-  <description><![CDATA[]]></description>
-</item>
-<item>
-  <title>Flask-APScheduler</title>
-  <link>https://hellofinger.tech/tags/flask-apscheduler/</link>
-  <pubDate>Sat, 23 Mar 2019 23:14:00 &#43;0000</pubDate>
-  <author>Finger</author>
-  <guid>https://hellofinger.tech/tags/flask-apscheduler/</guid>
   <description><![CDATA[]]></description>
 </item>
 </channel>

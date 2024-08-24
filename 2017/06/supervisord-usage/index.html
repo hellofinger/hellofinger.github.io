@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
     <meta name="robots" content="noodp" />
     <title>Supervisord 使用笔记 - Finger&#39;s Blog</title><meta name="author" content="Finger">
-<meta name="author-link" content="">
+<meta name="author-link" content="https://github.com/hellofinger">
 <meta name="description" content="一、安装1 2 3 4 - pip install supervisor - echo_supervisord_conf #或者 - echo_supervisord_conf &gt; supervisord.conf - supervisord -c ./supervisord.conf 二、遇到错误1 2 3 [root@localhost ~]# supervisord -c ./supervisord.conf Error: .ini file does not include supervisord section For help, use /usr/bin/supervisord -h 错误原因是因为配置文件少了 [supervisrod] 配置项
 1 2 3 4 5 6 7 8 9 10 [program:djangotest] user=lzz command=/usr/bin/python /var/www/djangotest/manage.py runserver 0.0.0.0:8000 autostart=true autorestart=true stderr_logfile=/var/logs/err.log stdout_logfile=/var/logs/out.log stopsignal=INT [supervisord] 三、常用命令1 2 supervisord : supervisor的服务器端部分，用于supervisor启动 supervisorctl：启动supervisor的命令行窗口，在该命令行中可执行start、stop、status、reload等操作。 参考文献http://www." /><meta name="keywords" content='Supervisord' />
   <meta itemprop="name" content="Supervisord 使用笔记">
@@ -181,8 +181,8 @@
   <article class="page single">
     <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>Supervisord 使用笔记</span>
       </h1></div><div class="post-meta">
-      <div class="post-meta-line"><span class="post-author"><span class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-      Finger</span></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/python/" class="post-category" title="分类 - Python"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Python</a></span></div><div class="post-meta-line"><span title="发布于 2017-06-22 23:40:00"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2017-06-22">2017-06-22</time></span>&nbsp;<span title="76 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 100 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 1 分钟</span>&nbsp;</div>
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/python/" class="post-category" title="分类 - Python"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Python</a></span></div><div class="post-meta-line"><span title="发布于 2017-06-22 23:40:00"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2017-06-22">2017-06-22</time></span>&nbsp;<span title="76 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 100 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 1 分钟</span>&nbsp;</div>
     </div><div class="details toc" id="toc-static" data-kept="false">
         <div class="details-summary toc-title">
           <span>目录</span>
@@ -281,7 +281,7 @@
       </div><div class="post-info-license">
             <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
           </div></div><div class="post-info-line">
-        <div class="post-info-md"><span><a href="https://github.com/hugo-fixit/docs/blob/main/main/posts%5cpython%5csupervisord-usage.md?plain=1" title="查看源码"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-source">查看源码</a></span><span><a href="https://github.com/hugo-fixit/docs/edit/main/main/posts%5cpython%5csupervisord-usage.md" title="编辑此页"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-edit">编辑此页</a></span><span><a href="https://github.com/hugo-fixit/docs/issues/new?title=[BUG]%20Supervisord&#43;%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0&amp;body=%7cField%7cValue%7c%0A%7c-%7c-%7c%0A%7cTitle%7cSupervisord&#43;%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0%7c%0A%7cURL%7chttps://hellofinger.tech/2017/06/supervisord-usage/%7c%0A%7cFilename%7chttps://github.com/hugo-fixit/docs/blob/main/main/posts%5cpython%5csupervisord-usage.md?plain=1%7c" title="报告问题"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-report">报告问题</a></span></div>
+        <div class="post-info-md"></div>
         <div class="post-info-share">
           <span><a href="javascript:void(0);" title="分享到 X" data-sharer="twitter" data-url="https://hellofinger.tech/2017/06/supervisord-usage/" data-title="Supervisord 使用笔记" data-hashtags="Supervisord"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a>
   <a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://hellofinger.tech/2017/06/supervisord-usage/" data-hashtag="Supervisord"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
@@ -305,7 +305,7 @@
     <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
         </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
             <span itemprop="copyrightYear">2017 - 2024</span><span class="author" itemprop="copyrightHolder">
-              <a href="/">Finger</a></span><span class="license footer-divider"><a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"></div></div>
+              <a href="https://github.com/hellofinger"target="_blank" rel="external nofollow noopener noreferrer">Finger</a></span><span class="license footer-divider"><a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"></div></div>
   </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="回到顶部"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric">0%</span>
         </div></div><div id="mask"></div><noscript>
     <div class="noscript-warning">该网站在启用 JavaScript 的情况下效果最佳。</div>

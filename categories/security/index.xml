@@ -1,0 +1,33 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>Security - 分类 - Finger&#39;s Blog</title>
+    <link>https://hellofinger.tech/categories/security/</link>
+    <description>Security - 分类 | Finger&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Tue, 25 Feb 2020 18:11:52 &#43;0000</lastBuildDate><atom:link href="https://hellofinger.tech/categories/security/" rel="self" type="application/rss+xml" /><item>
+  <title>GitLab最佳实践--强制代码包含版本信息</title>
+  <link>https://hellofinger.tech/2020/02/gitlab-code-header-include-copyright/</link>
+  <pubDate>Tue, 25 Feb 2020 18:11:52 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2020/02/gitlab-code-header-include-copyright/</guid>
+  <description><![CDATA[需求概述要求开发人员上传的代码文件头部必须包含版权信息，否则阻止代码上传到Git仓库。
+解决方案还是基于Git Hooks的方式，在服务器端通过脚本控制Git Push的内容。
+具体思路1、获取到Git 提交的文件以及文件内容。
+2、过滤文件后缀，检索文件内容，匹配关键字信息(如 Copyright)。并获取到关键字所在的文件行数。
+3、具体逻辑判断，例如：Copyright必须在文件内容前10行以内。
+代码实现1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 exitcode=&#39;0&#39; FILES=`git diff --name-status $oldrev $newrev | awk &#39;{print $2}&#39;` # 遍历客户端Git Push的文件 for filepath in $FILES; do if [ &#34;$filepath&#34; = &#34;.gitallowed&#34; ]; then echo &#34;Skipping $filepath .]]></description>
+</item>
+<item>
+  <title>GitLab最佳实践--服务器端使用git-secrets</title>
+  <link>https://hellofinger.tech/2020/02/gitlab-server-using-git-secrets/</link>
+  <pubDate>Sat, 22 Feb 2020 18:11:52 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2020/02/gitlab-server-using-git-secrets/</guid>
+  <description><![CDATA[GitLab 服务器端使用git-secrets随着互联网的快速发展，信息安全问题也变得越来越重要，对于代码仓库管理员来说，我们需要通过代码扫描工具防止开发者将企业系统中的账号密码和其他敏感信息提交到Git仓库。从而避免这些敏感信息泄露到互联网。
+AWS的git-secrets（https://github.com/awslabs/git-secrets)。提供了一种扫描代码文件的方法。下面我分享一下我们项目组使用git-secrets的一些经验。
+起初，我们要求所有开发在本地安装git-secrets工具，这样能使他们在commit/push代码的时候及时发现代码中是否存在敏感信息，若是存在则会阻止代码推送到Git服务器仓库。真的这样是一种很好的方式。但是在实施的过程中还是存在开发人员将敏感信息写在代码中，并且上传到GitHub（是的，最早我们没有自建代码仓库，使用了GitHub私有仓库）。
+后来，我们搭建了私有GitLab，将GItHub代码仓库迁移到了GitLab。并且在GitLab服务器安装git-secrets。通过编写扫描脚本，定时扫描所有代码仓库，将扫描结果以邮件形式发送给所有开发人员。
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 def scan_all_repository(): root = &#34;/var/opt/gitlab/git-data/repositories&#34; cmd = &#34;find {} -name &#39;*.git&#39;&#34;.format(root) status_code, output = subprocess.getstatusoutput(cmd) result = [] if status_code == 0: files = output.split(&#34;\n&#34;) total = len(files) for idx, name in enumerate(files): if idx % 10 == 0: print(&#34;[{}] This is {}/{}&#34;.format(datetime.datetime.now(), idx, total)) os.]]></description>
+</item>
+</channel>
+</rss>

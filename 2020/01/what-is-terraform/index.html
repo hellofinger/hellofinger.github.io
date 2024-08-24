@@ -5,9 +5,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
     <meta name="robots" content="noodp" />
-    <title>Terraform 是什么？ - Finger&#39;s Blog</title><meta name="author" content="Finger">
-<meta name="author-link" content="">
-<meta name="description" content="一、Terraform 是什么？Terraform是一个开源基础架构，是HashiCorp创建的代码软件工具。它使用户能够使用称为HCL(HashiCorp Configuration Language)配置语言或可选的JSON来定义和配置数据中心基础架构。 HCL是声明式的，也就是说，程序员用HCL来描述整个基础架构应该是什么样的，然后把具体的实施工作交给Terraform就可以了，程序员不需要了解实施的具体步骤和细节，不需要了解terraform如何与云服务商的API进行对接。Terraform会根据代码，自动下载相应的Provider和Provisioner来负责具体步骤和细节。于声明式对应的是命令式。命令式语言是按照步骤执行的，先后顺序很重要，对固定输入执行命令式语言会得到固定的输出。声明式和命令式并无高下之分，只是在云资源编排这一领域，声明式会比较方便实现。
+    <title>Terraform基础--Terraform是什么？ - Finger&#39;s Blog</title><meta name="author" content="Finger">
+<meta name="author-link" content="https://github.com/hellofinger">
+<meta name="description" content="一、Terraform是什么？Terraform是一个开源基础架构，是HashiCorp创建的代码软件工具。它使用户能够使用称为HCL(HashiCorp Configuration Language)配置语言或可选的JSON来定义和配置数据中心基础架构。 HCL是声明式的，也就是说，程序员用HCL来描述整个基础架构应该是什么样的，然后把具体的实施工作交给Terraform就可以了，程序员不需要了解实施的具体步骤和细节，不需要了解terraform如何与云服务商的API进行对接。Terraform会根据代码，自动下载相应的Provider和Provisioner来负责具体步骤和细节。于声明式对应的是命令式。命令式语言是按照步骤执行的，先后顺序很重要，对固定输入执行命令式语言会得到固定的输出。声明式和命令式并无高下之分，只是在云资源编排这一领域，声明式会比较方便实现。
 Terraform 支持许多云基础架构提供商，国外云如 Amazon Web Services，IBM Cloud（以前的 Bluemix），Google Cloud Platform，Linode， Microsoft Azure， Oracle 云基础架构或 VMware vSphere 以及 OpenStack。 国内云包括阿里，腾讯，华为，京东等云服务商。
 Terraform 是一种安全有效地构建、更改和版本控制基础设施的工具(基础架构自动化的编排工具)。 以用来管理多层次的资源。从上层的软件配置到底层的网络、系统配置都可以使用 Terraform 统一进行管理。 它的目标是 &ldquo;Write, Plan, and create Infrastructure as Code&rdquo;, 基础架构即代码。
 Terraform 几乎可以支持所有市面上能见到的云服务。具体的说就是可以用代码来管理维护 IT 资源，把之前需要手动操作的一部分任务通过程序来自动化的完成，这样的做的结果非常明显：高效、不易出错。
@@ -18,8 +18,8 @@ Terraform 是用 Go 语言开发的开源项目，你可以在 github 上访问�
 二、Terraform 特点2.1、基础架构即代码(Infrastructure as Code) 基础设施使用高级配置语法进行描述。这可以让你的数据中心蓝图像你其他代码一样进行版本控制和管理。此外基础设施可以被分享和重用。
 2.2、执行计划(Execution Plans)
 Terraform 有一个 plan 步骤，它生成一个执行计划。执行计划显示了当执行 apply 命令时 Terraform 将做什么。通过 plan 进行提前检查，可以使 Terraform 操作真正的基础结构时避免意外。" /><meta name="keywords" content='Terraform, IAC' />
-  <meta itemprop="name" content="Terraform 是什么？">
-  <meta itemprop="description" content="一、Terraform 是什么？Terraform是一个开源基础架构，是HashiCorp创建的代码软件工具。它使用户能够使用称为HCL(HashiCorp Configuration Language)配置语言或可选的JSON来定义和配置数据中心基础架构。 HCL是声明式的，也就是说，程序员用HCL来描述整个基础架构应该是什么样的，然后把具体的实施工作交给Terraform就可以了，程序员不需要了解实施的具体步骤和细节，不需要了解terraform如何与云服务商的API进行对接。Terraform会根据代码，自动下载相应的Provider和Provisioner来负责具体步骤和细节。于声明式对应的是命令式。命令式语言是按照步骤执行的，先后顺序很重要，对固定输入执行命令式语言会得到固定的输出。声明式和命令式并无高下之分，只是在云资源编排这一领域，声明式会比较方便实现。
+  <meta itemprop="name" content="Terraform基础--Terraform是什么？">
+  <meta itemprop="description" content="一、Terraform是什么？Terraform是一个开源基础架构，是HashiCorp创建的代码软件工具。它使用户能够使用称为HCL(HashiCorp Configuration Language)配置语言或可选的JSON来定义和配置数据中心基础架构。 HCL是声明式的，也就是说，程序员用HCL来描述整个基础架构应该是什么样的，然后把具体的实施工作交给Terraform就可以了，程序员不需要了解实施的具体步骤和细节，不需要了解terraform如何与云服务商的API进行对接。Terraform会根据代码，自动下载相应的Provider和Provisioner来负责具体步骤和细节。于声明式对应的是命令式。命令式语言是按照步骤执行的，先后顺序很重要，对固定输入执行命令式语言会得到固定的输出。声明式和命令式并无高下之分，只是在云资源编排这一领域，声明式会比较方便实现。
 Terraform 支持许多云基础架构提供商，国外云如 Amazon Web Services，IBM Cloud（以前的 Bluemix），Google Cloud Platform，Linode， Microsoft Azure， Oracle 云基础架构或 VMware vSphere 以及 OpenStack。 国内云包括阿里，腾讯，华为，京东等云服务商。
 Terraform 是一种安全有效地构建、更改和版本控制基础设施的工具(基础架构自动化的编排工具)。 以用来管理多层次的资源。从上层的软件配置到底层的网络、系统配置都可以使用 Terraform 统一进行管理。 它的目标是 “Write, Plan, and create Infrastructure as Code”, 基础架构即代码。
 Terraform 几乎可以支持所有市面上能见到的云服务。具体的说就是可以用代码来管理维护 IT 资源，把之前需要手动操作的一部分任务通过程序来自动化的完成，这样的做的结果非常明显：高效、不易出错。
@@ -32,11 +32,11 @@ Terraform 是用 Go 语言开发的开源项目，你可以在 github 上访问�
 Terraform 有一个 plan 步骤，它生成一个执行计划。执行计划显示了当执行 apply 命令时 Terraform 将做什么。通过 plan 进行提前检查，可以使 Terraform 操作真正的基础结构时避免意外。">
   <meta itemprop="datePublished" content="2020-01-06T08:44:52+08:00">
   <meta itemprop="dateModified" content="2020-01-06T08:44:52+08:00">
-  <meta itemprop="wordCount" content="124">
+  <meta itemprop="wordCount" content="123">
   <meta itemprop="keywords" content="Terraform,IAC"><meta property="og:url" content="https://hellofinger.tech/2020/01/what-is-terraform/">
   <meta property="og:site_name" content="Finger&#39;s Blog">
-  <meta property="og:title" content="Terraform 是什么？">
-  <meta property="og:description" content="一、Terraform 是什么？Terraform是一个开源基础架构，是HashiCorp创建的代码软件工具。它使用户能够使用称为HCL(HashiCorp Configuration Language)配置语言或可选的JSON来定义和配置数据中心基础架构。 HCL是声明式的，也就是说，程序员用HCL来描述整个基础架构应该是什么样的，然后把具体的实施工作交给Terraform就可以了，程序员不需要了解实施的具体步骤和细节，不需要了解terraform如何与云服务商的API进行对接。Terraform会根据代码，自动下载相应的Provider和Provisioner来负责具体步骤和细节。于声明式对应的是命令式。命令式语言是按照步骤执行的，先后顺序很重要，对固定输入执行命令式语言会得到固定的输出。声明式和命令式并无高下之分，只是在云资源编排这一领域，声明式会比较方便实现。
+  <meta property="og:title" content="Terraform基础--Terraform是什么？">
+  <meta property="og:description" content="一、Terraform是什么？Terraform是一个开源基础架构，是HashiCorp创建的代码软件工具。它使用户能够使用称为HCL(HashiCorp Configuration Language)配置语言或可选的JSON来定义和配置数据中心基础架构。 HCL是声明式的，也就是说，程序员用HCL来描述整个基础架构应该是什么样的，然后把具体的实施工作交给Terraform就可以了，程序员不需要了解实施的具体步骤和细节，不需要了解terraform如何与云服务商的API进行对接。Terraform会根据代码，自动下载相应的Provider和Provisioner来负责具体步骤和细节。于声明式对应的是命令式。命令式语言是按照步骤执行的，先后顺序很重要，对固定输入执行命令式语言会得到固定的输出。声明式和命令式并无高下之分，只是在云资源编排这一领域，声明式会比较方便实现。
 Terraform 支持许多云基础架构提供商，国外云如 Amazon Web Services，IBM Cloud（以前的 Bluemix），Google Cloud Platform，Linode， Microsoft Azure， Oracle 云基础架构或 VMware vSphere 以及 OpenStack。 国内云包括阿里，腾讯，华为，京东等云服务商。
 Terraform 是一种安全有效地构建、更改和版本控制基础设施的工具(基础架构自动化的编排工具)。 以用来管理多层次的资源。从上层的软件配置到底层的网络、系统配置都可以使用 Terraform 统一进行管理。 它的目标是 “Write, Plan, and create Infrastructure as Code”, 基础架构即代码。
 Terraform 几乎可以支持所有市面上能见到的云服务。具体的说就是可以用代码来管理维护 IT 资源，把之前需要手动操作的一部分任务通过程序来自动化的完成，这样的做的结果非常明显：高效、不易出错。
@@ -56,8 +56,8 @@ Terraform 有一个 plan 步骤，它生成一个执行计划。执行计划显�
     <meta property="article:tag" content="IAC">
 
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Terraform 是什么？">
-  <meta name="twitter:description" content="一、Terraform 是什么？Terraform是一个开源基础架构，是HashiCorp创建的代码软件工具。它使用户能够使用称为HCL(HashiCorp Configuration Language)配置语言或可选的JSON来定义和配置数据中心基础架构。 HCL是声明式的，也就是说，程序员用HCL来描述整个基础架构应该是什么样的，然后把具体的实施工作交给Terraform就可以了，程序员不需要了解实施的具体步骤和细节，不需要了解terraform如何与云服务商的API进行对接。Terraform会根据代码，自动下载相应的Provider和Provisioner来负责具体步骤和细节。于声明式对应的是命令式。命令式语言是按照步骤执行的，先后顺序很重要，对固定输入执行命令式语言会得到固定的输出。声明式和命令式并无高下之分，只是在云资源编排这一领域，声明式会比较方便实现。
+  <meta name="twitter:title" content="Terraform基础--Terraform是什么？">
+  <meta name="twitter:description" content="一、Terraform是什么？Terraform是一个开源基础架构，是HashiCorp创建的代码软件工具。它使用户能够使用称为HCL(HashiCorp Configuration Language)配置语言或可选的JSON来定义和配置数据中心基础架构。 HCL是声明式的，也就是说，程序员用HCL来描述整个基础架构应该是什么样的，然后把具体的实施工作交给Terraform就可以了，程序员不需要了解实施的具体步骤和细节，不需要了解terraform如何与云服务商的API进行对接。Terraform会根据代码，自动下载相应的Provider和Provisioner来负责具体步骤和细节。于声明式对应的是命令式。命令式语言是按照步骤执行的，先后顺序很重要，对固定输入执行命令式语言会得到固定的输出。声明式和命令式并无高下之分，只是在云资源编排这一领域，声明式会比较方便实现。
 Terraform 支持许多云基础架构提供商，国外云如 Amazon Web Services，IBM Cloud（以前的 Bluemix），Google Cloud Platform，Linode， Microsoft Azure， Oracle 云基础架构或 VMware vSphere 以及 OpenStack。 国内云包括阿里，腾讯，华为，京东等云服务商。
 Terraform 是一种安全有效地构建、更改和版本控制基础设施的工具(基础架构自动化的编排工具)。 以用来管理多层次的资源。从上层的软件配置到底层的网络、系统配置都可以使用 Terraform 统一进行管理。 它的目标是 “Write, Plan, and create Infrastructure as Code”, 基础架构即代码。
 Terraform 几乎可以支持所有市面上能见到的云服务。具体的说就是可以用代码来管理维护 IT 资源，把之前需要手动操作的一部分任务通过程序来自动化的完成，这样的做的结果非常明显：高效、不易出错。
@@ -77,12 +77,12 @@ Terraform 有一个 plan 步骤，它生成一个执行计划。执行计划显�
   {
     "@context": "http://schema.org",
     "@type": "BlogPosting",
-    "headline": "Terraform 是什么？",
+    "headline": "Terraform基础--Terraform是什么？",
     "inLanguage": "zh-CN",
     "mainEntityOfPage": {
       "@type": "WebPage",
       "@id": "https:\/\/hellofinger.tech\/2020\/01\/what-is-terraform\/"
-    },"genre": "posts","keywords": "Terraform, IAC","wordcount":  124 ,
+    },"genre": "posts","keywords": "Terraform, IAC","wordcount":  123 ,
     "url": "https:\/\/hellofinger.tech\/2020\/01\/what-is-terraform\/","datePublished": "2020-01-06T08:44:52+08:00","dateModified": "2020-01-06T08:44:52+08:00","publisher": {
       "@type": "Organization",
       "name": ""},"author": {
@@ -216,10 +216,10 @@ Terraform 有一个 plan 步骤，它生成一个执行计划。执行计划显�
   </div><main class="container"><aside class="aside-collection animate__animated animate__fadeIn animate__faster" aria-label="合集"></aside>
 
   <article class="page single">
-    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>Terraform 是什么？</span>
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>Terraform基础--Terraform是什么？</span>
       </h1></div><div class="post-meta">
-      <div class="post-meta-line"><span class="post-author"><span class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-      Finger</span></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/iac/" class="post-category" title="分类 - IAC"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> IAC</a></span></div><div class="post-meta-line"><span title="发布于 2020-01-06 08:44:52"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2020-01-06">2020-01-06</time></span>&nbsp;<span title="124 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 200 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 1 分钟</span>&nbsp;</div>
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/iac/" class="post-category" title="分类 - IAC"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> IAC</a></span></div><div class="post-meta-line"><span title="发布于 2020-01-06 08:44:52"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2020-01-06">2020-01-06</time></span>&nbsp;<span title="123 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 200 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 1 分钟</span>&nbsp;</div>
     </div><div class="details toc" id="toc-static" data-kept="false">
         <div class="details-summary toc-title">
           <span>目录</span>
@@ -227,15 +227,15 @@ Terraform 有一个 plan 步骤，它生成一个执行计划。执行计划显�
         </div>
         <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
   <ul>
-    <li><a href="#一terraform-是什么">一、Terraform 是什么？</a></li>
+    <li><a href="#一terraform是什么">一、Terraform是什么？</a></li>
     <li><a href="#二terraform-特点">二、Terraform 特点</a></li>
     <li><a href="#三terraform-如何运作">三、Terraform 如何运作</a></li>
     <li><a href="#四terraform-优点">四、Terraform 优点</a></li>
     <li><a href="#参考">参考</a></li>
   </ul>
 </nav></div>
-      </div><div class="content" id="content"><h2 id="一terraform-是什么" class="heading-element"><span>一、Terraform 是什么？</span>
-  <a href="#%e4%b8%80terraform-%e6%98%af%e4%bb%80%e4%b9%88" class="heading-mark">
+      </div><div class="content" id="content"><h2 id="一terraform是什么" class="heading-element"><span>一、Terraform是什么？</span>
+  <a href="#%e4%b8%80terraform%e6%98%af%e4%bb%80%e4%b9%88" class="heading-mark">
     <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
   </a>
 </h2><p>Terraform是一个开源基础架构，是HashiCorp创建的代码软件工具。它使用户能够使用称为HCL(HashiCorp Configuration Language)配置语言或可选的JSON来定义和配置数据中心基础架构。 HCL是声明式的，也就是说，程序员用HCL来描述整个基础架构应该是什么样的，然后把具体的实施工作交给Terraform就可以了，程序员不需要了解实施的具体步骤和细节，不需要了解terraform如何与云服务商的API进行对接。Terraform会根据代码，自动下载相应的Provider和Provisioner来负责具体步骤和细节。于声明式对应的是命令式。命令式语言是按照步骤执行的，先后顺序很重要，对固定输入执行命令式语言会得到固定的输出。声明式和命令式并无高下之分，只是在云资源编排这一领域，声明式会比较方便实现。</p>
@@ -305,11 +305,11 @@ Terraform 有一个 plan 步骤，它生成一个执行计划。执行计划显�
       </div><div class="post-info-license">
             <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
           </div></div><div class="post-info-line">
-        <div class="post-info-md"><span><a href="https://github.com/hugo-fixit/docs/blob/main/main/posts%5cterraform%5c02%20Terraform%e6%98%af%e4%bb%80%e4%b9%88%5cindex.md?plain=1" title="查看源码"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-source">查看源码</a></span><span><a href="https://github.com/hugo-fixit/docs/edit/main/main/posts%5cterraform%5c02%20Terraform%e6%98%af%e4%bb%80%e4%b9%88%5cindex.md" title="编辑此页"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-edit">编辑此页</a></span><span><a href="https://github.com/hugo-fixit/docs/issues/new?title=[BUG]%20Terraform&#43;%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F&amp;body=%7cField%7cValue%7c%0A%7c-%7c-%7c%0A%7cTitle%7cTerraform&#43;%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F%7c%0A%7cURL%7chttps://hellofinger.tech/2020/01/what-is-terraform/%7c%0A%7cFilename%7chttps://github.com/hugo-fixit/docs/blob/main/main/posts%5cterraform%5c02%20Terraform%e6%98%af%e4%bb%80%e4%b9%88%5cindex.md?plain=1%7c" title="报告问题"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-report">报告问题</a></span></div>
+        <div class="post-info-md"></div>
         <div class="post-info-share">
-          <span><a href="javascript:void(0);" title="分享到 X" data-sharer="twitter" data-url="https://hellofinger.tech/2020/01/what-is-terraform/" data-title="Terraform 是什么？" data-hashtags="Terraform,IAC"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a>
+          <span><a href="javascript:void(0);" title="分享到 X" data-sharer="twitter" data-url="https://hellofinger.tech/2020/01/what-is-terraform/" data-title="Terraform基础--Terraform是什么？" data-hashtags="Terraform,IAC"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a>
   <a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://hellofinger.tech/2020/01/what-is-terraform/" data-hashtag="Terraform"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
-  <a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://hellofinger.tech/2020/01/what-is-terraform/" data-title="Terraform 是什么？"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://hellofinger.tech/2020/01/what-is-terraform/" data-title="Terraform基础--Terraform是什么？"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
   </span>
         </div>
       </div></div>
@@ -319,8 +319,8 @@ Terraform 有一个 plan 步骤，它生成一个执行计划。执行计划显�
     <section>
       <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
     </section>
-  </div><div class="post-nav"><a href="/2020/01/terraform-first-example/" class="post-nav-item" rel="prev" title="Terraform，从一个简单的例子开始"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>Terraform，从一个简单的例子开始</a>
-      <a href="/2020/02/terraform-basic/" class="post-nav-item" rel="next" title="Terraform的基本语法">Terraform的基本语法<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+  </div><div class="post-nav"><a href="/2020/01/terraform-first-example/" class="post-nav-item" rel="prev" title="Terraform基础--从一个简单的例子开始"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>Terraform基础--从一个简单的例子开始</a>
+      <a href="/2020/02/terraform-basic/" class="post-nav-item" rel="next" title="Terraform基础--基本语法">Terraform基础--基本语法<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
 </div>
 </article>
 
@@ -329,7 +329,7 @@ Terraform 有一个 plan 步骤，它生成一个执行计划。执行计划显�
     <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
         </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
             <span itemprop="copyrightYear">2017 - 2024</span><span class="author" itemprop="copyrightHolder">
-              <a href="/">Finger</a></span><span class="license footer-divider"><a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"></div></div>
+              <a href="https://github.com/hellofinger"target="_blank" rel="external nofollow noopener noreferrer">Finger</a></span><span class="license footer-divider"><a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"></div></div>
   </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="回到顶部"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric">0%</span>
         </div></div><div id="mask"></div><noscript>
     <div class="noscript-warning">该网站在启用 JavaScript 的情况下效果最佳。</div>
