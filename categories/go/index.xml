@@ -1,0 +1,63 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>Go - 分类 - Finger&#39;s Blog</title>
+    <link>https://hellofinger.tech/categories/go/</link>
+    <description>Go - 分类 | Finger&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Fri, 26 Feb 2021 17:27:52 &#43;0000</lastBuildDate><atom:link href="https://hellofinger.tech/categories/go/" rel="self" type="application/rss+xml" /><item>
+  <title>Go基础--管道Channel</title>
+  <link>https://hellofinger.tech/2021/02/go-basic-channel/</link>
+  <pubDate>Fri, 26 Feb 2021 17:27:52 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2021/02/go-basic-channel/</guid>
+  <description><![CDATA[ChannelChannel 是Goroutine之间的一种通信机制。这种通信机制有个专业名词叫CSP （ Communicating Sequential Process）即通信顺序进程，是一种并发编程模型。Goroutine 和 Channel 分别对应 CSP 中的实体和传递信息的媒介，Goroutine 之间会通过 Channel 传递数据。
+设计原理在很多主流的编程语言中，多个线程传递数据的方式一般都是共享内存，为了解决线程之间的资源竞争，我们需要限制同一时间能够获取资源的线程数量。
+在Go语言中则设计成：不通过共享内存的方式进行通信，而是通过通信的方式共享内存。
+上图中的两个 Goroutine，一个会向 Channel 中发送数据，另一个会从 Channel 中接收数据，它们两者能够独立运行并不存在直接关联，但是能通过 Channel 间接完成通信。
+声明1 2 3 4 ch := make(chan int) # 设置缓冲大小 ch := make(chan int, 100) 类型它包括三种类型的定义。可选的&lt;-代表channel的方向。如果没有指定方向，那么Channel就是双向的，既可以接收数据，也可以发送数据。
+1 2 3 4 5 ChannelType = ( &#34;chan&#34; | &#34;chan&#34; &#34;&lt;-&#34; | &#34;&lt;-&#34; &#34;chan&#34; ) chan T // 可以接收和发送类型为 T 的数据 chan&lt;- float64 // 只可以用来发送 float64 类型的数据 &lt;-chan int // 只可以用来接收 int 类型的数据 基本操作channel 存在3种状态：]]></description>
+</item>
+<item>
+  <title>Go基础--Context</title>
+  <link>https://hellofinger.tech/2021/02/go-basic-context/</link>
+  <pubDate>Fri, 26 Feb 2021 14:07:52 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2021/02/go-basic-context/</guid>
+  <description><![CDATA[什么是 ContextContext 是 Go 并发编程中的一种编程模式。 主要指的是 goroutine的上下文，包含 goroutine 的运行状态，环境，现场等信息。 Context 主要用来在goroutine 之间传递上下文信息，包含：取消信号，超时时间，截止时间，k-v等。
+为什么需要 Context在并发程序中，由于超时，取消操作或者一些异常情况，往往需要进行抢占操作或者中断后续的操作。例如：主协程中有多个任务1,2，&hellip;m，主协程对这些任务有超时控制；而其中任务1又有多个子任务1,2，&hellip;n。任务1对这些子任务也有自己的超时控制，那么这些子任务既要感知主协程的取消信号，也需要感知任务1的取消信号。 因此我们需要解决以下问题： 1、上层任务取消后，所有的下层任务都会被取消 2、中间某一层的任务取消后，只会将当前任务的下层任务取消，而不会影响上层的任务以及同级任务。
+Context 的定义1 2 3 4 5 6 7 8 9 10 11 12 13 type Context interface { // 当 context 被取消或者到了 deadline，返回一个被关闭的 channel Done() &lt;-chan struct{} // 在 channel Done 关闭后，返回 context 取消原因 Err() error // 返回 context 是否会被取消以及自动取消时间（即 deadline） Deadline() (deadline time.Time, ok bool) // 获取 key 对应的 value Value(key interface{}) interface{} } Context 是一个接口，定义了4个方法，它们都是幂等的。也就是说连续多次调用同一个方法，得到的结果都是相同的。]]></description>
+</item>
+<item>
+  <title>Go Package--gokit介绍</title>
+  <link>https://hellofinger.tech/2020/08/go-package-gokit/</link>
+  <pubDate>Thu, 20 Aug 2020 15:57:52 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2020/08/go-package-gokit/</guid>
+  <description><![CDATA[Go-kit介绍Go kit 是用于在 Go 中构建微服务的编程工具包。用来解决了分布式系统和应用程序体系结构中的常见问题，让使用者可以专注于交付业务价值。
+本身不是一个框架，而是一套微服务工具集，是框架的底层，用它的话来说，如果你希望构建一个框架，而Go-kit 就希望成为你的框架的一部分 可以用Go-kit 做适应自己平台的框架 它自身称为toolkit，并不是framework 它主要是为了满足5大原则，单一职责原则，开放原则，封闭原则，依赖倒置原则，接口隔离原则 三层模型Go-kit最核心是提供了三层模型来解耦业务，这是我们用它的主要目的，模型由上到下分别是 transport -&gt; endpoint -&gt; service
+Transport 可以理解为是个拦截器，负责请求协议的实现和路由转发，请求和响应的序列化和反序列化
+Endpoint 负责功能逻辑转发，这一层会调用Service具体方法
+Service 服务功能具体实现，这样便于测试，只要 mock 传入的依赖参数即可
+参考https://zhuanlan.zhihu.com/p/100226931?utm_source=wechat_session http://gokit.io/examples/stringsvc.html https://github.com/go-kit/kit ]]></description>
+</item>
+<item>
+  <title>Go基础--三个点</title>
+  <link>https://hellofinger.tech/2020/07/go-basic-three-dot/</link>
+  <pubDate>Wed, 22 Jul 2020 10:14:52 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2020/07/go-basic-three-dot/</guid>
+  <description><![CDATA[三个点可变长的函数参数1 2 3 4 5 6 7 func Sum(nums ...int) int { cnt := 0 for _, n := range nums { cnt += n } return cnt } 调用可变长参数列表的函数1 2 3 primes := []int{2, 3, 5, 7} Sum(primes...) 两个切片合并1 2 3 4 5 6 7 8 9 10 11 12 13 14 var str_1 = []string{ &#34;a&#34;, &#34;b&#34;, &#34;c&#34;, } var str_2 = []string{ &#34;1&#34;, &#34;2&#34;, &#34;3&#34;, } str_1 = append(str_1, str_2.]]></description>
+</item>
+<item>
+  <title>Go基础--Make和New</title>
+  <link>https://hellofinger.tech/2020/07/go-basic-make-and-new/</link>
+  <pubDate>Mon, 20 Jul 2020 09:44:52 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2020/07/go-basic-make-and-new/</guid>
+  <description><![CDATA[make 和 newmake和new都是用于初始化，但是二者有很大差异：
+-make 的作用是初始化内置的数据结构，例如切片，哈希和Channel -new 的作用是根据传入的类型分配内存，并返回指向该内存的指针
+重点：make只用于map, slice, channel的内存分配，返回有初始值的类型本身，new用于所有类型的分配，new返回指针
+make1 2 3 slice := make([]int, 0, 100) hash := make(map[int]bool, 10) ch := make(chan int, 5) new1 2 3 4 5 6 i := new(int) # 等于 var v int i := &amp;v new 和 make 内存分配图：]]></description>
+</item>
+</channel>
+</rss>
