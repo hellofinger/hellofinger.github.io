@@ -1,0 +1,129 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>GitLab - 标签 - Finger&#39;s Blog</title>
+    <link>https://hellofinger.tech/tags/gitlab/</link>
+    <description>GitLab - 标签 | Finger&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Fri, 28 Feb 2020 18:11:52 &#43;0000</lastBuildDate><atom:link href="https://hellofinger.tech/tags/gitlab/" rel="self" type="application/rss+xml" /><item>
+  <title>GitLab最佳实践--集成JIRA</title>
+  <link>https://hellofinger.tech/2020/02/gitlab-integrate-jira/</link>
+  <pubDate>Fri, 28 Feb 2020 18:11:52 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2020/02/gitlab-integrate-jira/</guid>
+  <description><![CDATA[为什么要集成JIRAJIRA是项目管理的工具，GitLab是代码的管理工具，将两者集成可以实现项目管理和开发的结合。开发人员的每一次代码变更都可以反应到JIRA ISSUE的comment中。并且生成相互关联的链接。大大方便了相关问题跟踪。另外开发人员也可以直接通过Git commit 关闭 JIRA ISSUE。 简化了在JIRA上的操作。
+如何集成配置JIRA为GitLab创建一个拥有访问权限的JIRA账号或者是API Token。本文以API Token为例。 配置GitLab找到项目菜单 Settings =&gt; Integrations =&gt; Project services =&gt; Jira。
+勾选服务选项，填写JIRA的配置信息。然后点击保存，激活JIRA服务。
+以上是在某一个具体项目配置JIRA。如果我们有几十，几百个项目，则可以在Admin菜单Service Templates配置JIRA ，这样以后新创建的代码仓库都会自动激活JIRA服务。不必要每个项目都重复操作一遍。(如果是已经存在的未激活JIRA服务的项目，则Service Template没有效果，需要重新在项目内激活)
+如果JIRA是本地服务，会提示网络错误。
+需要在管理员界面，配置允许本地访问，加上本地IP地址。
+测试集成在JIRA创建Project 和 Issue。
+在GitLab提交一个新文件。comment 必须带有JIRA ISSUE的ID(GJI-1)。
+我们回到JIRA ISSUE ID的详情页面。一切ok的情况下，comment会有GitLab的变更记录。
+最后我们测试一下通过在提交和合并请求中使用触发词，直接关闭JIRA ISSUE。 目前支持三个触发词：
+Resolves PROJECT-1 Closes PROJECT-1 Fixes PROJECT-1 ]]></description>
+</item>
+<item>
+  <title>GitLab最佳实践--强制代码包含版本信息</title>
+  <link>https://hellofinger.tech/2020/02/gitlab-code-header-include-copyright/</link>
+  <pubDate>Tue, 25 Feb 2020 18:11:52 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2020/02/gitlab-code-header-include-copyright/</guid>
+  <description><![CDATA[需求概述要求开发人员上传的代码文件头部必须包含版权信息，否则阻止代码上传到Git仓库。
+解决方案还是基于Git Hooks的方式，在服务器端通过脚本控制Git Push的内容。
+具体思路1、获取到Git 提交的文件以及文件内容。
+2、过滤文件后缀，检索文件内容，匹配关键字信息(如 Copyright)。并获取到关键字所在的文件行数。
+3、具体逻辑判断，例如：Copyright必须在文件内容前10行以内。
+代码实现1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 exitcode=&#39;0&#39; FILES=`git diff --name-status $oldrev $newrev | awk &#39;{print $2}&#39;` # 遍历客户端Git Push的文件 for filepath in $FILES; do if [ &#34;$filepath&#34; = &#34;.gitallowed&#34; ]; then echo &#34;Skipping $filepath .]]></description>
+</item>
+<item>
+  <title>GitLab最佳实践--服务器端使用git-secrets</title>
+  <link>https://hellofinger.tech/2020/02/gitlab-server-using-git-secrets/</link>
+  <pubDate>Sat, 22 Feb 2020 18:11:52 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2020/02/gitlab-server-using-git-secrets/</guid>
+  <description><![CDATA[GitLab 服务器端使用git-secrets随着互联网的快速发展，信息安全问题也变得越来越重要，对于代码仓库管理员来说，我们需要通过代码扫描工具防止开发者将企业系统中的账号密码和其他敏感信息提交到Git仓库。从而避免这些敏感信息泄露到互联网。
+AWS的git-secrets（https://github.com/awslabs/git-secrets)。提供了一种扫描代码文件的方法。下面我分享一下我们项目组使用git-secrets的一些经验。
+起初，我们要求所有开发在本地安装git-secrets工具，这样能使他们在commit/push代码的时候及时发现代码中是否存在敏感信息，若是存在则会阻止代码推送到Git服务器仓库。真的这样是一种很好的方式。但是在实施的过程中还是存在开发人员将敏感信息写在代码中，并且上传到GitHub（是的，最早我们没有自建代码仓库，使用了GitHub私有仓库）。
+后来，我们搭建了私有GitLab，将GItHub代码仓库迁移到了GitLab。并且在GitLab服务器安装git-secrets。通过编写扫描脚本，定时扫描所有代码仓库，将扫描结果以邮件形式发送给所有开发人员。
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 def scan_all_repository(): root = &#34;/var/opt/gitlab/git-data/repositories&#34; cmd = &#34;find {} -name &#39;*.git&#39;&#34;.format(root) status_code, output = subprocess.getstatusoutput(cmd) result = [] if status_code == 0: files = output.split(&#34;\n&#34;) total = len(files) for idx, name in enumerate(files): if idx % 10 == 0: print(&#34;[{}] This is {}/{}&#34;.format(datetime.datetime.now(), idx, total)) os.]]></description>
+</item>
+<item>
+  <title>GitLab最佳实践--CI/CD之Pipeline(四)</title>
+  <link>https://hellofinger.tech/2020/02/gitlab-cicd-pipeline-4/</link>
+  <pubDate>Thu, 20 Feb 2020 18:11:52 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2020/02/gitlab-cicd-pipeline-4/</guid>
+  <description><![CDATA[Only / Exceptonly 和 except用于定义Pipeline Job应该什么时候执行或者不执行。
+only 定义需要执行的分支或标签 except 定义不执行的分支或标签 以下为用法规则：
+only和except如果都存在在一个Pipepline Job声明中，则所需引用(ref)将会被only和except所定义的分支过滤. only和except允许使用正则表达式 only和except允许使用指定仓库地址，但是不forks仓库 only和except 允许使用的特殊关键字：
+值 描述 branches 当目标分支执行push操作时 tags 当目标分支打tag标记时 api 当一个pipeline被另一个pipeline api所触发时 external 当使用了GitLab以外的外部CI服务，如Jenkins pipelines 针对多项目触发器而言，当使用CI_JOB_TOKEN并使用gitlab所提供的api创建多个pipelines的时候 pushes 当pipeline被用户的git push操作所触发的时候 schedules 针对预定好的pipline而言 triggers 用token创建pipline的时候 web 在GitLab页面上pipeline标签页下，点击Run Pileline按钮时 merge_requests 当用户发起合并请求时 chat 对于使用GitLab ChatOps命令时 接下来看一个简单的例子，定义一个仅在feature分支才触发job，而其他分支都不执行。
+1 2 3 4 5 job: script: - echo &#39;Hello, Only / Except&#39; only: - feature 添加test.txt文件后，可以看到job开始执行。
+再来看一个使用正则表达式的例子。
+1 2 3 4 5 job: script: - echo &#39;Test regular expression&#39; only: - /^issue-.]]></description>
+</item>
+<item>
+  <title>GitLab最佳实践--CI/CD之Pipeline(三)</title>
+  <link>https://hellofinger.tech/2020/02/gitlab-cicd-pipeline-3/</link>
+  <pubDate>Tue, 18 Feb 2020 18:11:52 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2020/02/gitlab-cicd-pipeline-3/</guid>
+  <description><![CDATA[RulesRules是用于定义Pipeline Job的触发规则。可用的属性有：
+if changes exists 1 2 3 4 5 6 7 job: script: - echo &#39;Hello, Rules&#39; rules: - if: &#39;$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == &#34;dev&#34;&#39; when: always - when: manual 在上述例子中，如果匹配 if 条件内容，则按照 when:always规则执行。即当分支为dev时，只要commit就会触发该任务。否则，按照when:manual规则执行，任务变成手动触发。
+a、满足第一个条件，在dev分支，执行commit。pipeline任务正常执行。
+b、不满足第一个条件，在master分支，执行commit。pipeline任务变成手动模式。
+rules:if语法类似于编程语言的if，else条件语句。 多个if语句为：
+1 2 3 4 5 6 7 rules: - if: Condition 1 when: always - if: Condition 2 when: manual ... - when: on_success 也可以使用逻辑运算符：逻辑与(&amp;&amp;) 和 逻辑或(||) 例如：
+1 2 3 4 5 6 7 8 job: script: &#34;echo Hello, Rules!]]></description>
+</item>
+<item>
+  <title>GitLab最佳实践--CI/CD之Pipeline(二)</title>
+  <link>https://hellofinger.tech/2020/02/gitlab-cicd-pipeline-2/</link>
+  <pubDate>Mon, 17 Feb 2020 18:11:52 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2020/02/gitlab-cicd-pipeline-2/</guid>
+  <description><![CDATA[1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 stages: - build - cleanup_build - test - deploy - cleanup build_job: stage: build script: - echo &#34;build job&#34; cleanup_build_job: stage: cleanup_build script: - echo &#34;cleanup build job&#34; when: on_failure test_job: stage: test script: - echo &#34;test job&#34; deploy_job: stage: deploy script: - echo &#34;deploy job&#34; when: manual cleanup_job: stage: cleanup script: - echo &#34;cleanup job&#34; when: always 以上为Pipeline Job属性when 的例子。]]></description>
+</item>
+<item>
+  <title>GitLab最佳实践--CI/CD之Pipeline(一)</title>
+  <link>https://hellofinger.tech/2020/02/gitlab-cicd-pipeline-1/</link>
+  <pubDate>Sun, 16 Feb 2020 18:11:52 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2020/02/gitlab-cicd-pipeline-1/</guid>
+  <description><![CDATA[从CI / CD &ndash; HelloWorld的例子中我们知道 .gitlab-ci.yml文件定义了Pipeline的结构和顺序。GitLab Runner根据Pipeline的结构和顺序执行任务。接下来我们看下面一个例子。
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 stages: - build - test - deploy build: stage: build script: - echo &#34;build job&#34; tags: - docker test1: stage: test script: - echo &#34;test1 job&#34; tags: - docker test2: stage: test script: - echo &#34;test2 job&#34; tags: - docker deply: stage: deploy script: - echo &#34;deploy job&#34; tags: - docker stages（阶段）保留关键字，定义了Pipeline的全部阶段。同一阶段内的任务并行执行。全部执行成功后开始下一阶段任务。任何阶段内任意任务执行失败都会导致Pipeline失败。所有阶段内的任务都执行成功后Pipeline才会显示passed。否则显示failed。如果未定义stages，则默认有build、test、deploy三个阶段，如果未定义stage，则默认test阶段。]]></description>
+</item>
+<item>
+  <title>GitLab最佳实践--CI/CD之Hello World</title>
+  <link>https://hellofinger.tech/2020/02/gitlab-install-and-maintance/</link>
+  <pubDate>Sat, 15 Feb 2020 18:11:52 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2020/02/gitlab-install-and-maintance/</guid>
+  <description><![CDATA[CI / CD 方法论简介软件开发的连续方法基于自动化脚本，以最大程度地减少在开发应用程序时引入错误的机会。从开发新代码到部署新代码，甚至根本不需要干预。
+它涉及到在每次小的迭代中就不断地构建，测试和部署代码更改，从而减少了基于错误或失败的先前版本开发新代码的机会。
+此方法主要有三种，我们可以根据自己项目的实际情况进行应用。
+持续集成考虑一个应用程序，其代码存储在GitLab的Git存储库中。开发人员每天都要多次推送代码更改。对于每次向存储库的推送，您都可以创建一组脚本来自动构建和测试您的应用程序，从而减少了向应用程序引入错误的机会。
+这种做法被称为持续集成；对于提交给应用程序（甚至是开发分支）的每个更改，它都会自动连续地构建和测试，以确保所引入的更改通过您为应用程序建立的所有测试，准则和代码合规性标准。
+GitLab本身就是使用持续集成作为软件开发方法的一个示例。对于项目的每一次推送，都有一组检查代码的脚本。
+持续交付持续交付是超越持续集成的一步。您的应用程序不仅会在推送到代码库的每次代码更改时都进行构建和测试，而且，作为附加步骤，即使部署是手动触发的，它也可以连续部署。
+此方法可确保自动检查代码，但需要人工干预才能从策略上手动触发更改的部署。
+持续部署类似于持续交付，持续部署也是超越持续集成的又一步。不同之处在于，您无需将其手动部署，而是将其设置为自动部署。部署您的应用程序完全不需要人工干预。
+GitLab CI / CD简介GitLab CI/CD是GitLab内置功能，它提供了强大的项目管理和集成功能，并且提供了可视化界面。可以很方便的实现持续集成，交付与部署。并且无需第三方应用程序。
+GitLab CI / CD 工作流简介Step1、我们需要把项目源代码托管到GitLab仓库。 Step2、在项目根目录新建 .gitlab-ci.yml。在此文件，编写我们需要运行的脚本内容(例如：依赖项，执行顺序，触发方式等)。 Step3、将该项目注册到可以运行的GitLab Runner。
+GitLab会自动检测 .gitlab-ci.yml文件，并根据该文件的内容进行触发，并执行脚本内容。
+第一个例子 &ndash; Hello World在GitLab官网( https://gitlab.com )注册一个账号。当然我们也可以使用自己搭建的GitLab(参考上一篇文章《GitLab最佳实践 &ndash; 安装与维护》)
+Step1、新建一个项目gitlab-cicd-helloworld。
+Step2、新建 .gitlab-ci.yml，增加以下内容：
+1 2 3 4 5 demo_job_1: tags: - ci script: - echo &#34;Hello World&#34; Step3、安装和注册GitLab Runner。本例使用的是Windows系统。 传送门：https://docs.gitlab.com/runner/install/windows.html
+进入项目Settings &ndash;&gt; CD / CD菜单，找到Runners配置信息。
+执行命令：.\gitlab-runner.exe register。Runnner注册成功后，回到设置界面刷新后，将会看到绿色圆点标记的可用Runnners。]]></description>
+</item>
+<item>
+  <title>GitLab最佳实践--安装与维护</title>
+  <link>https://hellofinger.tech/2020/02/gitlab-install-and-maintance/</link>
+  <pubDate>Sun, 09 Feb 2020 18:11:52 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2020/02/gitlab-install-and-maintance/</guid>
+  <description><![CDATA[一、为什么使用Gitlab杜绝因为程序员的疏忽，导致敏感信息泄露到公网。 开源免费。 满足企业的安全性与私密需求。 部署和维护简单。 可以流水线作业和项目进度协作 二、安装与运行1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 // 拉取镜像 // docker pull gitlab/gitlab-ce // 运行镜像（因为是在本地运行，用的是本机IP地址，正式部署应该使用域名） docker run --detach \ --hostname 192.168.37.129 \ --publish 443:443 --publish 80:80 --publish 2022:22 \ --name gitlab \ --restart always \ --volume /srv/gitlab/config:/etc/gitlab \ --volume /srv/gitlab/logs:/var/log/gitlab \ --volume /srv/gitlab/data:/var/opt/gitlab \ // 修改配置 docker exec -it gitlab /bin/bash // 编辑配置 vim /etc/gitlab/gitlab.]]></description>
+</item>
+</channel>
+</rss>

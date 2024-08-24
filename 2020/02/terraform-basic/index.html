@@ -5,8 +5,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
     <meta name="robots" content="noodp" />
-    <title>Terraform的基本语法 - Finger&#39;s Blog</title><meta name="author" content="Finger">
-<meta name="author-link" content="">
+    <title>Terraform基础--基本语法 - Finger&#39;s Blog</title><meta name="author" content="Finger">
+<meta name="author-link" content="https://github.com/hellofinger">
 <meta name="description" content="语法Terraform语言也就是HCL(HashiCorp Configuration Language)，是一种丰富的语言。他的语法结构类似于JSON语法。主要由参数和块构成。
 参数1 2 ami = &#34;ami-061eb2b23f9f8839c&#34; instance_type = &#34;t2.micro&#34; 等号前的标识符是参数名称，等号后的表达式是参数的值。
 代码块1 2 3 4 5 6 7 8 resource &#34;aws_instance&#34; &#34;example-instance&#34; { ami = &#34;ami-061eb2b23f9f8839c&#34; instance_type = &#34;t2.micro&#34; tags = { Name = &#34;Example by ChangSha Union&#34; } } 块具有类型(resource)，每一个块类型定义后需要定义多个标签，上述例子定义了 aws_instance和 example-instance 两个标签。特定的块类型可以具有任意数量的标签或者不需要标签名。aws_instance为第三方云资源的关键字，example-instance为自定义资源变量名。
@@ -15,7 +15,7 @@
 标识符参数名，块类型名以及大多数特定于Terraform的结构(如资源，输入变量)的名称都是标识符。
 标识符可以包含字母，数字，下划线（_）和连字符（-）。标识符的第一个字符不能为数字，这和编程语言规则相同。
 注释# 单行或者结尾注释 // 单行注释，以替代# /* */ 多行注释 Terraform VS 传统函数将Terraform与传统函数(以JavaScript语法为例)比较。input variable相当于函数参数，local value类似于局部变量。而output类似于返回值。" /><meta name="keywords" content='Terraform, IAC' />
-  <meta itemprop="name" content="Terraform的基本语法">
+  <meta itemprop="name" content="Terraform基础--基本语法">
   <meta itemprop="description" content="语法Terraform语言也就是HCL(HashiCorp Configuration Language)，是一种丰富的语言。他的语法结构类似于JSON语法。主要由参数和块构成。
 参数1 2 ami = &#34;ami-061eb2b23f9f8839c&#34; instance_type = &#34;t2.micro&#34; 等号前的标识符是参数名称，等号后的表达式是参数的值。
 代码块1 2 3 4 5 6 7 8 resource &#34;aws_instance&#34; &#34;example-instance&#34; { ami = &#34;ami-061eb2b23f9f8839c&#34; instance_type = &#34;t2.micro&#34; tags = { Name = &#34;Example by ChangSha Union&#34; } } 块具有类型(resource)，每一个块类型定义后需要定义多个标签，上述例子定义了 aws_instance和 example-instance 两个标签。特定的块类型可以具有任意数量的标签或者不需要标签名。aws_instance为第三方云资源的关键字，example-instance为自定义资源变量名。
@@ -29,7 +29,7 @@
   <meta itemprop="wordCount" content="72">
   <meta itemprop="keywords" content="Terraform,IAC"><meta property="og:url" content="https://hellofinger.tech/2020/02/terraform-basic/">
   <meta property="og:site_name" content="Finger&#39;s Blog">
-  <meta property="og:title" content="Terraform的基本语法">
+  <meta property="og:title" content="Terraform基础--基本语法">
   <meta property="og:description" content="语法Terraform语言也就是HCL(HashiCorp Configuration Language)，是一种丰富的语言。他的语法结构类似于JSON语法。主要由参数和块构成。
 参数1 2 ami = &#34;ami-061eb2b23f9f8839c&#34; instance_type = &#34;t2.micro&#34; 等号前的标识符是参数名称，等号后的表达式是参数的值。
 代码块1 2 3 4 5 6 7 8 resource &#34;aws_instance&#34; &#34;example-instance&#34; { ami = &#34;ami-061eb2b23f9f8839c&#34; instance_type = &#34;t2.micro&#34; tags = { Name = &#34;Example by ChangSha Union&#34; } } 块具有类型(resource)，每一个块类型定义后需要定义多个标签，上述例子定义了 aws_instance和 example-instance 两个标签。特定的块类型可以具有任意数量的标签或者不需要标签名。aws_instance为第三方云资源的关键字，example-instance为自定义资源变量名。
@@ -47,7 +47,7 @@
     <meta property="article:tag" content="IAC">
 
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Terraform的基本语法">
+  <meta name="twitter:title" content="Terraform基础--基本语法">
   <meta name="twitter:description" content="语法Terraform语言也就是HCL(HashiCorp Configuration Language)，是一种丰富的语言。他的语法结构类似于JSON语法。主要由参数和块构成。
 参数1 2 ami = &#34;ami-061eb2b23f9f8839c&#34; instance_type = &#34;t2.micro&#34; 等号前的标识符是参数名称，等号后的表达式是参数的值。
 代码块1 2 3 4 5 6 7 8 resource &#34;aws_instance&#34; &#34;example-instance&#34; { ami = &#34;ami-061eb2b23f9f8839c&#34; instance_type = &#34;t2.micro&#34; tags = { Name = &#34;Example by ChangSha Union&#34; } } 块具有类型(resource)，每一个块类型定义后需要定义多个标签，上述例子定义了 aws_instance和 example-instance 两个标签。特定的块类型可以具有任意数量的标签或者不需要标签名。aws_instance为第三方云资源的关键字，example-instance为自定义资源变量名。
@@ -65,7 +65,7 @@
   {
     "@context": "http://schema.org",
     "@type": "BlogPosting",
-    "headline": "Terraform的基本语法",
+    "headline": "Terraform基础--基本语法",
     "inLanguage": "zh-CN",
     "mainEntityOfPage": {
       "@type": "WebPage",
@@ -204,10 +204,10 @@
   </div><main class="container"><aside class="aside-collection animate__animated animate__fadeIn animate__faster" aria-label="合集"></aside>
 
   <article class="page single">
-    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>Terraform的基本语法</span>
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>Terraform基础--基本语法</span>
       </h1></div><div class="post-meta">
-      <div class="post-meta-line"><span class="post-author"><span class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-      Finger</span></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/iac/" class="post-category" title="分类 - IAC"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> IAC</a></span></div><div class="post-meta-line"><span title="发布于 2020-02-01 11:17:52"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2020-02-01">2020-02-01</time></span>&nbsp;<span title="72 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 100 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 1 分钟</span>&nbsp;</div>
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/iac/" class="post-category" title="分类 - IAC"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> IAC</a></span></div><div class="post-meta-line"><span title="发布于 2020-02-01 11:17:52"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2020-02-01">2020-02-01</time></span>&nbsp;<span title="72 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 100 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 1 分钟</span>&nbsp;</div>
     </div><div class="details toc" id="toc-static" data-kept="false">
         <div class="details-summary toc-title">
           <span>目录</span>
@@ -303,11 +303,11 @@
       </div><div class="post-info-license">
             <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
           </div></div><div class="post-info-line">
-        <div class="post-info-md"><span><a href="https://github.com/hugo-fixit/docs/blob/main/main/posts%5cterraform%5c04%20Terraform%e7%9a%84%e5%9f%ba%e6%9c%ac%e8%af%ad%e6%b3%95%5cindex.md?plain=1" title="查看源码"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-source">查看源码</a></span><span><a href="https://github.com/hugo-fixit/docs/edit/main/main/posts%5cterraform%5c04%20Terraform%e7%9a%84%e5%9f%ba%e6%9c%ac%e8%af%ad%e6%b3%95%5cindex.md" title="编辑此页"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-edit">编辑此页</a></span><span><a href="https://github.com/hugo-fixit/docs/issues/new?title=[BUG]%20Terraform%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95&amp;body=%7cField%7cValue%7c%0A%7c-%7c-%7c%0A%7cTitle%7cTerraform%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95%7c%0A%7cURL%7chttps://hellofinger.tech/2020/02/terraform-basic/%7c%0A%7cFilename%7chttps://github.com/hugo-fixit/docs/blob/main/main/posts%5cterraform%5c04%20Terraform%e7%9a%84%e5%9f%ba%e6%9c%ac%e8%af%ad%e6%b3%95%5cindex.md?plain=1%7c" title="报告问题"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-report">报告问题</a></span></div>
+        <div class="post-info-md"></div>
         <div class="post-info-share">
-          <span><a href="javascript:void(0);" title="分享到 X" data-sharer="twitter" data-url="https://hellofinger.tech/2020/02/terraform-basic/" data-title="Terraform的基本语法" data-hashtags="Terraform,IAC"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a>
+          <span><a href="javascript:void(0);" title="分享到 X" data-sharer="twitter" data-url="https://hellofinger.tech/2020/02/terraform-basic/" data-title="Terraform基础--基本语法" data-hashtags="Terraform,IAC"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a>
   <a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://hellofinger.tech/2020/02/terraform-basic/" data-hashtag="Terraform"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
-  <a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://hellofinger.tech/2020/02/terraform-basic/" data-title="Terraform的基本语法"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://hellofinger.tech/2020/02/terraform-basic/" data-title="Terraform基础--基本语法"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
   </span>
         </div>
       </div></div>
@@ -317,8 +317,8 @@
     <section>
       <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
     </section>
-  </div><div class="post-nav"><a href="/2020/01/what-is-terraform/" class="post-nav-item" rel="prev" title="Terraform 是什么？"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>Terraform 是什么？</a>
-      <a href="/2020/02/terraform-variables/" class="post-nav-item" rel="next" title="Terraform的变量详解">Terraform的变量详解<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+  </div><div class="post-nav"><a href="/2020/01/what-is-terraform/" class="post-nav-item" rel="prev" title="Terraform基础--Terraform是什么？"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>Terraform基础--Terraform是什么？</a>
+      <a href="/2020/02/terraform-variables/" class="post-nav-item" rel="next" title="Terraform基础--变量详解">Terraform基础--变量详解<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
 </div>
 </article>
 
@@ -327,7 +327,7 @@
     <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
         </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
             <span itemprop="copyrightYear">2017 - 2024</span><span class="author" itemprop="copyrightHolder">
-              <a href="/">Finger</a></span><span class="license footer-divider"><a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"></div></div>
+              <a href="https://github.com/hellofinger"target="_blank" rel="external nofollow noopener noreferrer">Finger</a></span><span class="license footer-divider"><a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"></div></div>
   </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="回到顶部"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric">0%</span>
         </div></div><div id="mask"></div><noscript>
     <div class="noscript-warning">该网站在启用 JavaScript 的情况下效果最佳。</div>

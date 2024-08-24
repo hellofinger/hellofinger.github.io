@@ -5,8 +5,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
     <meta name="robots" content="noodp" />
-    <title>Terraform的变量详解 - Finger&#39;s Blog</title><meta name="author" content="Finger">
-<meta name="author-link" content="">
+    <title>Terraform基础--变量详解 - Finger&#39;s Blog</title><meta name="author" content="Finger">
+<meta name="author-link" content="https://github.com/hellofinger">
 <meta name="description" content="定义变量创建 variables.tf文件，定义变量名为：aws_region。设置默认值：ap-southeast-1。默认值是可选的。如果未设置默认值，则该变量是必需的。
 1 2 3 4 5 # variables.tf variable &#34;aws_region&#34; { default = &#34;ap-southeast-1&#34; } 注意：该文件可以命名为任何名称，因为Terraform加载目录下以*.tf结尾的所有文件。
 使用变量通过使用占位符 ${}和var关键字引用定义的变量名。
@@ -17,7 +17,7 @@
 1 2 3 # terraform.tfvars aws_region = &#34;ap-southeast-1&#34; 对于当前目录中匹配 terraform.tfvars 或 *.auto.tfvars 存在的所有文件，Terraform会自动加载它们以填充变量。如果文件名为其他名称，则可以-var-file直接使用该标志指定文件。这些文件与Terraform配置文件的语法相同。与Terraform配置文件一样，这些文件也可以是JSON。
 1 terraform apply -var-file=&#34;xxx.tfvars&#34; 注意：不建议将用户名和密码保存到版本控制中，但是可以创建一个本地秘钥变量文件用-var-file加载。
 -var-file 可以使用多次，指定不同的变量文件。例如：" /><meta name="keywords" content='Terraform, IAC' />
-  <meta itemprop="name" content="Terraform的变量详解">
+  <meta itemprop="name" content="Terraform基础--变量详解">
   <meta itemprop="description" content="定义变量创建 variables.tf文件，定义变量名为：aws_region。设置默认值：ap-southeast-1。默认值是可选的。如果未设置默认值，则该变量是必需的。
 1 2 3 4 5 # variables.tf variable &#34;aws_region&#34; { default = &#34;ap-southeast-1&#34; } 注意：该文件可以命名为任何名称，因为Terraform加载目录下以*.tf结尾的所有文件。
 使用变量通过使用占位符 ${}和var关键字引用定义的变量名。
@@ -33,7 +33,7 @@
   <meta itemprop="wordCount" content="293">
   <meta itemprop="keywords" content="Terraform,IAC"><meta property="og:url" content="https://hellofinger.tech/2020/02/terraform-variables/">
   <meta property="og:site_name" content="Finger&#39;s Blog">
-  <meta property="og:title" content="Terraform的变量详解">
+  <meta property="og:title" content="Terraform基础--变量详解">
   <meta property="og:description" content="定义变量创建 variables.tf文件，定义变量名为：aws_region。设置默认值：ap-southeast-1。默认值是可选的。如果未设置默认值，则该变量是必需的。
 1 2 3 4 5 # variables.tf variable &#34;aws_region&#34; { default = &#34;ap-southeast-1&#34; } 注意：该文件可以命名为任何名称，因为Terraform加载目录下以*.tf结尾的所有文件。
 使用变量通过使用占位符 ${}和var关键字引用定义的变量名。
@@ -53,7 +53,7 @@
     <meta property="article:tag" content="IAC">
 
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Terraform的变量详解">
+  <meta name="twitter:title" content="Terraform基础--变量详解">
   <meta name="twitter:description" content="定义变量创建 variables.tf文件，定义变量名为：aws_region。设置默认值：ap-southeast-1。默认值是可选的。如果未设置默认值，则该变量是必需的。
 1 2 3 4 5 # variables.tf variable &#34;aws_region&#34; { default = &#34;ap-southeast-1&#34; } 注意：该文件可以命名为任何名称，因为Terraform加载目录下以*.tf结尾的所有文件。
 使用变量通过使用占位符 ${}和var关键字引用定义的变量名。
@@ -73,7 +73,7 @@
   {
     "@context": "http://schema.org",
     "@type": "BlogPosting",
-    "headline": "Terraform的变量详解",
+    "headline": "Terraform基础--变量详解",
     "inLanguage": "zh-CN",
     "mainEntityOfPage": {
       "@type": "WebPage",
@@ -212,10 +212,10 @@
   </div><main class="container"><aside class="aside-collection animate__animated animate__fadeIn animate__faster" aria-label="合集"></aside>
 
   <article class="page single">
-    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>Terraform的变量详解</span>
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>Terraform基础--变量详解</span>
       </h1></div><div class="post-meta">
-      <div class="post-meta-line"><span class="post-author"><span class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-      Finger</span></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/iac/" class="post-category" title="分类 - IAC"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> IAC</a></span></div><div class="post-meta-line"><span title="发布于 2020-02-02 04:23:52"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2020-02-02">2020-02-02</time></span>&nbsp;<span title="293 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 300 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 2 分钟</span>&nbsp;</div>
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/iac/" class="post-category" title="分类 - IAC"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> IAC</a></span></div><div class="post-meta-line"><span title="发布于 2020-02-02 04:23:52"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2020-02-02">2020-02-02</time></span>&nbsp;<span title="293 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 300 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 2 分钟</span>&nbsp;</div>
     </div><div class="details toc" id="toc-static" data-kept="false">
         <div class="details-summary toc-title">
           <span>目录</span>
@@ -529,11 +529,11 @@
       </div><div class="post-info-license">
             <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
           </div></div><div class="post-info-line">
-        <div class="post-info-md"><span><a href="https://github.com/hugo-fixit/docs/blob/main/main/posts%5cterraform%5c05%20Terraform%e7%9a%84%e5%8f%98%e9%87%8f%e8%af%a6%e8%a7%a3%5cindex.md?plain=1" title="查看源码"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-source">查看源码</a></span><span><a href="https://github.com/hugo-fixit/docs/edit/main/main/posts%5cterraform%5c05%20Terraform%e7%9a%84%e5%8f%98%e9%87%8f%e8%af%a6%e8%a7%a3%5cindex.md" title="编辑此页"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-edit">编辑此页</a></span><span><a href="https://github.com/hugo-fixit/docs/issues/new?title=[BUG]%20Terraform%E7%9A%84%E5%8F%98%E9%87%8F%E8%AF%A6%E8%A7%A3&amp;body=%7cField%7cValue%7c%0A%7c-%7c-%7c%0A%7cTitle%7cTerraform%E7%9A%84%E5%8F%98%E9%87%8F%E8%AF%A6%E8%A7%A3%7c%0A%7cURL%7chttps://hellofinger.tech/2020/02/terraform-variables/%7c%0A%7cFilename%7chttps://github.com/hugo-fixit/docs/blob/main/main/posts%5cterraform%5c05%20Terraform%e7%9a%84%e5%8f%98%e9%87%8f%e8%af%a6%e8%a7%a3%5cindex.md?plain=1%7c" title="报告问题"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-report">报告问题</a></span></div>
+        <div class="post-info-md"></div>
         <div class="post-info-share">
-          <span><a href="javascript:void(0);" title="分享到 X" data-sharer="twitter" data-url="https://hellofinger.tech/2020/02/terraform-variables/" data-title="Terraform的变量详解" data-hashtags="Terraform,IAC"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a>
+          <span><a href="javascript:void(0);" title="分享到 X" data-sharer="twitter" data-url="https://hellofinger.tech/2020/02/terraform-variables/" data-title="Terraform基础--变量详解" data-hashtags="Terraform,IAC"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a>
   <a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://hellofinger.tech/2020/02/terraform-variables/" data-hashtag="Terraform"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
-  <a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://hellofinger.tech/2020/02/terraform-variables/" data-title="Terraform的变量详解"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://hellofinger.tech/2020/02/terraform-variables/" data-title="Terraform基础--变量详解"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
   </span>
         </div>
       </div></div>
@@ -543,8 +543,8 @@
     <section>
       <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
     </section>
-  </div><div class="post-nav"><a href="/2020/02/terraform-basic/" class="post-nav-item" rel="prev" title="Terraform的基本语法"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>Terraform的基本语法</a>
-      <a href="/2020/02/terraform-modules/" class="post-nav-item" rel="next" title="Terraform模块基础">Terraform模块基础<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+  </div><div class="post-nav"><a href="/2020/02/terraform-basic/" class="post-nav-item" rel="prev" title="Terraform基础--基本语法"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>Terraform基础--基本语法</a>
+      <a href="/2020/02/terraform-modules/" class="post-nav-item" rel="next" title="Terraform基础--模块基础">Terraform基础--模块基础<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
 </div>
 </article>
 
@@ -553,7 +553,7 @@
     <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
         </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
             <span itemprop="copyrightYear">2017 - 2024</span><span class="author" itemprop="copyrightHolder">
-              <a href="/">Finger</a></span><span class="license footer-divider"><a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"></div></div>
+              <a href="https://github.com/hellofinger"target="_blank" rel="external nofollow noopener noreferrer">Finger</a></span><span class="license footer-divider"><a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"></div></div>
   </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="回到顶部"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric">0%</span>
         </div></div><div id="mask"></div><noscript>
     <div class="noscript-warning">该网站在启用 JavaScript 的情况下效果最佳。</div>

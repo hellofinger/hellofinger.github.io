@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
     <meta name="robots" content="noodp" />
     <title>Ubuntu 安装svn服务 - Finger&#39;s Blog</title><meta name="author" content="Finger">
-<meta name="author-link" content="">
+<meta name="author-link" content="https://github.com/hellofinger">
 <meta name="description" content="一、安装Subversion Server1 apt-get install subversion 二、创建SVN版本库1 2 mkdir /srv/svn # 创建SVN根目录 svnadmin create test # 创建测试项目库 三、SVN配置主要包含以下三个配置文件：
 1. svnserve.conf服务配置：
 1 2 3 4 5 6 [general] anon-access = none # 匿名用户不可读 auth-access = write # 权限用户可写 password-db = passwd # 启用密码文件 authz-db = authz # 启用权限文件 realm = repos # 认证域名称 2. passwd账号配置：
@@ -194,8 +194,8 @@
   <article class="page single">
     <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>Ubuntu 安装svn服务</span>
       </h1></div><div class="post-meta">
-      <div class="post-meta-line"><span class="post-author"><span class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-      Finger</span></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/note/" class="post-category" title="分类 - Note"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Note</a></span></div><div class="post-meta-line"><span title="发布于 2017-01-27 20:56:00"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2017-01-27">2017-01-27</time></span>&nbsp;<span title="132 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 200 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 1 分钟</span>&nbsp;</div>
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/note/" class="post-category" title="分类 - Note"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Note</a></span></div><div class="post-meta-line"><span title="发布于 2017-01-27 20:56:00"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2017-01-27">2017-01-27</time></span>&nbsp;<span title="132 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 200 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 1 分钟</span>&nbsp;</div>
     </div><div class="details toc" id="toc-static" data-kept="false">
         <div class="details-summary toc-title">
           <span>目录</span>
@@ -357,7 +357,7 @@
       </div><div class="post-info-license">
             <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
           </div></div><div class="post-info-line">
-        <div class="post-info-md"><span><a href="https://github.com/hugo-fixit/docs/blob/main/main/posts%5cdevops%5cubuntu-install-svn-simple-server.md?plain=1" title="查看源码"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-source">查看源码</a></span><span><a href="https://github.com/hugo-fixit/docs/edit/main/main/posts%5cdevops%5cubuntu-install-svn-simple-server.md" title="编辑此页"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-edit">编辑此页</a></span><span><a href="https://github.com/hugo-fixit/docs/issues/new?title=[BUG]%20Ubuntu&#43;%E5%AE%89%E8%A3%85svn%E6%9C%8D%E5%8A%A1&amp;body=%7cField%7cValue%7c%0A%7c-%7c-%7c%0A%7cTitle%7cUbuntu&#43;%E5%AE%89%E8%A3%85svn%E6%9C%8D%E5%8A%A1%7c%0A%7cURL%7chttps://hellofinger.tech/2017/01/ubuntu-install-svn-simple-server/%7c%0A%7cFilename%7chttps://github.com/hugo-fixit/docs/blob/main/main/posts%5cdevops%5cubuntu-install-svn-simple-server.md?plain=1%7c" title="报告问题"target="_blank" rel="external nofollow noopener noreferrer" class="link-to-report">报告问题</a></span></div>
+        <div class="post-info-md"></div>
         <div class="post-info-share">
           <span><a href="javascript:void(0);" title="分享到 X" data-sharer="twitter" data-url="https://hellofinger.tech/2017/01/ubuntu-install-svn-simple-server/" data-title="Ubuntu 安装svn服务" data-hashtags="SVN,Ubuntu"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a>
   <a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://hellofinger.tech/2017/01/ubuntu-install-svn-simple-server/" data-hashtag="SVN"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
@@ -381,7 +381,7 @@
     <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
         </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
             <span itemprop="copyrightYear">2017 - 2024</span><span class="author" itemprop="copyrightHolder">
-              <a href="/">Finger</a></span><span class="license footer-divider"><a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"></div></div>
+              <a href="https://github.com/hellofinger"target="_blank" rel="external nofollow noopener noreferrer">Finger</a></span><span class="license footer-divider"><a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"></div></div>
   </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="回到顶部"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric">0%</span>
         </div></div><div id="mask"></div><noscript>
     <div class="noscript-warning">该网站在启用 JavaScript 的情况下效果最佳。</div>
