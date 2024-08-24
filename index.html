@@ -12,7 +12,7 @@
 <meta name="author-link" content="https://github.com/hellofinger">
 <meta name="description" content="" /><meta name="keywords" content='Finger, DevOps, Python, Go, Kubernetes, k8s' />
   <meta itemprop="name" content="Finger&#39;s Blog">
-  <meta itemprop="datePublished" content="2020-06-16T15:02:52+08:00">
+  <meta itemprop="datePublished" content="2021-02-26T17:27:52+00:00">
   <meta itemprop="dateModified" content="2024-08-23T18:44:07+08:00"><meta property="og:url" content="https://hellofinger.tech/">
   <meta property="og:site_name" content="Finger&#39;s Blog">
   <meta property="og:title" content="Finger&#39;s Blog">
@@ -164,6 +164,46 @@
     </a><a href="mailto:finger.zhou@gmail.com" title="Email"target="_blank" rel="external nofollow noopener noreferrer me"><i class="fa-regular fa-envelope fa-fw" aria-hidden="true"></i>
     </a><a href="/index.xml" title="RSS"target="_blank" rel="external nofollow noopener noreferrer me"><i class="fa-solid fa-rss fa-fw" aria-hidden="true"></i>
     </a></div></div>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2021/02/go-basic-channel/">Go基础--管道Channel</a>
+  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span>&nbsp;<span class="post-publish" title='2021-02-26 17:27:52'>发布于 <time datetime="2021-02-26">2021-02-26</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/go/" class="post-category" title="分类 - Go"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Go</a></span></div><div class="content">ChannelChannel 是Goroutine之间的一种通信机制。这种通信机制有个专业名词叫CSP （ Communicating Sequential Process）即通信顺序进程，是一种并发编程模型。Goroutine 和 Channel 分别对应 CSP 中的实体和传递信息的媒介，Goroutine 之间会通过 Channel 传递数据。
+设计原理在很多主流的编程语言中，多个线程传递数据的方式一般都是共享内存，为了解决线程之间的资源竞争，我们需要限制同一时间能够获取资源的线程数量。
+在Go语言中则设计成：不通过共享内存的方式进行通信，而是通过通信的方式共享内存。
+上图中的两个 Goroutine，一个会向 Channel 中发送数据，另一个会从 Channel 中接收数据，它们两者能够独立运行并不存在直接关联，但是能通过 Channel 间接完成通信。
+声明1 2 3 4 ch := make(chan int) # 设置缓冲大小 ch := make(chan int, 100) 类型它包括三种类型的定义。可选的&lt;-代表channel的方向。如果没有指定方向，那么Channel就是双向的，既可以接收数据，也可以发送数据。
+1 2 3 4 5 ChannelType = ( &#34;chan&#34; | &#34;chan&#34; &#34;&lt;-&#34; | &#34;&lt;-&#34; &#34;chan&#34; ) chan T // 可以接收和发送类型为 T 的数据 chan&lt;- float64 // 只可以用来发送 float64 类型的数据 &lt;-chan int // 只可以用来接收 int 类型的数据 基本操作channel 存在3种状态：</div><div class="post-footer">
+    <a href="/2021/02/go-basic-channel/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/go/' class="post-tag">Go</a></div></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2021/02/go-basic-context/">Go基础--Context</a>
+  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span>&nbsp;<span class="post-publish" title='2021-02-26 14:07:52'>发布于 <time datetime="2021-02-26">2021-02-26</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/go/" class="post-category" title="分类 - Go"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Go</a></span></div><div class="content">什么是 ContextContext 是 Go 并发编程中的一种编程模式。 主要指的是 goroutine的上下文，包含 goroutine 的运行状态，环境，现场等信息。 Context 主要用来在goroutine 之间传递上下文信息，包含：取消信号，超时时间，截止时间，k-v等。
+为什么需要 Context在并发程序中，由于超时，取消操作或者一些异常情况，往往需要进行抢占操作或者中断后续的操作。例如：主协程中有多个任务1,2，&hellip;m，主协程对这些任务有超时控制；而其中任务1又有多个子任务1,2，&hellip;n。任务1对这些子任务也有自己的超时控制，那么这些子任务既要感知主协程的取消信号，也需要感知任务1的取消信号。 因此我们需要解决以下问题： 1、上层任务取消后，所有的下层任务都会被取消 2、中间某一层的任务取消后，只会将当前任务的下层任务取消，而不会影响上层的任务以及同级任务。
+Context 的定义1 2 3 4 5 6 7 8 9 10 11 12 13 type Context interface { // 当 context 被取消或者到了 deadline，返回一个被关闭的 channel Done() &lt;-chan struct{} // 在 channel Done 关闭后，返回 context 取消原因 Err() error // 返回 context 是否会被取消以及自动取消时间（即 deadline） Deadline() (deadline time.Time, ok bool) // 获取 key 对应的 value Value(key interface{}) interface{} } Context 是一个接口，定义了4个方法，它们都是幂等的。也就是说连续多次调用同一个方法，得到的结果都是相同的。</div><div class="post-footer">
+    <a href="/2021/02/go-basic-context/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/go/' class="post-tag">Go</a></div></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2020/08/go-package-gokit/">Go Package--Gokit介绍</a>
+  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span>&nbsp;<span class="post-publish" title='2020-08-20 15:57:52'>发布于 <time datetime="2020-08-20">2020-08-20</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/go/" class="post-category" title="分类 - Go"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Go</a></span></div><div class="content">Go-kit介绍Go kit 是用于在 Go 中构建微服务的编程工具包。用来解决了分布式系统和应用程序体系结构中的常见问题，让使用者可以专注于交付业务价值。
+本身不是一个框架，而是一套微服务工具集，是框架的底层，用它的话来说，如果你希望构建一个框架，而Go-kit 就希望成为你的框架的一部分 可以用Go-kit 做适应自己平台的框架 它自身称为toolkit，并不是framework 它主要是为了满足5大原则，单一职责原则，开放原则，封闭原则，依赖倒置原则，接口隔离原则 三层模型Go-kit最核心是提供了三层模型来解耦业务，这是我们用它的主要目的，模型由上到下分别是 transport -&gt; endpoint -&gt; service
+Transport 可以理解为是个拦截器，负责请求协议的实现和路由转发，请求和响应的序列化和反序列化
+Endpoint 负责功能逻辑转发，这一层会调用Service具体方法
+Service 服务功能具体实现，这样便于测试，只要 mock 传入的依赖参数即可
+参考https://zhuanlan.zhihu.com/p/100226931?utm_source=wechat_session http://gokit.io/examples/stringsvc.html https://github.com/go-kit/kit </div><div class="post-footer">
+    <a href="/2020/08/go-package-gokit/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/go/' class="post-tag">Go</a></div></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2020/07/go-basic-three-dot/">Go基础--三个点</a>
+  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span>&nbsp;<span class="post-publish" title='2020-07-22 10:14:52'>发布于 <time datetime="2020-07-22">2020-07-22</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/go/" class="post-category" title="分类 - Go"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Go</a></span></div><div class="content">三个点可变长的函数参数1 2 3 4 5 6 7 func Sum(nums ...int) int { cnt := 0 for _, n := range nums { cnt += n } return cnt } 调用可变长参数列表的函数1 2 3 primes := []int{2, 3, 5, 7} Sum(primes...) 两个切片合并1 2 3 4 5 6 7 8 9 10 11 12 13 14 var str_1 = []string{ &#34;a&#34;, &#34;b&#34;, &#34;c&#34;, } var str_2 = []string{ &#34;1&#34;, &#34;2&#34;, &#34;3&#34;, } str_1 = append(str_1, str_2.</div><div class="post-footer">
+    <a href="/2020/07/go-basic-three-dot/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/go/' class="post-tag">Go</a></div></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2020/07/go-basic-make-and-new/">Go基础--Make和New</a>
+  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span>&nbsp;<span class="post-publish" title='2020-07-20 09:44:52'>发布于 <time datetime="2020-07-20">2020-07-20</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/go/" class="post-category" title="分类 - Go"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Go</a></span></div><div class="content">make 和 newmake和new都是用于初始化，但是二者有很大差异：
+-make 的作用是初始化内置的数据结构，例如切片，哈希和Channel -new 的作用是根据传入的类型分配内存，并返回指向该内存的指针
+重点：make只用于map, slice, channel的内存分配，返回有初始值的类型本身，new用于所有类型的分配，new返回指针
+make1 2 3 slice := make([]int, 0, 100) hash := make(map[int]bool, 10) ch := make(chan int, 5) new1 2 3 4 5 6 i := new(int) # 等于 var v int i := &amp;v new 和 make 内存分配图：</div><div class="post-footer">
+    <a href="/2020/07/go-basic-make-and-new/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/go/' class="post-tag">Go</a></div></div>
+</article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2020/06/neo4j-basic/">Neo4j 基础知识</a>
   </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
     Finger</a></span>&nbsp;<span class="post-publish" title='2020-06-16 15:02:52'>发布于 <time datetime="2020-06-16">2020-06-16</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/database/" class="post-category" title="分类 - Database"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Database</a>&ensp;<a href="/categories/storage/" class="post-category" title="分类 - Storage"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a></span></div><div class="content"><h2 id="简介" class="heading-element"><span>简介</span>
@@ -347,62 +387,6 @@
 </ul></div><div class="post-footer">
     <a href="/2020/06/neo4j-basic/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/neo4j/' class="post-tag">Neo4j</a></div></div>
 </article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2020/02/gitlab-integrate-jira/">GitLab最佳实践--集成JIRA</a>
-  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span>&nbsp;<span class="post-publish" title='2020-02-28 18:11:52'>发布于 <time datetime="2020-02-28">2020-02-28</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/iac/" class="post-category" title="分类 - IAC"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> IAC</a></span></div><div class="content">为什么要集成JIRAJIRA是项目管理的工具，GitLab是代码的管理工具，将两者集成可以实现项目管理和开发的结合。开发人员的每一次代码变更都可以反应到JIRA ISSUE的comment中。并且生成相互关联的链接。大大方便了相关问题跟踪。另外开发人员也可以直接通过Git commit 关闭 JIRA ISSUE。 简化了在JIRA上的操作。
-如何集成配置JIRA为GitLab创建一个拥有访问权限的JIRA账号或者是API Token。本文以API Token为例。 配置GitLab找到项目菜单 Settings =&gt; Integrations =&gt; Project services =&gt; Jira。
-勾选服务选项，填写JIRA的配置信息。然后点击保存，激活JIRA服务。
-以上是在某一个具体项目配置JIRA。如果我们有几十，几百个项目，则可以在Admin菜单Service Templates配置JIRA ，这样以后新创建的代码仓库都会自动激活JIRA服务。不必要每个项目都重复操作一遍。(如果是已经存在的未激活JIRA服务的项目，则Service Template没有效果，需要重新在项目内激活)
-如果JIRA是本地服务，会提示网络错误。
-需要在管理员界面，配置允许本地访问，加上本地IP地址。
-测试集成在JIRA创建Project 和 Issue。
-在GitLab提交一个新文件。comment 必须带有JIRA ISSUE的ID(GJI-1)。
-我们回到JIRA ISSUE ID的详情页面。一切ok的情况下，comment会有GitLab的变更记录。
-最后我们测试一下通过在提交和合并请求中使用触发词，直接关闭JIRA ISSUE。 目前支持三个触发词：
-Resolves PROJECT-1 Closes PROJECT-1 Fixes PROJECT-1 </div><div class="post-footer">
-    <a href="/2020/02/gitlab-integrate-jira/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/gitlab/' class="post-tag">GitLab</a><a href='/tags/git/' class="post-tag">Git</a><a href='/tags/iac/' class="post-tag">IAC</a></div></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2020/02/gitlab-code-header-include-copyright/">GitLab最佳实践--强制代码包含版本信息</a>
-  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span>&nbsp;<span class="post-publish" title='2020-02-25 18:11:52'>发布于 <time datetime="2020-02-25">2020-02-25</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/iac/" class="post-category" title="分类 - IAC"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> IAC</a>&ensp;<a href="/categories/security/" class="post-category" title="分类 - Security"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Security</a></span></div><div class="content">需求概述要求开发人员上传的代码文件头部必须包含版权信息，否则阻止代码上传到Git仓库。
-解决方案还是基于Git Hooks的方式，在服务器端通过脚本控制Git Push的内容。
-具体思路1、获取到Git 提交的文件以及文件内容。
-2、过滤文件后缀，检索文件内容，匹配关键字信息(如 Copyright)。并获取到关键字所在的文件行数。
-3、具体逻辑判断，例如：Copyright必须在文件内容前10行以内。
-代码实现1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 exitcode=&#39;0&#39; FILES=`git diff --name-status $oldrev $newrev | awk &#39;{print $2}&#39;` # 遍历客户端Git Push的文件 for filepath in $FILES; do if [ &#34;$filepath&#34; = &#34;.gitallowed&#34; ]; then echo &#34;Skipping $filepath .</div><div class="post-footer">
-    <a href="/2020/02/gitlab-code-header-include-copyright/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/gitlab/' class="post-tag">GitLab</a><a href='/tags/git/' class="post-tag">Git</a><a href='/tags/iac/' class="post-tag">IAC</a></div></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2020/02/gitlab-server-using-git-secrets/">GitLab最佳实践--服务器端使用git-Secrets</a>
-  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span>&nbsp;<span class="post-publish" title='2020-02-22 18:11:52'>发布于 <time datetime="2020-02-22">2020-02-22</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/iac/" class="post-category" title="分类 - IAC"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> IAC</a>&ensp;<a href="/categories/security/" class="post-category" title="分类 - Security"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Security</a></span></div><div class="content">GitLab 服务器端使用git-secrets随着互联网的快速发展，信息安全问题也变得越来越重要，对于代码仓库管理员来说，我们需要通过代码扫描工具防止开发者将企业系统中的账号密码和其他敏感信息提交到Git仓库。从而避免这些敏感信息泄露到互联网。
-AWS的git-secrets（https://github.com/awslabs/git-secrets)。提供了一种扫描代码文件的方法。下面我分享一下我们项目组使用git-secrets的一些经验。
-起初，我们要求所有开发在本地安装git-secrets工具，这样能使他们在commit/push代码的时候及时发现代码中是否存在敏感信息，若是存在则会阻止代码推送到Git服务器仓库。真的这样是一种很好的方式。但是在实施的过程中还是存在开发人员将敏感信息写在代码中，并且上传到GitHub（是的，最早我们没有自建代码仓库，使用了GitHub私有仓库）。
-后来，我们搭建了私有GitLab，将GItHub代码仓库迁移到了GitLab。并且在GitLab服务器安装git-secrets。通过编写扫描脚本，定时扫描所有代码仓库，将扫描结果以邮件形式发送给所有开发人员。
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 def scan_all_repository(): root = &#34;/var/opt/gitlab/git-data/repositories&#34; cmd = &#34;find {} -name &#39;*.git&#39;&#34;.format(root) status_code, output = subprocess.getstatusoutput(cmd) result = [] if status_code == 0: files = output.split(&#34;\n&#34;) total = len(files) for idx, name in enumerate(files): if idx % 10 == 0: print(&#34;[{}] This is {}/{}&#34;.format(datetime.datetime.now(), idx, total)) os.</div><div class="post-footer">
-    <a href="/2020/02/gitlab-server-using-git-secrets/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/gitlab/' class="post-tag">GitLab</a><a href='/tags/git/' class="post-tag">Git</a><a href='/tags/iac/' class="post-tag">IAC</a></div></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2020/02/gitlab-cicd-pipeline-4/">GitLab最佳实践--CI/CD之Pipeline(四)</a>
-  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span>&nbsp;<span class="post-publish" title='2020-02-20 18:11:52'>发布于 <time datetime="2020-02-20">2020-02-20</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/iac/" class="post-category" title="分类 - IAC"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> IAC</a>&ensp;<a href="/categories/cicd/" class="post-category" title="分类 - CICD"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> CICD</a></span></div><div class="content">Only / Exceptonly 和 except用于定义Pipeline Job应该什么时候执行或者不执行。
-only 定义需要执行的分支或标签 except 定义不执行的分支或标签 以下为用法规则：
-only和except如果都存在在一个Pipepline Job声明中，则所需引用(ref)将会被only和except所定义的分支过滤. only和except允许使用正则表达式 only和except允许使用指定仓库地址，但是不forks仓库 only和except 允许使用的特殊关键字：
-值 描述 branches 当目标分支执行push操作时 tags 当目标分支打tag标记时 api 当一个pipeline被另一个pipeline api所触发时 external 当使用了GitLab以外的外部CI服务，如Jenkins pipelines 针对多项目触发器而言，当使用CI_JOB_TOKEN并使用gitlab所提供的api创建多个pipelines的时候 pushes 当pipeline被用户的git push操作所触发的时候 schedules 针对预定好的pipline而言 triggers 用token创建pipline的时候 web 在GitLab页面上pipeline标签页下，点击Run Pileline按钮时 merge_requests 当用户发起合并请求时 chat 对于使用GitLab ChatOps命令时 接下来看一个简单的例子，定义一个仅在feature分支才触发job，而其他分支都不执行。
-1 2 3 4 5 job: script: - echo &#39;Hello, Only / Except&#39; only: - feature 添加test.txt文件后，可以看到job开始执行。
-再来看一个使用正则表达式的例子。
-1 2 3 4 5 job: script: - echo &#39;Test regular expression&#39; only: - /^issue-.</div><div class="post-footer">
-    <a href="/2020/02/gitlab-cicd-pipeline-4/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/gitlab/' class="post-tag">GitLab</a><a href='/tags/git/' class="post-tag">Git</a><a href='/tags/iac/' class="post-tag">IAC</a></div></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2020/02/gitlab-cicd-pipeline-3/">GitLab最佳实践--CI/CD之Pipeline(三)</a>
-  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span>&nbsp;<span class="post-publish" title='2020-02-18 18:11:52'>发布于 <time datetime="2020-02-18">2020-02-18</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/iac/" class="post-category" title="分类 - IAC"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> IAC</a>&ensp;<a href="/categories/cicd/" class="post-category" title="分类 - CICD"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> CICD</a></span></div><div class="content">RulesRules是用于定义Pipeline Job的触发规则。可用的属性有：
-if changes exists 1 2 3 4 5 6 7 job: script: - echo &#39;Hello, Rules&#39; rules: - if: &#39;$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == &#34;dev&#34;&#39; when: always - when: manual 在上述例子中，如果匹配 if 条件内容，则按照 when:always规则执行。即当分支为dev时，只要commit就会触发该任务。否则，按照when:manual规则执行，任务变成手动触发。
-a、满足第一个条件，在dev分支，执行commit。pipeline任务正常执行。
-b、不满足第一个条件，在master分支，执行commit。pipeline任务变成手动模式。
-rules:if语法类似于编程语言的if，else条件语句。 多个if语句为：
-1 2 3 4 5 6 7 rules: - if: Condition 1 when: always - if: Condition 2 when: manual ... - when: on_success 也可以使用逻辑运算符：逻辑与(&amp;&amp;) 和 逻辑或(||) 例如：
-1 2 3 4 5 6 7 8 job: script: &#34;echo Hello, Rules!</div><div class="post-footer">
-    <a href="/2020/02/gitlab-cicd-pipeline-3/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/gitlab/' class="post-tag">GitLab</a><a href='/tags/git/' class="post-tag">Git</a><a href='/tags/iac/' class="post-tag">IAC</a></div></div>
-</article>
 <ul class="pagination"><li class="page-item active">
           <span class="page-link">
             <a href="/">1</a>
@@ -419,7 +403,7 @@ rules:if语法类似于编程语言的if，else条件语句。 多个if语句�
           <span class="page-link" aria-hidden="true">&hellip;</span>
         </li><li class="page-item">
           <span class="page-link">
-            <a href="/page/9/">9</a>
+            <a href="/page/10/">10</a>
           </span>
         </li></ul></div></main><footer class="footer">
     <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
