@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
   <head>
-	<meta name="generator" content="Hugo 0.133.0">
+	<meta name="generator" content="Hugo 0.133.0"><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
     
       <meta name="theme" content='FixIt v0.3.10-c936e541'>
     
@@ -13,7 +13,7 @@
 <meta name="description" content="" /><meta name="keywords" content='Finger, DevOps, Python, Go, Kubernetes, k8s' />
   <meta itemprop="name" content="Finger&#39;s Blog">
   <meta itemprop="datePublished" content="2022-08-15T20:14:52+00:00">
-  <meta itemprop="dateModified" content="2024-08-23T18:44:07+08:00"><meta property="og:url" content="https://hellofinger.tech/">
+  <meta itemprop="dateModified" content="2024-08-26T00:38:55+08:00"><meta property="og:url" content="http://localhost:1313/">
   <meta property="og:site_name" content="Finger&#39;s Blog">
   <meta property="og:title" content="Finger&#39;s Blog">
   <meta property="og:locale" content="zh_CN">
@@ -24,14 +24,14 @@
 <meta name="application-name" content="FixIt">
 <meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://hellofinger.tech/" /><link rel="alternate" href="/index.xml" type="application/rss+xml" title="Finger&#39;s Blog">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="http://localhost:1313/" /><link rel="alternate" href="/index.xml" type="application/rss+xml" title="Finger&#39;s Blog">
   <link rel="feed" href="/index.xml" type="application/rss+xml" title="Finger&#39;s Blog"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
   {
     "@context": "http://schema.org",
     "@type": "WebSite",
-    "url": "https:\/\/hellofinger.tech\/","inLanguage": "zh-CN","author": {
+    "url": "http:\/\/localhost:1313\/","inLanguage": "zh-CN","author": {
         "@type": "Person",
         "name": "Finger"
       },"name": "Finger's Blog"
@@ -207,16 +207,20 @@ Docker Runc: 1.0.0-rc5 ( runc version &lt; 1.0-rc6 )
 1.1、容器架构容器的架构涉及多个组件和概念，它们共同协作来提供一个高效、隔离和可移植的应用程序运行环境。以下是容器架构的主要组成部分：
 主机操作系统 (Host Operating System) 容器引擎 (Container Engine) 容器镜像 (Container Image) 容器 (Container) 容器编排 (Container Orchestration) 网络 (Networking) 存储 (Storage) 1.2、容器的本质容器的本质是一个特殊的进程，它是由Namespaces，Cgroups和 rootfs 构成。我们可以将它一分为二来看待，Namespace和Cgroups为动态资源，rootfs 为静态资源。
 二、什么是容器安全?容器安全是指使用安全工具和策略来保护容器化应用程序的各个方面免受潜在风险的过程。容器化环境不仅包含容器和在其中运行的应用程序，还包括容器运行时、内核和主机操作系统等底层基础设施。
-三、容器安全架构组件 (Container Security Architecture Components)编译流水线 (Build Pipeline)
+三、容器安全架构组件编译流水线 (Build Pipeline)
 容器镜像 (Container images and registries)
 容器宿主机 (Container host machines)
 容器运行时 (Container runtime)，如 docker, containerd
 容器编排工具 Container platforms and orchestrations) 如 kubernetes
 应用程序(Applications)
-四、容器安全挑战 (Container Security Challenges)4.1、容器配置错误暴露应用程序不需要或不安全端口
+四、容器安全挑战4.1、容器配置错误暴露应用程序不需要或不安全端口
 泄露秘钥和凭据，例如密码和身份验证令牌
 过于宽容的容器运行时权限，例如以Root身份运行容器
-开启特权模式 (privileged)</div><div class="post-footer">
+开启特权模式 (privileged)
+挂载宿主机目录
+4.2、容器基础设施中的漏洞容器通常由应用程序代码、配置、库和包组成，最后编译成镜像，通过容器运行时运行在宿主机操作系统内核中。容器生命周期的每个阶段都可能将安全漏洞引入到容器基础设施中，从而增加运行时可能被利用的攻击面。漏洞还可以从容器镜像内置的外部依赖项继承、甚至存在于堆栈内的主机和容器运行时中。
+作为应用程序的一部分，容器镜像还可以从开源库和包继承安全漏洞，从而使其容易受到攻击。开发人员可能会使用来自第三方容器注册表(Registry)的基础镜像来构建容器镜像，这些镜像可能无意中包含安全漏洞，或者可能已被黑客故意替换为受损的镜像。
+最后，容器和主机可能包含漏洞，当容器在宿主机操作系统内核上运行时，这些漏洞可通过网络、主机和端点被利用。特别是主机内核和容器运行时中的容器逃逸漏洞可能会为攻击媒介打开大门，利用本地权限升级来损害整个基础设施。e.g. CVE-2019-5736</div><div class="post-footer">
     <a href="/2022/08/container-securty/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/docker/' class="post-tag">Docker</a><a href='/tags/security/' class="post-tag">Security</a></div></div>
 </article>
 <ul class="pagination"><li class="page-item active">
@@ -243,7 +247,7 @@ Docker Runc: 1.0.0-rc5 ( runc version &lt; 1.0-rc6 )
             <span itemprop="copyrightYear">2017 - 2024</span><span class="author" itemprop="copyrightHolder">
               <a href="https://github.com/hellofinger"target="_blank" rel="external nofollow noopener noreferrer">Finger</a></span><span class="license footer-divider"><a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"></div></div>
   </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="回到顶部"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric">0%</span>
-        </div><div class="fixed-button view-comments d-none" role="button" aria-label="查看评论"><i class="fa-solid fa-comment fa-fw" aria-hidden="true"></i></div></div><div id="mask"></div><noscript>
+        </div></div><div id="mask"></div><noscript>
     <div class="noscript-warning">该网站在启用 JavaScript 的情况下效果最佳。</div>
   </noscript>
 </div><link rel="preload" href="/lib/katex/katex.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">

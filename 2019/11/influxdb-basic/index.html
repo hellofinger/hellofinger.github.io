@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
-  <head>
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
     
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
@@ -266,9 +266,9 @@ InfluxDB 提供了多种客户端库和集成，使其可以轻松与各种编�
 安装1 2 3 4 5 6 7 8 9 10 11 12 # Ubuntu &amp; Debian wget https://dl.influxdata.com/influxdb/releases/influxdb_1.7.9_amd64.deb sudo dpkg -i influxdb_1.7.9_amd64.deb # or wget -qO- https://repos.influxdata.com/influxdb.key | sudo apt-key add - source /etc/lsb-release echo &#34;deb https://repos.influxdata.com/${DISTRIB_ID,,} ${DISTRIB_CODENAME} stable&#34; | sudo tee /etc/apt/ sudo apt-get update &amp;&amp; sudo apt-get install influxdb sudo service influxdb start 卸载1 2 3 # Ubuntu &amp; Debian sudo dpkg -l | grep influxdb sudo apt-get autoremove influxdb 认证管理修改配置文件1 2 3 4 5 6 7 8 9 10 11 12 # /etc/influxdb/influxdb.conf [http] enabled = true bind-address = &#34;:8086&#34; auth-enabled = true log-enabled = true write-tracing = false pprof-enabled = true pprof-auth-enabled = true debug-pprof-enabled = false ping-auth-enabled = true 1 2 3 4 5 6 7 8 9 10 # 重启 sudo systemctl restart influxdb # or sudo service influxdb restart # 客户端认证登录 influx -username devops -password xxx # 测试 curl -G http://localhost:8086/query -u username:password --data-urlencode &#34;q=SHOW DATABASES&#34; 与关系型数据库比较Relational database Influx DB database database table measurement column points 特殊名词Point由时间戳（time）、数据（field）、标签（tags）组成。
 Point属性 传统数据库中的概念 time 每个数据记录时间，是数据库中的主索引(会自动生成) fields 各种记录值（没有索引的属性）也就是记录的值：温度， 湿度 tags 各种有索引的属性：地区，海拔 用户管理创建管理员账号1 2 3 4 5 // 新用户 CREATE USER &lt;username&gt; WITH PASSWORD &#39;&lt;password&gt;&#39; WITH ALL PRIVILEGES // 老用户 GRANT ALL PRIVILEGES TO &lt;username&gt; 创建普通用户1 2 3 4 5 6 7 8 CREATE USER &lt;username&gt; WITH PASSWORD &#39;&lt;password&gt;&#39; // 授权数据库权限 GRANT [READ,WRITE,ALL] ON &lt;database_name&gt; TO &lt;username&gt; GRANT READ ON test TO &#34;grafana&#34; GRANT ALL ON test TO &#34;devops&#34; 数据保存策略（Retention Policies）1 2 3 4 5 6 7 8 9 # 创建策略 CREATE RETENTION POLICY aws_elb_log_retention_policy ON DevOpsBigScreen DURATION 3d REPLICATION 3 DEFAULT # 查看策略 SHOW RETENTION POLICIES ON &lt;database_name&gt; # 删除策略 DROP RETENTION POLICY &lt;retention_policy_name&gt; ON &lt;database_name&gt; 参考https://docs.influxdata.com/influxdb/v1.7/introduction/installation/ https://www.influxdata.com/blog/getting-started-python-influxdb/ https://xtutu.gitbooks.io/influxdb-handbook/content/shu_ju_ku_yu_biao_de_cao_zuo.html ">
   <meta itemprop="datePublished" content="2019-11-15T11:51:52+08:00">
-  <meta itemprop="dateModified" content="2019-11-15T11:51:52+08:00">
+  <meta itemprop="dateModified" content="2024-08-26T00:38:55+08:00">
   <meta itemprop="wordCount" content="293">
-  <meta itemprop="keywords" content="InfluxDB"><meta property="og:url" content="https://hellofinger.tech/2019/11/influxdb-basic/">
+  <meta itemprop="keywords" content="InfluxDB"><meta property="og:url" content="http://localhost:1313/2019/11/influxdb-basic/">
   <meta property="og:site_name" content="Finger&#39;s Blog">
   <meta property="og:title" content="InfluxDB 基础知识">
   <meta property="og:description" content="简介InfluxDB 是一个开源的时间序列数据库，专门设计用于处理时间相关数据。它被广泛用于监控、分析和存储大规模的时序数据，如应用程序指标、传感器数据、日志数据等。InfluxDB 使用一种称为 InfluxQL 的SQL-like 查询语言来查询和操作数据。它具有高性能、可扩展性和易用性的特点，适用于需要高速写入和查询时间序列数据的场景。
@@ -279,7 +279,7 @@ Point属性 传统数据库中的概念 time 每个数据记录时间，是数�
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
     <meta property="article:published_time" content="2019-11-15T11:51:52+08:00">
-    <meta property="article:modified_time" content="2019-11-15T11:51:52+08:00">
+    <meta property="article:modified_time" content="2024-08-26T00:38:55+08:00">
     <meta property="article:tag" content="InfluxDB">
 
   <meta name="twitter:card" content="summary">
@@ -291,7 +291,7 @@ Point属性 传统数据库中的概念 time 每个数据记录时间，是数�
 <meta name="application-name" content="FixIt">
 <meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://hellofinger.tech/2019/11/influxdb-basic/" /><link rel="prev" href="https://hellofinger.tech/2019/07/about-the-cache/" /><link rel="next" href="https://hellofinger.tech/2020/01/terraform-first-example/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="http://localhost:1313/2019/11/influxdb-basic/" /><link rel="prev" href="http://localhost:1313/2019/07/about-the-cache/" /><link rel="next" href="http://localhost:1313/2020/01/terraform-first-example/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
   {
@@ -301,9 +301,9 @@ Point属性 传统数据库中的概念 time 每个数据记录时间，是数�
     "inLanguage": "zh-CN",
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": "https:\/\/hellofinger.tech\/2019\/11\/influxdb-basic\/"
+      "@id": "http:\/\/localhost:1313\/2019\/11\/influxdb-basic\/"
     },"genre": "posts","keywords": "InfluxDB","wordcount":  293 ,
-    "url": "https:\/\/hellofinger.tech\/2019\/11\/influxdb-basic\/","datePublished": "2019-11-15T11:51:52+08:00","dateModified": "2019-11-15T11:51:52+08:00","publisher": {
+    "url": "http:\/\/localhost:1313\/2019\/11\/influxdb-basic\/","datePublished": "2019-11-15T11:51:52+08:00","dateModified": "2024-08-26T00:38:55+08:00","publisher": {
       "@type": "Organization",
       "name": ""},"author": {
         "@type": "Person",
@@ -439,7 +439,7 @@ Point属性 传统数据库中的概念 time 每个数据记录时间，是数�
     <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>InfluxDB 基础知识</span>
       </h1></div><div class="post-meta">
       <div class="post-meta-line"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/database/" class="post-category" title="分类 - Database"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Database</a>&ensp;<a href="/categories/storage/" class="post-category" title="分类 - Storage"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a></span></div><div class="post-meta-line"><span title="发布于 2019-11-15 11:51:52"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2019-11-15">2019-11-15</time></span>&nbsp;<span title="293 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 300 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 2 分钟</span>&nbsp;</div>
+    Finger</a></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/database/" class="post-category" title="分类 - Database"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Database</a>&ensp;<a href="/categories/storage/" class="post-category" title="分类 - Storage"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a></span></div><div class="post-meta-line"><span title="发布于 2019-11-15 11:51:52"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2019-11-15">2019-11-15</time></span>&nbsp;<span title="更新于 2024-08-26 00:38:55"><i class="fa-regular fa-calendar-check fa-fw me-1" aria-hidden="true"></i><time datetime="2024-08-26">2024-08-26</time></span>&nbsp;<span title="293 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 300 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 2 分钟</span>&nbsp;</div>
     </div><div class="details toc" id="toc-static" data-kept="false">
         <div class="details-summary toc-title">
           <span>目录</span>
@@ -467,14 +467,7 @@ Point属性 传统数据库中的概念 time 每个数据记录时间，是数�
     <li><a href="#参考">参考</a></li>
   </ul>
 </nav></div>
-      </div><div class="content" id="content"><div class="details admonition warning open">
-      <div class="details-summary admonition-title">
-        <i class="icon fa-solid fa-exclamation-triangle fa-fw" aria-hidden="true"></i>警告<i class="details-icon fa-solid fa-angle-right fa-fw" aria-hidden="true"></i>
-      </div>
-      <div class="details-content">
-        <div class="admonition-content">本文最后更新于 2019-11-15，文中内容可能已过时。</div>
-      </div>
-    </div><h2 id="简介" class="heading-element"><span>简介</span>
+      </div><div class="content" id="content"><h2 id="简介" class="heading-element"><span>简介</span>
   <a href="#%e7%ae%80%e4%bb%8b" class="heading-mark">
     <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
   </a>
@@ -737,16 +730,16 @@ Point属性 传统数据库中的概念 time 每个数据记录时间，是数�
   <div class="post-info">
     <div class="post-info-line">
       <div class="post-info-mod">
-        <span title="更新于 2019-11-15 11:51:52">更新于 2019-11-15&nbsp;</span>
+        <span title="更新于 2024-08-26 00:38:55">更新于 2024-08-26&nbsp;</span>
       </div><div class="post-info-license">
             <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
           </div></div><div class="post-info-line">
         <div class="post-info-md"></div>
         <div class="post-info-share">
-          <span><a href="javascript:void(0);" title="分享到 X" data-sharer="twitter" data-url="https://hellofinger.tech/2019/11/influxdb-basic/" data-title="InfluxDB 基础知识" data-hashtags="InfluxDB"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a>
-  <a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://hellofinger.tech/2019/11/influxdb-basic/" data-hashtag="InfluxDB"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
-  <a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://hellofinger.tech/2019/11/influxdb-basic/" data-title="InfluxDB 基础知识"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
-  <a href="javascript:void(0);" title="分享到 百度" data-sharer="baidu" data-url="https://hellofinger.tech/2019/11/influxdb-basic/" data-title="InfluxDB 基础知识"><i data-svg-src="/lib/simple-icons/icons/baidu.min.svg" aria-hidden="true"></i></a>
+          <span><a href="javascript:void(0);" title="分享到 X" data-sharer="twitter" data-url="http://localhost:1313/2019/11/influxdb-basic/" data-title="InfluxDB 基础知识" data-hashtags="InfluxDB"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="http://localhost:1313/2019/11/influxdb-basic/" data-hashtag="InfluxDB"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="http://localhost:1313/2019/11/influxdb-basic/" data-title="InfluxDB 基础知识"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 百度" data-sharer="baidu" data-url="http://localhost:1313/2019/11/influxdb-basic/" data-title="InfluxDB 基础知识"><i data-svg-src="/lib/simple-icons/icons/baidu.min.svg" aria-hidden="true"></i></a>
   </span>
         </div>
       </div></div>
@@ -766,7 +759,7 @@ Point属性 传统数据库中的概念 time 每个数据记录时间，是数�
     <div class="reward-ways" data-mode="static"><div><img loading="lazy" src="/images/alipay.jpg" alt="Finger 支付宝" data-title="Finger 支付宝" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/><span>支付宝</span>
           </div><div><img loading="lazy" src="/images/wechatpay.jpg" alt="Finger 微信" data-title="Finger 微信" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/><span>微信</span>
           </div></div>
-  </div><div id="comments"></div></article>
+  </div></article>
 
   <aside class="toc" id="toc-auto" aria-label="目录"><h2 class="toc-title">目录&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
       <div class="toc-content" id="toc-content-auto"></div></aside></main><footer class="footer">
@@ -775,9 +768,9 @@ Point属性 传统数据库中的概念 time 每个数据记录时间，是数�
             <span itemprop="copyrightYear">2017 - 2024</span><span class="author" itemprop="copyrightHolder">
               <a href="https://github.com/hellofinger"target="_blank" rel="external nofollow noopener noreferrer">Finger</a></span><span class="license footer-divider"><a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"></div></div>
   </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="回到顶部"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric">0%</span>
-        </div><div class="fixed-button view-comments d-none" role="button" aria-label="查看评论"><i class="fa-solid fa-comment fa-fw" aria-hidden="true"></i></div></div><div id="mask"></div><noscript>
+        </div></div><div id="mask"></div><noscript>
     <div class="noscript-warning">该网站在启用 JavaScript 的情况下效果最佳。</div>
   </noscript>
 </div><link rel="preload" href="/lib/katex/katex.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="/lib/katex/katex.min.css"></noscript><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script src="/lib/autocomplete/autocomplete.min.js" defer></script><script src="/lib/fuse/fuse.min.js" defer></script><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/copy-tex.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="/js/flyfish.js" defer></script><script>window.config={"code":{"copyTitle":"复制到剪贴板","editLockTitle":"锁定可编辑代码块","editUnLockTitle":"解锁可编辑代码块","editable":true,"maxShownLines":10},"comment":{"enable":true,"expired":false},"cookieconsent":{"content":{"dismiss":"同意","link":"了解更多","message":"本网站使用 Cookies 来改善您的浏览体验。"},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"distance":100,"findAllMatches":false,"highlightTag":"em","ignoreFieldNorm":false,"ignoreLocation":false,"isCaseSensitive":false,"location":0,"maxResultLength":10,"minMatchCharLength":2,"noResultsFound":"没有找到结果","snippetLength":30,"threshold":0.3,"useExtendedSearch":false},"version":"v0.3.10-c936e541"};</script><script src="/js/theme.min.js" defer></script></body>
+    <noscript><link rel="stylesheet" href="/lib/katex/katex.min.css"></noscript><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script src="/lib/autocomplete/autocomplete.min.js" defer></script><script src="/lib/fuse/fuse.min.js" defer></script><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/copy-tex.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="/js/flyfish.js" defer></script><script>window.config={"code":{"copyTitle":"复制到剪贴板","editLockTitle":"锁定可编辑代码块","editUnLockTitle":"解锁可编辑代码块","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"同意","link":"了解更多","message":"本网站使用 Cookies 来改善您的浏览体验。"},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"distance":100,"findAllMatches":false,"highlightTag":"em","ignoreFieldNorm":false,"ignoreLocation":false,"isCaseSensitive":false,"location":0,"maxResultLength":10,"minMatchCharLength":2,"noResultsFound":"没有找到结果","snippetLength":30,"threshold":0.3,"useExtendedSearch":false},"version":"v0.3.10-c936e541"};</script><script src="/js/theme.min.js" defer></script></body>
 </html>

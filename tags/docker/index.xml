@@ -1,15 +1,15 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
   <channel>
     <title>Docker - 标签 - Finger&#39;s Blog</title>
-    <link>https://hellofinger.tech/tags/docker/</link>
+    <link>http://localhost:1313/tags/docker/</link>
     <description>Docker - 标签 | Finger&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
-      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Mon, 15 Aug 2022 20:14:52 &#43;0000</lastBuildDate><atom:link href="https://hellofinger.tech/tags/docker/" rel="self" type="application/rss+xml" /><item>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Mon, 15 Aug 2022 20:14:52 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/docker/" rel="self" type="application/rss+xml" /><item>
   <title>CVE-2019-5736容器逃逸漏洞复现</title>
-  <link>https://hellofinger.tech/2022/08/docker-cve-2019-5736/</link>
+  <link>http://localhost:1313/2022/08/docker-cve-2019-5736/</link>
   <pubDate>Mon, 15 Aug 2022 20:14:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2022/08/docker-cve-2019-5736/</guid>
+  <guid>http://localhost:1313/2022/08/docker-cve-2019-5736/</guid>
   <description><![CDATA[一、漏洞概述CVE-2019-5736漏洞是指通过从容器内覆盖并执行主机系统 runc 二进制文件，从而获取主机上的root执行权限。
 二、影响版本OS: Ubuntu 16.04
 Docker: 18.06.0-ce ( docker version &lt; 18.09.02 )
@@ -18,19 +18,19 @@ Docker Runc: 1.0.0-rc5 ( runc version &lt; 1.0-rc6 )
 </item>
 <item>
   <title>Docker特权模式逃逸</title>
-  <link>https://hellofinger.tech/2022/08/docker-privileged-escape/</link>
+  <link>http://localhost:1313/2022/08/docker-privileged-escape/</link>
   <pubDate>Fri, 12 Aug 2022 20:14:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2022/08/docker-privileged-escape/</guid>
+  <guid>http://localhost:1313/2022/08/docker-privileged-escape/</guid>
   <description><![CDATA[一、漏洞说明特权模式逃逸是一种最简单有效的逃逸方法，使用特权模式启动的容器时，docker管理员可通过mount命令将外部宿主机磁盘设备挂载进容器内部，获取对整个宿主机的文件读写权限，可直接通过chroot切换根目录、写ssh公钥和crontab计划任何等逃逸到宿主机。
 二、环境搭建1 2 // 使用特权模式运行容器 docker run -it --privileged ubuntu:18.04 三、漏洞验证1 2 3 // 如果是以特权模式启动，**CapEff** 对应的掩码值应该为: 0000003fffffffff root@43552e476ea7:/# cat /proc/self/status | grep CapEff CapEff: 0000003fffffffff 四、漏洞利用4.1、查看宿主机目录1 2 3 4 5 6 fdisk -l Device Boot Start End Sectors Size Id Type /dev/sda1 * 2048 48234495 48232448 23G 83 Linux /dev/sda2 48236542 52426751 4190210 2G 5 Extended /dev/sda5 48236544 52426751 4190208 2G 82 Linux swap / Solaris 4.]]></description>
 </item>
 <item>
   <title>Docker中Root权限的危害性</title>
-  <link>https://hellofinger.tech/2022/08/docker-root-danger/</link>
+  <link>http://localhost:1313/2022/08/docker-root-danger/</link>
   <pubDate>Fri, 12 Aug 2022 20:14:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2022/08/docker-root-danger/</guid>
+  <guid>http://localhost:1313/2022/08/docker-root-danger/</guid>
   <description><![CDATA[一、在docker使用root用户越权案例如果一个普通用户，并且这个用户在docker组，则这个用户已经是root了。
 方法一假如我们有一个用户demo，它本身不具有sudo的权限，所以就有很多文件无法进行读写操作，例如它无法查看 /root 目录
 1 2 sudo adduser demo sudo groupadd docker 1 2 3 demo@ubuntu-VirtualBox:/home$ sudo ls /root [sudo] password for demo: demo is not in the sudoers file. This incident will be reported. 但是这个用户在docker的group里，具有执行docker的权限
@@ -38,51 +38,55 @@ Docker Runc: 1.0.0-rc5 ( runc version &lt; 1.0-rc6 )
 </item>
 <item>
   <title>Dcoker Remote API未授权访问漏洞</title>
-  <link>https://hellofinger.tech/2022/08/docker-remote-api-vulnerability-escape/</link>
+  <link>http://localhost:1313/2022/08/docker-remote-api-vulnerability-escape/</link>
   <pubDate>Fri, 12 Aug 2022 18:14:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2022/08/docker-remote-api-vulnerability-escape/</guid>
+  <guid>http://localhost:1313/2022/08/docker-remote-api-vulnerability-escape/</guid>
   <description><![CDATA[一、漏洞说明Docker守护进程监听IP为0.0.0.0，导致可以直接通过Docker Remote API操作Docker
 二、影响版本Docker version: 19.03.12 之前版本
 三、漏洞复现3.1、安装docker1 sudo apt-get update 3.2、备份docker服务文件1 cp /lib/systemd/system/docker.service /lib/systemd/system/docker.service.bak 3.3、修改服务文件，将docker监听IP改成0.0.0.01 vim /lib/systemd/system/docker.service	1 2 3 4 # 在文件末尾加上如下代码 [Service] ExecStart= ExecStart=/usr/bin/dockerd -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock 3.4、重启守护进程和docker服务1 2 3 sudo systemctl daemon-reload # 重载守护进程 sudo service docker restart # 重启docker服务 systemctl status docker.service # 查看docker运行情况 3.5、漏洞检测1 2 3 curl http://x.x.x.x:2375 docker -H tcp://x.x.x.x:2375 images 1 2 3 4 5 6 7 8 9 10 ┌──(kali㉿kali)-[~] └─$ docker -H tcp://10.]]></description>
 </item>
 <item>
   <title>Docker Socket 挂载逃逸</title>
-  <link>https://hellofinger.tech/2022/08/docker-socket-mount-escape/</link>
+  <link>http://localhost:1313/2022/08/docker-socket-mount-escape/</link>
   <pubDate>Fri, 12 Aug 2022 18:14:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2022/08/docker-socket-mount-escape/</guid>
+  <guid>http://localhost:1313/2022/08/docker-socket-mount-escape/</guid>
   <description><![CDATA[一、漏洞描述在启动docker容器时，将宿主机/var/run/docker.sock文件挂载到docker容器中，在docker容器中，也可以操作宿主机的docker
 二、环境搭建1 docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock ubuntu:16.04 /bin/bash 三、漏洞验证1 find / -name docker.sock 四、漏洞利用在docker容器中安装docker，利用docker.sock 访问宿主机资源
 1 docker -H unix://var/run/docker.sock images 1 2 3 4 5 6 7 8 9 root@99db92ade596:/# docker -H unix://var/run/docker.sock images REPOSITORY TAG IMAGE ID CREATED SIZE flaskapp-no-root latest 191c96d54d26 25 hours ago 126MB flaskapp-root latest 50d72e86aa68 25 hours ago 126MB alpine latest 7e01a0d0a1dc 3 days ago 7.34MB busybox latest a416a98b71e2 3 weeks ago 4.]]></description>
 </item>
 <item>
   <title>容器安全</title>
-  <link>https://hellofinger.tech/2022/08/container-securty/</link>
+  <link>http://localhost:1313/2022/08/container-securty/</link>
   <pubDate>Thu, 11 Aug 2022 16:14:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2022/08/container-securty/</guid>
+  <guid>http://localhost:1313/2022/08/container-securty/</guid>
   <description><![CDATA[一、 容器概述容器（Container）是一种虚拟化技术，用于在计算机上运行应用程序和服务。与传统的虚拟机不同，容器不需要为每个应用创建独立的操作系统实例。相反，容器共享主机操作系统的内核，但它们有自己的文件系统、进程空间和网络接口。这使得容器能够在一个主机上运行多个隔离的应用程序，并且每个容器之间互不干扰。
 1.1、容器架构容器的架构涉及多个组件和概念，它们共同协作来提供一个高效、隔离和可移植的应用程序运行环境。以下是容器架构的主要组成部分：
 主机操作系统 (Host Operating System) 容器引擎 (Container Engine) 容器镜像 (Container Image) 容器 (Container) 容器编排 (Container Orchestration) 网络 (Networking) 存储 (Storage) 1.2、容器的本质容器的本质是一个特殊的进程，它是由Namespaces，Cgroups和 rootfs 构成。我们可以将它一分为二来看待，Namespace和Cgroups为动态资源，rootfs 为静态资源。
 二、什么是容器安全?容器安全是指使用安全工具和策略来保护容器化应用程序的各个方面免受潜在风险的过程。容器化环境不仅包含容器和在其中运行的应用程序，还包括容器运行时、内核和主机操作系统等底层基础设施。
-三、容器安全架构组件 (Container Security Architecture Components)编译流水线 (Build Pipeline)
+三、容器安全架构组件编译流水线 (Build Pipeline)
 容器镜像 (Container images and registries)
 容器宿主机 (Container host machines)
 容器运行时 (Container runtime)，如 docker, containerd
 容器编排工具 Container platforms and orchestrations) 如 kubernetes
 应用程序(Applications)
-四、容器安全挑战 (Container Security Challenges)4.1、容器配置错误暴露应用程序不需要或不安全端口
+四、容器安全挑战4.1、容器配置错误暴露应用程序不需要或不安全端口
 泄露秘钥和凭据，例如密码和身份验证令牌
 过于宽容的容器运行时权限，例如以Root身份运行容器
-开启特权模式 (privileged)]]></description>
+开启特权模式 (privileged)
+挂载宿主机目录
+4.2、容器基础设施中的漏洞容器通常由应用程序代码、配置、库和包组成，最后编译成镜像，通过容器运行时运行在宿主机操作系统内核中。容器生命周期的每个阶段都可能将安全漏洞引入到容器基础设施中，从而增加运行时可能被利用的攻击面。漏洞还可以从容器镜像内置的外部依赖项继承、甚至存在于堆栈内的主机和容器运行时中。
+作为应用程序的一部分，容器镜像还可以从开源库和包继承安全漏洞，从而使其容易受到攻击。开发人员可能会使用来自第三方容器注册表(Registry)的基础镜像来构建容器镜像，这些镜像可能无意中包含安全漏洞，或者可能已被黑客故意替换为受损的镜像。
+最后，容器和主机可能包含漏洞，当容器在宿主机操作系统内核上运行时，这些漏洞可通过网络、主机和端点被利用。特别是主机内核和容器运行时中的容器逃逸漏洞可能会为攻击媒介打开大门，利用本地权限升级来损害整个基础设施。e.g. CVE-2019-5736]]></description>
 </item>
 <item>
   <title>Docker 构建第一个App</title>
-  <link>https://hellofinger.tech/2017/06/docker-build-and-run-your-first-app/</link>
+  <link>http://localhost:1313/2017/06/docker-build-and-run-your-first-app/</link>
   <pubDate>Thu, 22 Jun 2017 23:45:00 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2017/06/docker-build-and-run-your-first-app/</guid>
+  <guid>http://localhost:1313/2017/06/docker-build-and-run-your-first-app/</guid>
   <description><![CDATA[测试环境：阿里云 ubuntu14.04
 一、新建Dockerfile文件1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 # Use an official Python runtime as a base image FROM python:2.7-slim # Set the working directory to /app WORKDIR /app # Copy the current directory contents into the container at /app ADD . /app # Install any needed packages specified in requirements.txt RUN pip install -r requirements.]]></description>
 </item>

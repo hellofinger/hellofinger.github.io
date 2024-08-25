@@ -1,15 +1,15 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
   <channel>
     <title>BigData - 标签 - Finger&#39;s Blog</title>
-    <link>https://hellofinger.tech/tags/bigdata/</link>
+    <link>http://localhost:1313/tags/bigdata/</link>
     <description>BigData - 标签 | Finger&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
-      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Sat, 09 Jun 2018 13:06:00 &#43;0000</lastBuildDate><atom:link href="https://hellofinger.tech/tags/bigdata/" rel="self" type="application/rss+xml" /><item>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Sat, 09 Jun 2018 13:06:00 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/bigdata/" rel="self" type="application/rss+xml" /><item>
   <title>用Python实现一个大数据搜索引擎</title>
-  <link>https://hellofinger.tech/2018/06/simple-bigdata-search-with-python/</link>
+  <link>http://localhost:1313/2018/06/simple-bigdata-search-with-python/</link>
   <pubDate>Sat, 09 Jun 2018 13:06:00 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2018/06/simple-bigdata-search-with-python/</guid>
+  <guid>http://localhost:1313/2018/06/simple-bigdata-search-with-python/</guid>
   <description><![CDATA[本文转自：https://my.oschina.net/taogang/blog/1579204
 搜索是大数据领域里常见的需求。Splunk和ELK分别是该领域在非开源和开源领域里的领导者。本文利用很少的Python代码实现了一个基本的数据搜索功能，试图让大家理解大数据搜索的基本原理。
 1、布隆过滤器（Bloom Filter）第一步我们先要实现一个布隆过滤器
