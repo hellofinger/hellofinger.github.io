@@ -15,7 +15,7 @@
 1 2 3 4 5 6 &gt;&gt;&gt; class O(object): pass ... &gt;&gt;&gt; O.__dict__[&#39;name&#39;] = &#39;Finger&#39; Traceback (most recent call last): File &#34;&lt;stdin&gt;&#34;, line 1, in &lt;module&gt; TypeError: &#39;dictproxy&#39; object does not support item assignment 答：是的, class的__dict__是只读的
 1 2 3 4 5 &gt;&gt;&gt; O.__dict__ dict_proxy({&#39;__dict__&#39;: &lt;attribute &#39;__dict__&#39; of &#39;O&#39; objects&gt;, &#39;__module__&#39;: &#39;__main__&#39;, &#39;__weakref__&#39;: &lt;attribute &#39;__weakref__&#39; of &#39;O&#39; objects&gt;, &#39;__doc__&#39;: None}) &gt;&gt;&gt; O.__dict__.items() [(&#39;__dict__&#39;, &lt;attribute &#39;__dict__&#39; of &#39;O&#39; objects&gt;), (&#39;__module__&#39;, &#39;__main__&#39;), (&#39;__weakref__&#39;, &lt;attribute &#39;__weakref__&#39; of &#39;O&#39; objects&gt;), (&#39;__doc__&#39;, None)] 可以看到O.">
   <meta itemprop="datePublished" content="2018-05-17T20:40:00+00:00">
-  <meta itemprop="dateModified" content="2018-05-17T20:40:00+00:00">
+  <meta itemprop="dateModified" content="2024-08-26T00:38:55+08:00">
   <meta itemprop="wordCount" content="226">
   <meta itemprop="keywords" content="Python"><meta property="og:url" content="https://hellofinger.tech/2018/05/python-class-dict-cannot-update/">
   <meta property="og:site_name" content="Finger&#39;s Blog">
@@ -27,7 +27,7 @@
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
     <meta property="article:published_time" content="2018-05-17T20:40:00+00:00">
-    <meta property="article:modified_time" content="2018-05-17T20:40:00+00:00">
+    <meta property="article:modified_time" content="2024-08-26T00:38:55+08:00">
     <meta property="article:tag" content="Python">
 
   <meta name="twitter:card" content="summary">
@@ -50,7 +50,7 @@
       "@type": "WebPage",
       "@id": "https:\/\/hellofinger.tech\/2018\/05\/python-class-dict-cannot-update\/"
     },"genre": "posts","keywords": "Python","wordcount":  226 ,
-    "url": "https:\/\/hellofinger.tech\/2018\/05\/python-class-dict-cannot-update\/","datePublished": "2018-05-17T20:40:00+00:00","dateModified": "2018-05-17T20:40:00+00:00","publisher": {
+    "url": "https:\/\/hellofinger.tech\/2018\/05\/python-class-dict-cannot-update\/","datePublished": "2018-05-17T20:40:00+00:00","dateModified": "2024-08-26T00:38:55+08:00","publisher": {
       "@type": "Organization",
       "name": ""},"author": {
         "@type": "Person",
@@ -186,7 +186,7 @@
     <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>Python类的__dict__无法更新</span>
       </h1></div><div class="post-meta">
       <div class="post-meta-line"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/python/" class="post-category" title="分类 - Python"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Python</a></span></div><div class="post-meta-line"><span title="发布于 2018-05-17 20:40:00"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2018-05-17">2018-05-17</time></span>&nbsp;<span title="226 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 300 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 2 分钟</span>&nbsp;</div>
+    Finger</a></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/python/" class="post-category" title="分类 - Python"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Python</a></span></div><div class="post-meta-line"><span title="发布于 2018-05-17 20:40:00"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2018-05-17">2018-05-17</time></span>&nbsp;<span title="更新于 2024-08-26 00:38:55"><i class="fa-regular fa-calendar-check fa-fw me-1" aria-hidden="true"></i><time datetime="2024-08-26">2024-08-26</time></span>&nbsp;<span title="226 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 300 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 2 分钟</span>&nbsp;</div>
     </div><div class="details toc" id="toc-static" data-kept="false">
         <div class="details-summary toc-title">
           <span>目录</span>
@@ -201,14 +201,7 @@
     </li>
   </ul>
 </nav></div>
-      </div><div class="content" id="content"><div class="details admonition warning open">
-      <div class="details-summary admonition-title">
-        <i class="icon fa-solid fa-exclamation-triangle fa-fw" aria-hidden="true"></i>警告<i class="details-icon fa-solid fa-angle-right fa-fw" aria-hidden="true"></i>
-      </div>
-      <div class="details-content">
-        <div class="admonition-content">本文最后更新于 2018-05-17，文中内容可能已过时。</div>
-      </div>
-    </div><h3 id="python类的__dict__无法更新" class="heading-element"><span>Python类的__dict__无法更新？</span>
+      </div><div class="content" id="content"><h3 id="python类的__dict__无法更新" class="heading-element"><span>Python类的__dict__无法更新？</span>
   <a href="#python%e7%b1%bb%e7%9a%84__dict__%e6%97%a0%e6%b3%95%e6%9b%b4%e6%96%b0" class="heading-mark">
     <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
   </a>
@@ -331,7 +324,7 @@
   <div class="post-info">
     <div class="post-info-line">
       <div class="post-info-mod">
-        <span title="更新于 2018-05-17 20:40:00">更新于 2018-05-17&nbsp;</span>
+        <span title="更新于 2024-08-26 00:38:55">更新于 2024-08-26&nbsp;</span>
       </div><div class="post-info-license">
             <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
           </div></div><div class="post-info-line">

@@ -17,7 +17,7 @@
 如图所示： a 为前4 Bit，则a = S » 12 b 为a后4 Bit，则b = S » 8 &amp; 0b1111 c 为最后8 Bit, 则c = S &amp; 0b11111111 假定S = 10086，则：
 1 2 3 4 5 6 &gt;&gt;&gt; S = 10086 &gt;&gt;&gt; a = S &gt;&gt; 12 &gt;&gt;&gt; b = S &gt;&gt; 8 &amp; 0b1111 &gt;&gt;&gt; c = S &amp; 0b11111111 &gt;&gt;&gt; print(a, b, c) 2 7 102 验证一下：">
   <meta itemprop="datePublished" content="2018-07-15T14:30:00+00:00">
-  <meta itemprop="dateModified" content="2018-07-15T14:30:00+00:00">
+  <meta itemprop="dateModified" content="2024-08-26T00:38:55+08:00">
   <meta itemprop="wordCount" content="127">
   <meta itemprop="keywords" content="Python"><meta property="og:url" content="https://hellofinger.tech/2018/07/a-best-practice-of-bitwise-operation/">
   <meta property="og:site_name" content="Finger&#39;s Blog">
@@ -30,7 +30,7 @@
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
     <meta property="article:published_time" content="2018-07-15T14:30:00+00:00">
-    <meta property="article:modified_time" content="2018-07-15T14:30:00+00:00">
+    <meta property="article:modified_time" content="2024-08-26T00:38:55+08:00">
     <meta property="article:tag" content="Python">
 
   <meta name="twitter:card" content="summary">
@@ -54,7 +54,7 @@
       "@type": "WebPage",
       "@id": "https:\/\/hellofinger.tech\/2018\/07\/a-best-practice-of-bitwise-operation\/"
     },"genre": "posts","keywords": "Python","wordcount":  127 ,
-    "url": "https:\/\/hellofinger.tech\/2018\/07\/a-best-practice-of-bitwise-operation\/","datePublished": "2018-07-15T14:30:00+00:00","dateModified": "2018-07-15T14:30:00+00:00","publisher": {
+    "url": "https:\/\/hellofinger.tech\/2018\/07\/a-best-practice-of-bitwise-operation\/","datePublished": "2018-07-15T14:30:00+00:00","dateModified": "2024-08-26T00:38:55+08:00","publisher": {
       "@type": "Organization",
       "name": ""},"author": {
         "@type": "Person",
@@ -190,15 +190,8 @@
     <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>位运算的最佳实践</span>
       </h1></div><div class="post-meta">
       <div class="post-meta-line"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/python/" class="post-category" title="分类 - Python"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Python</a></span></div><div class="post-meta-line"><span title="发布于 2018-07-15 14:30:00"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2018-07-15">2018-07-15</time></span>&nbsp;<span title="127 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 200 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 1 分钟</span>&nbsp;</div>
-    </div><div class="content" id="content"><div class="details admonition warning open">
-      <div class="details-summary admonition-title">
-        <i class="icon fa-solid fa-exclamation-triangle fa-fw" aria-hidden="true"></i>警告<i class="details-icon fa-solid fa-angle-right fa-fw" aria-hidden="true"></i>
-      </div>
-      <div class="details-content">
-        <div class="admonition-content">本文最后更新于 2018-07-15，文中内容可能已过时。</div>
-      </div>
-    </div><p>问：假设 S由a, b, c三个数值组成, S的大小为2个字节(Byte)。已知S的值。求解a, b, c分别是多少？
+    Finger</a></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/python/" class="post-category" title="分类 - Python"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Python</a></span></div><div class="post-meta-line"><span title="发布于 2018-07-15 14:30:00"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2018-07-15">2018-07-15</time></span>&nbsp;<span title="更新于 2024-08-26 00:38:55"><i class="fa-regular fa-calendar-check fa-fw me-1" aria-hidden="true"></i><time datetime="2024-08-26">2024-08-26</time></span>&nbsp;<span title="127 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 200 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 1 分钟</span>&nbsp;</div>
+    </div><div class="content" id="content"><p>问：假设 S由a, b, c三个数值组成, S的大小为2个字节(Byte)。已知S的值。求解a, b, c分别是多少？
 其中a = 4 Bit, b = 4 Bit, c = 8 Bit。(a &gt;= 0, b &gt;= 0, c &gt;= 0)</p>
 <p>解：</p>
 <p>如图所示：
@@ -255,7 +248,7 @@
   <div class="post-info">
     <div class="post-info-line">
       <div class="post-info-mod">
-        <span title="更新于 2018-07-15 14:30:00">更新于 2018-07-15&nbsp;</span>
+        <span title="更新于 2024-08-26 00:38:55">更新于 2024-08-26&nbsp;</span>
       </div><div class="post-info-license">
             <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
           </div></div><div class="post-info-line">

@@ -11,7 +11,7 @@
   <meta itemprop="name" content="github 本地配置">
   <meta itemprop="description" content="本地配置github用户名密码1、使用命令1 2 3 git config --global user.name [username] git config --global user.email [email] git config --global credential.helper store 2、配置文件1 2 3 [user] name = finger email = finger_chou@163.com 保存用户名密码1、使用命令1 2 echo &#34;[credential]&#34; &gt;&gt; .git/config echo &#34; helper = store&#34; &gt;&gt; .git/config 2、配置文件1 2 [credential] helper = store 查看配置1 git config --list ">
   <meta itemprop="datePublished" content="2017-01-13T17:56:00+00:00">
-  <meta itemprop="dateModified" content="2017-01-13T17:56:00+00:00">
+  <meta itemprop="dateModified" content="2024-08-26T00:38:55+08:00">
   <meta itemprop="wordCount" content="58">
   <meta itemprop="keywords" content="Git,Github"><meta property="og:url" content="https://hellofinger.tech/2017/01/github-config-usage/">
   <meta property="og:site_name" content="Finger&#39;s Blog">
@@ -21,7 +21,7 @@
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
     <meta property="article:published_time" content="2017-01-13T17:56:00+00:00">
-    <meta property="article:modified_time" content="2017-01-13T17:56:00+00:00">
+    <meta property="article:modified_time" content="2024-08-26T00:38:55+08:00">
     <meta property="article:tag" content="Git">
     <meta property="article:tag" content="Github">
 
@@ -43,7 +43,7 @@
       "@type": "WebPage",
       "@id": "https:\/\/hellofinger.tech\/2017\/01\/github-config-usage\/"
     },"genre": "posts","keywords": "Git, Github","wordcount":  58 ,
-    "url": "https:\/\/hellofinger.tech\/2017\/01\/github-config-usage\/","datePublished": "2017-01-13T17:56:00+00:00","dateModified": "2017-01-13T17:56:00+00:00","publisher": {
+    "url": "https:\/\/hellofinger.tech\/2017\/01\/github-config-usage\/","datePublished": "2017-01-13T17:56:00+00:00","dateModified": "2024-08-26T00:38:55+08:00","publisher": {
       "@type": "Organization",
       "name": ""},"author": {
         "@type": "Person",
@@ -179,7 +179,7 @@
     <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>Github 本地配置</span>
       </h1></div><div class="post-meta">
       <div class="post-meta-line"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/note/" class="post-category" title="分类 - Note"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Note</a></span></div><div class="post-meta-line"><span title="发布于 2017-01-13 17:56:00"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2017-01-13">2017-01-13</time></span>&nbsp;<span title="58 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 100 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 1 分钟</span>&nbsp;</div>
+    Finger</a></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/note/" class="post-category" title="分类 - Note"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Note</a></span></div><div class="post-meta-line"><span title="发布于 2017-01-13 17:56:00"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2017-01-13">2017-01-13</time></span>&nbsp;<span title="更新于 2024-08-26 00:38:55"><i class="fa-regular fa-calendar-check fa-fw me-1" aria-hidden="true"></i><time datetime="2024-08-26">2024-08-26</time></span>&nbsp;<span title="58 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 100 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 1 分钟</span>&nbsp;</div>
     </div><div class="details toc" id="toc-static" data-kept="false">
         <div class="details-summary toc-title">
           <span>目录</span>
@@ -196,14 +196,7 @@
     </li>
   </ul>
 </nav></div>
-      </div><div class="content" id="content"><div class="details admonition warning open">
-      <div class="details-summary admonition-title">
-        <i class="icon fa-solid fa-exclamation-triangle fa-fw" aria-hidden="true"></i>警告<i class="details-icon fa-solid fa-angle-right fa-fw" aria-hidden="true"></i>
-      </div>
-      <div class="details-content">
-        <div class="admonition-content">本文最后更新于 2017-01-13，文中内容可能已过时。</div>
-      </div>
-    </div><h3 id="本地配置github用户名密码" class="heading-element"><span>本地配置github用户名密码</span>
+      </div><div class="content" id="content"><h3 id="本地配置github用户名密码" class="heading-element"><span>本地配置github用户名密码</span>
   <a href="#%e6%9c%ac%e5%9c%b0%e9%85%8d%e7%bd%aegithub%e7%94%a8%e6%88%b7%e5%90%8d%e5%af%86%e7%a0%81" class="heading-mark">
     <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
   </a>
@@ -289,7 +282,7 @@
   <div class="post-info">
     <div class="post-info-line">
       <div class="post-info-mod">
-        <span title="更新于 2017-01-13 17:56:00">更新于 2017-01-13&nbsp;</span>
+        <span title="更新于 2024-08-26 00:38:55">更新于 2024-08-26&nbsp;</span>
       </div><div class="post-info-license">
             <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
           </div></div><div class="post-info-line">

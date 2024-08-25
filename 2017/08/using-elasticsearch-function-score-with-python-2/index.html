@@ -19,7 +19,7 @@ origin: 中心点或字段可能的最佳值，落在原点origin上的文档评
 线性衰减(linear) 指数衰减(exp) 高斯衰减(gauss) 它们可以操作数值，时间以及经纬度地理坐标点这样的字段，这三个函数都有以下参数：
 origin: 中心点或字段可能的最佳值，落在原点origin上的文档评分 _score 为满分1.0 。 scale: 衰减率，即一个文档从原点origin下落时，评分_score改变的速度(例如每 £10 欧元或每 100 米)。 decay: 从原点origin衰减到scale所得的评分_score，默认值为 0.5。 offset: 以原点origin为中心点，为其设置一个非零的偏移量offset 覆盖一个范围，而不只是单个原点。在范围 -offset &lt;= origin &lt;= &#43;offset 内的所有评分_score都是 1.">
   <meta itemprop="datePublished" content="2017-08-26T10:23:00+00:00">
-  <meta itemprop="dateModified" content="2017-08-26T10:23:00+00:00">
+  <meta itemprop="dateModified" content="2024-08-26T00:38:55+08:00">
   <meta itemprop="wordCount" content="238">
   <meta itemprop="keywords" content="Python,ElasticSearch"><meta property="og:url" content="https://hellofinger.tech/2017/08/using-elasticsearch-function-score-with-python-2/">
   <meta property="og:site_name" content="Finger&#39;s Blog">
@@ -33,7 +33,7 @@ origin: 中心点或字段可能的最佳值，落在原点origin上的文档评
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
     <meta property="article:published_time" content="2017-08-26T10:23:00+00:00">
-    <meta property="article:modified_time" content="2017-08-26T10:23:00+00:00">
+    <meta property="article:modified_time" content="2024-08-26T00:38:55+08:00">
     <meta property="article:tag" content="Python">
     <meta property="article:tag" content="ElasticSearch">
 
@@ -59,7 +59,7 @@ origin: 中心点或字段可能的最佳值，落在原点origin上的文档评
       "@type": "WebPage",
       "@id": "https:\/\/hellofinger.tech\/2017\/08\/using-elasticsearch-function-score-with-python-2\/"
     },"genre": "posts","keywords": "Python, ElasticSearch","wordcount":  238 ,
-    "url": "https:\/\/hellofinger.tech\/2017\/08\/using-elasticsearch-function-score-with-python-2\/","datePublished": "2017-08-26T10:23:00+00:00","dateModified": "2017-08-26T10:23:00+00:00","publisher": {
+    "url": "https:\/\/hellofinger.tech\/2017\/08\/using-elasticsearch-function-score-with-python-2\/","datePublished": "2017-08-26T10:23:00+00:00","dateModified": "2024-08-26T00:38:55+08:00","publisher": {
       "@type": "Organization",
       "name": ""},"author": {
         "@type": "Person",
@@ -195,7 +195,7 @@ origin: 中心点或字段可能的最佳值，落在原点origin上的文档评
     <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>用Python实现Elasticsearch Function_score查询(二)</span>
       </h1></div><div class="post-meta">
       <div class="post-meta-line"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/elasticsearch/" class="post-category" title="分类 - ElasticSearch"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> ElasticSearch</a>&ensp;<a href="/categories/storage/" class="post-category" title="分类 - Storage"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a></span></div><div class="post-meta-line"><span title="发布于 2017-08-26 10:23:00"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2017-08-26">2017-08-26</time></span>&nbsp;<span title="238 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 300 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 2 分钟</span>&nbsp;</div>
+    Finger</a></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/elasticsearch/" class="post-category" title="分类 - ElasticSearch"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> ElasticSearch</a>&ensp;<a href="/categories/storage/" class="post-category" title="分类 - Storage"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a></span></div><div class="post-meta-line"><span title="发布于 2017-08-26 10:23:00"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2017-08-26">2017-08-26</time></span>&nbsp;<span title="更新于 2024-08-26 00:38:55"><i class="fa-regular fa-calendar-check fa-fw me-1" aria-hidden="true"></i><time datetime="2024-08-26">2024-08-26</time></span>&nbsp;<span title="238 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 300 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 2 分钟</span>&nbsp;</div>
     </div><div class="details toc" id="toc-static" data-kept="false">
         <div class="details-summary toc-title">
           <span>目录</span>
@@ -210,14 +210,7 @@ origin: 中心点或字段可能的最佳值，落在原点origin上的文档评
     </li>
   </ul>
 </nav></div>
-      </div><div class="content" id="content"><div class="details admonition warning open">
-      <div class="details-summary admonition-title">
-        <i class="icon fa-solid fa-exclamation-triangle fa-fw" aria-hidden="true"></i>警告<i class="details-icon fa-solid fa-angle-right fa-fw" aria-hidden="true"></i>
-      </div>
-      <div class="details-content">
-        <div class="admonition-content">本文最后更新于 2017-08-26，文中内容可能已过时。</div>
-      </div>
-    </div><h4 id="random_score" class="heading-element"><span>random_score</span>
+      </div><div class="content" id="content"><h4 id="random_score" class="heading-element"><span>random_score</span>
   <a href="#random_score" class="heading-mark">
     <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
   </a>
@@ -396,7 +389,7 @@ origin: 中心点或字段可能的最佳值，落在原点origin上的文档评
   <div class="post-info">
     <div class="post-info-line">
       <div class="post-info-mod">
-        <span title="更新于 2017-08-26 10:23:00">更新于 2017-08-26&nbsp;</span>
+        <span title="更新于 2024-08-26 00:38:55">更新于 2024-08-26&nbsp;</span>
       </div><div class="post-info-license">
             <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
           </div></div><div class="post-info-line">

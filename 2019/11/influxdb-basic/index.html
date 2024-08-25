@@ -266,7 +266,7 @@ InfluxDB 提供了多种客户端库和集成，使其可以轻松与各种编�
 安装1 2 3 4 5 6 7 8 9 10 11 12 # Ubuntu &amp; Debian wget https://dl.influxdata.com/influxdb/releases/influxdb_1.7.9_amd64.deb sudo dpkg -i influxdb_1.7.9_amd64.deb # or wget -qO- https://repos.influxdata.com/influxdb.key | sudo apt-key add - source /etc/lsb-release echo &#34;deb https://repos.influxdata.com/${DISTRIB_ID,,} ${DISTRIB_CODENAME} stable&#34; | sudo tee /etc/apt/ sudo apt-get update &amp;&amp; sudo apt-get install influxdb sudo service influxdb start 卸载1 2 3 # Ubuntu &amp; Debian sudo dpkg -l | grep influxdb sudo apt-get autoremove influxdb 认证管理修改配置文件1 2 3 4 5 6 7 8 9 10 11 12 # /etc/influxdb/influxdb.conf [http] enabled = true bind-address = &#34;:8086&#34; auth-enabled = true log-enabled = true write-tracing = false pprof-enabled = true pprof-auth-enabled = true debug-pprof-enabled = false ping-auth-enabled = true 1 2 3 4 5 6 7 8 9 10 # 重启 sudo systemctl restart influxdb # or sudo service influxdb restart # 客户端认证登录 influx -username devops -password xxx # 测试 curl -G http://localhost:8086/query -u username:password --data-urlencode &#34;q=SHOW DATABASES&#34; 与关系型数据库比较Relational database Influx DB database database table measurement column points 特殊名词Point由时间戳（time）、数据（field）、标签（tags）组成。
 Point属性 传统数据库中的概念 time 每个数据记录时间，是数据库中的主索引(会自动生成) fields 各种记录值（没有索引的属性）也就是记录的值：温度， 湿度 tags 各种有索引的属性：地区，海拔 用户管理创建管理员账号1 2 3 4 5 // 新用户 CREATE USER &lt;username&gt; WITH PASSWORD &#39;&lt;password&gt;&#39; WITH ALL PRIVILEGES // 老用户 GRANT ALL PRIVILEGES TO &lt;username&gt; 创建普通用户1 2 3 4 5 6 7 8 CREATE USER &lt;username&gt; WITH PASSWORD &#39;&lt;password&gt;&#39; // 授权数据库权限 GRANT [READ,WRITE,ALL] ON &lt;database_name&gt; TO &lt;username&gt; GRANT READ ON test TO &#34;grafana&#34; GRANT ALL ON test TO &#34;devops&#34; 数据保存策略（Retention Policies）1 2 3 4 5 6 7 8 9 # 创建策略 CREATE RETENTION POLICY aws_elb_log_retention_policy ON DevOpsBigScreen DURATION 3d REPLICATION 3 DEFAULT # 查看策略 SHOW RETENTION POLICIES ON &lt;database_name&gt; # 删除策略 DROP RETENTION POLICY &lt;retention_policy_name&gt; ON &lt;database_name&gt; 参考https://docs.influxdata.com/influxdb/v1.7/introduction/installation/ https://www.influxdata.com/blog/getting-started-python-influxdb/ https://xtutu.gitbooks.io/influxdb-handbook/content/shu_ju_ku_yu_biao_de_cao_zuo.html ">
   <meta itemprop="datePublished" content="2019-11-15T11:51:52+08:00">
-  <meta itemprop="dateModified" content="2019-11-15T11:51:52+08:00">
+  <meta itemprop="dateModified" content="2024-08-26T00:38:55+08:00">
   <meta itemprop="wordCount" content="293">
   <meta itemprop="keywords" content="InfluxDB"><meta property="og:url" content="https://hellofinger.tech/2019/11/influxdb-basic/">
   <meta property="og:site_name" content="Finger&#39;s Blog">
@@ -279,7 +279,7 @@ Point属性 传统数据库中的概念 time 每个数据记录时间，是数�
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
     <meta property="article:published_time" content="2019-11-15T11:51:52+08:00">
-    <meta property="article:modified_time" content="2019-11-15T11:51:52+08:00">
+    <meta property="article:modified_time" content="2024-08-26T00:38:55+08:00">
     <meta property="article:tag" content="InfluxDB">
 
   <meta name="twitter:card" content="summary">
@@ -303,7 +303,7 @@ Point属性 传统数据库中的概念 time 每个数据记录时间，是数�
       "@type": "WebPage",
       "@id": "https:\/\/hellofinger.tech\/2019\/11\/influxdb-basic\/"
     },"genre": "posts","keywords": "InfluxDB","wordcount":  293 ,
-    "url": "https:\/\/hellofinger.tech\/2019\/11\/influxdb-basic\/","datePublished": "2019-11-15T11:51:52+08:00","dateModified": "2019-11-15T11:51:52+08:00","publisher": {
+    "url": "https:\/\/hellofinger.tech\/2019\/11\/influxdb-basic\/","datePublished": "2019-11-15T11:51:52+08:00","dateModified": "2024-08-26T00:38:55+08:00","publisher": {
       "@type": "Organization",
       "name": ""},"author": {
         "@type": "Person",
@@ -439,7 +439,7 @@ Point属性 传统数据库中的概念 time 每个数据记录时间，是数�
     <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>InfluxDB 基础知识</span>
       </h1></div><div class="post-meta">
       <div class="post-meta-line"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/database/" class="post-category" title="分类 - Database"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Database</a>&ensp;<a href="/categories/storage/" class="post-category" title="分类 - Storage"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a></span></div><div class="post-meta-line"><span title="发布于 2019-11-15 11:51:52"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2019-11-15">2019-11-15</time></span>&nbsp;<span title="293 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 300 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 2 分钟</span>&nbsp;</div>
+    Finger</a></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/database/" class="post-category" title="分类 - Database"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Database</a>&ensp;<a href="/categories/storage/" class="post-category" title="分类 - Storage"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a></span></div><div class="post-meta-line"><span title="发布于 2019-11-15 11:51:52"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2019-11-15">2019-11-15</time></span>&nbsp;<span title="更新于 2024-08-26 00:38:55"><i class="fa-regular fa-calendar-check fa-fw me-1" aria-hidden="true"></i><time datetime="2024-08-26">2024-08-26</time></span>&nbsp;<span title="293 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 300 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 2 分钟</span>&nbsp;</div>
     </div><div class="details toc" id="toc-static" data-kept="false">
         <div class="details-summary toc-title">
           <span>目录</span>
@@ -467,14 +467,7 @@ Point属性 传统数据库中的概念 time 每个数据记录时间，是数�
     <li><a href="#参考">参考</a></li>
   </ul>
 </nav></div>
-      </div><div class="content" id="content"><div class="details admonition warning open">
-      <div class="details-summary admonition-title">
-        <i class="icon fa-solid fa-exclamation-triangle fa-fw" aria-hidden="true"></i>警告<i class="details-icon fa-solid fa-angle-right fa-fw" aria-hidden="true"></i>
-      </div>
-      <div class="details-content">
-        <div class="admonition-content">本文最后更新于 2019-11-15，文中内容可能已过时。</div>
-      </div>
-    </div><h2 id="简介" class="heading-element"><span>简介</span>
+      </div><div class="content" id="content"><h2 id="简介" class="heading-element"><span>简介</span>
   <a href="#%e7%ae%80%e4%bb%8b" class="heading-mark">
     <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
   </a>
@@ -737,7 +730,7 @@ Point属性 传统数据库中的概念 time 每个数据记录时间，是数�
   <div class="post-info">
     <div class="post-info-line">
       <div class="post-info-mod">
-        <span title="更新于 2019-11-15 11:51:52">更新于 2019-11-15&nbsp;</span>
+        <span title="更新于 2024-08-26 00:38:55">更新于 2024-08-26&nbsp;</span>
       </div><div class="post-info-license">
             <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
           </div></div><div class="post-info-line">

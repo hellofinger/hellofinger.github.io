@@ -19,7 +19,7 @@
 2、线性代数为什么如此实用？线性代数将复杂问题转变为简单，直观和高效的计算问题。下面的例子可以表明实现同样的功能，线性代数的代码表达是如何的简洁与美观。
 1 2 3 4 5 6 7 8 9 # Multiply two arrays &gt;&gt;&gt; x = [1, 2, 3] &gt;&gt;&gt; y = [2, 3, 4] &gt;&gt;&gt; product = [] &gt;&gt;&gt; for i in range(len(x)): ... product.append(x[i] * y[i]) ... &gt;&gt;&gt; product [2, 6, 12] 1 2 3 4 5 6 # Linear algebra version &gt;&gt;&gt; import numpy as np &gt;&gt;&gt; x = np.array([1,2,3]) &gt;&gt;&gt; y = np.">
   <meta itemprop="datePublished" content="2018-06-10T09:51:00+00:00">
-  <meta itemprop="dateModified" content="2018-06-10T09:51:00+00:00">
+  <meta itemprop="dateModified" content="2024-08-26T00:38:55+08:00">
   <meta itemprop="wordCount" content="564">
   <meta itemprop="keywords" content="Python,Numpy"><meta property="og:url" content="https://hellofinger.tech/2018/06/matrix-with-numpy/">
   <meta property="og:site_name" content="Finger&#39;s Blog">
@@ -33,7 +33,7 @@
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
     <meta property="article:published_time" content="2018-06-10T09:51:00+00:00">
-    <meta property="article:modified_time" content="2018-06-10T09:51:00+00:00">
+    <meta property="article:modified_time" content="2024-08-26T00:38:55+08:00">
     <meta property="article:tag" content="Python">
     <meta property="article:tag" content="Numpy">
 
@@ -59,7 +59,7 @@
       "@type": "WebPage",
       "@id": "https:\/\/hellofinger.tech\/2018\/06\/matrix-with-numpy\/"
     },"genre": "posts","keywords": "Python, Numpy","wordcount":  564 ,
-    "url": "https:\/\/hellofinger.tech\/2018\/06\/matrix-with-numpy\/","datePublished": "2018-06-10T09:51:00+00:00","dateModified": "2018-06-10T09:51:00+00:00","publisher": {
+    "url": "https:\/\/hellofinger.tech\/2018\/06\/matrix-with-numpy\/","datePublished": "2018-06-10T09:51:00+00:00","dateModified": "2024-08-26T00:38:55+08:00","publisher": {
       "@type": "Organization",
       "name": ""},"author": {
         "@type": "Person",
@@ -195,7 +195,7 @@
     <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>深度学习矩阵运算的概念和代码实现(Numpy)</span>
       </h1></div><div class="post-meta">
       <div class="post-meta-line"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/python/" class="post-category" title="分类 - Python"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Python</a></span></div><div class="post-meta-line"><span title="发布于 2018-06-10 09:51:00"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2018-06-10">2018-06-10</time></span>&nbsp;<span title="564 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 600 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 3 分钟</span>&nbsp;</div>
+    Finger</a></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/python/" class="post-category" title="分类 - Python"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Python</a></span></div><div class="post-meta-line"><span title="发布于 2018-06-10 09:51:00"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2018-06-10">2018-06-10</time></span>&nbsp;<span title="更新于 2024-08-26 00:38:55"><i class="fa-regular fa-calendar-check fa-fw me-1" aria-hidden="true"></i><time datetime="2024-08-26">2024-08-26</time></span>&nbsp;<span title="564 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 600 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 3 分钟</span>&nbsp;</div>
     </div><div class="details toc" id="toc-static" data-kept="false">
         <div class="details-summary toc-title">
           <span>目录</span>
@@ -214,14 +214,7 @@
     </li>
   </ul>
 </nav></div>
-      </div><div class="content" id="content"><div class="details admonition warning open">
-      <div class="details-summary admonition-title">
-        <i class="icon fa-solid fa-exclamation-triangle fa-fw" aria-hidden="true"></i>警告<i class="details-icon fa-solid fa-angle-right fa-fw" aria-hidden="true"></i>
-      </div>
-      <div class="details-content">
-        <div class="admonition-content">本文最后更新于 2018-06-10，文中内容可能已过时。</div>
-      </div>
-    </div><blockquote>
+      </div><div class="content" id="content"><blockquote>
 <p>本文从向量的概念与运算扩展到矩阵运算的概念与代码实现，对机器学习或者是深度学习的入门者提供最基础，也是最实用的教程指导，为以后的机器学习模型开发打下基础。</p>
 </blockquote>
 <p>在我们学习机器学习时，常常遇到需要使用矩阵提高计算效率的时候。如在使用批量梯度下降迭代求最优解时，正规方程会采用更简洁的矩阵形式提供权重的解析解法。而如果不了解矩阵的运算法则及意义，甚至我们都很难去理解一些如矩阵因子分解法和反向传播算法之类的基本概念。同时由于特征和权重都以向量储存，那如果我们不了解矩阵运算，代码实现将变得十分艰难。</p>
@@ -758,7 +751,7 @@
   <div class="post-info">
     <div class="post-info-line">
       <div class="post-info-mod">
-        <span title="更新于 2018-06-10 09:51:00">更新于 2018-06-10&nbsp;</span>
+        <span title="更新于 2024-08-26 00:38:55">更新于 2024-08-26&nbsp;</span>
       </div><div class="post-info-license">
             <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
           </div></div><div class="post-info-line">
