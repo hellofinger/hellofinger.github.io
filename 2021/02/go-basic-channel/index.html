@@ -50,7 +50,7 @@
 <meta name="application-name" content="FixIt">
 <meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://hellofinger.tech/2021/02/go-basic-channel/" /><link rel="prev" href="https://hellofinger.tech/2021/02/go-basic-context/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://hellofinger.tech/2021/02/go-basic-channel/" /><link rel="prev" href="https://hellofinger.tech/2021/02/go-basic-context/" /><link rel="next" href="https://hellofinger.tech/2022/08/container-securty/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
   {
@@ -294,8 +294,8 @@
 <li>写</li>
 <li>关闭</li>
 </ul>
-<p>把这3种操作和3种channel状态可以组合出9种情况：
-<img loading="lazy" src="imgs/channel-operate.png" alt="imgs/channel-operate.png" srcset="imgs/channel-operate.png?size=small, imgs/channel-operate.png?size=medium 1.5x, imgs/channel-operate.png?size=large 2x" data-title="imgs/channel-operate.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p>把这3种操作和3种channel状态可以组合出9种情况：</p>
+<p><img loading="lazy" src="imgs/channel-operate.png" alt="imgs/channel-operate.png" srcset="imgs/channel-operate.png?size=small, imgs/channel-operate.png?size=medium 1.5x, imgs/channel-operate.png?size=large 2x" data-title="imgs/channel-operate.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
 <p>对于nil通道的情况，也并非完全遵循上表，有1个特殊场景：当nil的通道在select的某个case中时，这个case会阻塞，但不会造成死锁。</p>
 <h3 id="常用操作" class="heading-element"><span>常用操作</span>
   <a href="#%e5%b8%b8%e7%94%a8%e6%93%8d%e4%bd%9c" class="heading-mark">
@@ -361,9 +361,11 @@
   <a href="#%e4%bd%bf%e7%94%a8_-ok-%e5%88%a4%e6%96%adchannel%e6%98%af%e5%90%a6%e5%85%b3%e9%97%ad" class="heading-mark">
     <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
   </a>
-</h4><p>读取已关闭的channel会得到零值，如果不确定channel，需要使用ok进行监测。
-ok<mark>true，读取数据，并且channel没有关闭
-ok</mark>false，通道关闭，无数据可读</p>
+</h4><p>读取已关闭的channel会得到零值，如果不确定channel，需要使用ok进行监测。</p>
+<ul>
+<li>ok==true，读取数据，并且channel没有关闭</li>
+<li>ok==false，通道关闭，无数据可读</li>
+</ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -578,9 +580,9 @@ ok</mark>false，通道关闭，无数据可读</p>
     <ul><li>
           <a href="/2021/02/go-basic-context/" title="Go基础--Context">Go基础--Context</a></li><li>
           <a href="/2020/08/go-package-gokit/" title="Go Package--Gokit介绍">Go Package--Gokit介绍</a></li><li>
+          <a href="/2022/08/docker-cve-2019-5736/" title="CVE-2019-5736容器逃逸漏洞复现">CVE-2019-5736容器逃逸漏洞复现</a></li><li>
           <a href="/2020/07/go-basic-three-dot/" title="Go基础--三个点">Go基础--三个点</a></li><li>
-          <a href="/2020/07/go-basic-make-and-new/" title="Go基础--Make和New">Go基础--Make和New</a></li><li>
-          <a href="/2020/06/neo4j-basic/" title="Neo4j 基础知识">Neo4j 基础知识</a></li></ul><div class="post-footer" id="post-footer">
+          <a href="/2020/07/go-basic-make-and-new/" title="Go基础--Make和New">Go基础--Make和New</a></li></ul><div class="post-footer" id="post-footer">
   <div class="post-info">
     <div class="post-info-line">
       <div class="post-info-mod">
@@ -603,7 +605,8 @@ ok</mark>false，通道关闭，无数据可读</p>
     <section>
       <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
     </section>
-  </div><div class="post-nav"><a href="/2021/02/go-basic-context/" class="post-nav-item" rel="prev" title="Go基础--Context"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>Go基础--Context</a></div>
+  </div><div class="post-nav"><a href="/2021/02/go-basic-context/" class="post-nav-item" rel="prev" title="Go基础--Context"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>Go基础--Context</a>
+      <a href="/2022/08/container-securty/" class="post-nav-item" rel="next" title="容器安全">容器安全<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
 </div>
 <div class="post-reward">
     <div class="comment">Buy me a coffee</div>

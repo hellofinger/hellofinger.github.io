@@ -12,7 +12,7 @@
 <meta name="author-link" content="https://github.com/hellofinger">
 <meta name="description" content="" /><meta name="keywords" content='Finger, DevOps, Python, Go, Kubernetes, k8s' />
   <meta itemprop="name" content="Finger&#39;s Blog">
-  <meta itemprop="datePublished" content="2021-02-26T17:27:52+00:00">
+  <meta itemprop="datePublished" content="2022-08-15T20:14:52+00:00">
   <meta itemprop="dateModified" content="2024-08-23T18:44:07+08:00"><meta property="og:url" content="https://hellofinger.tech/">
   <meta property="og:site_name" content="Finger&#39;s Blog">
   <meta property="og:title" content="Finger&#39;s Blog">
@@ -164,52 +164,61 @@
     </a><a href="mailto:finger.zhou@gmail.com" title="Email"target="_blank" rel="external nofollow noopener noreferrer me"><i class="fa-regular fa-envelope fa-fw" aria-hidden="true"></i>
     </a><a href="/index.xml" title="RSS"target="_blank" rel="external nofollow noopener noreferrer me"><i class="fa-solid fa-rss fa-fw" aria-hidden="true"></i>
     </a></div></div>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2017/01/cocos2dx-upload-google-play/">Cocos2dx－上传Google Play遇到的问题</a>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2017/07/python-face-recognition/">基于 Python 的开源人脸识别库</a>
   </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span>&nbsp;<span class="post-publish" title='2017-01-27 20:40:00'>发布于 <time datetime="2017-01-27">2017-01-27</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/note/" class="post-category" title="分类 - Note"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Note</a></span></div><div class="content">一、OpenSSL版本有多个安全漏洞，建议您尽快更新 OpenSSL因为项目使用的是cocos2d-x 3.3版本。因此cocos2d-x第三方库比较旧。上传Google Play 后台时被rejected。邮件原文如下：
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 Vulnerability ----------------------------------------------------------- **OpenSSL** The vulnerabilities were addressed in OpenSSL 1.0.2f/1.0.1r. To confirm your OpenSSL version, you can do a grep search for: \$ unzip -p YourApp.apk | strings | grep &#34;OpenSSL&#34; You can find more information and next steps in this Google Help Center article.</div><div class="post-footer">
-    <a href="/2017/01/cocos2dx-upload-google-play/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/cocos2d-x/' class="post-tag">Cocos2d-X</a><a href='/tags/javascript/' class="post-tag">Javascript</a></div></div>
+    Finger</a></span>&nbsp;<span class="post-publish" title='2017-07-30 10:41:00'>发布于 <time datetime="2017-07-30">2017-07-30</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/python/" class="post-category" title="分类 - Python"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Python</a></span></div><div class="content">项目说明该库使用 dlib 顶尖的深度学习人脸识别技术构建，在户外脸部检测数据库基准（Labeled Faces in the Wild benchmark）上的准确率高达 99.38%。 该项目是要构建一款免费、开源、实时、离线的网络 app，支持组织者使用人脸识别技术或二维码识别所有受邀人员。有了世界上最简单的人脸识别库，使用 Python 或命令行，即可识别和控制人脸。
+项目地址： https://github.com/ageitgey/face_recognition#face-recognition
+使用说明1、从图片中识别出人脸1 2 3 import face_recognition image = face_recognition.load_image_file(&#34;your_file.jpg&#34;) face_locations = face_recognition.face_locations(image) 2、从图片中识别面部特征，比如：眼睛, 鼻子, 嘴和下巴。1 2 3 import face_recognition image = face_recognition.load_image_file(&#34;your_file.jpg&#34;) face_landmarks_list = face_recognition.face_landmarks(image) 3、可以对识别的面部特征进行处理，比如类似美图秀秀的功能4、从图片中识别出某个具体的人1 2 3 4 5 6 7 8 import face_recognition known_image = face_recognition.load_image_file(&#34;biden.jpg&#34;) unknown_image = face_recognition.load_image_file(&#34;unknown.jpg&#34;) biden_encoding = face_recognition.face_encodings(known_image)[0] unknown_encoding = face_recognition.face_encodings(unknown_image)[0] results = face_recognition.compare_faces([biden_encoding], unknown_encoding) 更多请查看项目主页：</div><div class="post-footer">
+    <a href="/2017/07/python-face-recognition/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/python/' class="post-tag">Python</a></div></div>
 </article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2017/01/hexo-usage/">Hexo使用笔记</a>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2017/07/database-sharding/">数据库分库分表</a>
   </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span>&nbsp;<span class="post-publish" title='2017-01-27 20:40:00'>发布于 <time datetime="2017-01-27">2017-01-27</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/note/" class="post-category" title="分类 - Note"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Note</a></span></div><div class="content">中文文档：https://hexo.io/zh-cn/docs/index.html
-参考博客： http://blog.csdn.net/poem_of_sunshine/article/details/29369785/ http://www.jianshu.com/p/465830080ea9# http://www.jianshu.com/p/a2023a601ceb
-Github配置： https://help.github.com/articles/generating-an-ssh-key/ https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/
-常用命令1 2 3 4 hexo server | s --debug hexo clean hexo generate | g hexo deploy 绑定阿里云域名： http://quantumman.me/blog/setting-up-a-domain-with-gitHub-pages.html
-后端管理插件hexo-admin1 2 3 npm install --save hexo-admin hexo server -d open http://localhost:4000/admin/ 设置后台密码 修改站点配置文件，就是网站根目录下的 _config.yml文件:
-1 2 3 4 admin: username: finger password_hash: $2a$1$Cof3VuvY8nKKIUjeCNBSE.HjcrCKQ1P80GEegP//SLDFWZoGzm4pa secret: a secret something username：后端登录用户名 password_hash：后端登录用户密码对应的md5 hash值 secret：用于保证cookie安全 密码生成 hexo-admin密码是bcrypt编码。因此需要安装bcrypt-nodejs模块
-1 2 3 4 $ node &gt; const bcrypt = require(&#39;bcrypt-nodejs&#39;) &gt; bcrypt.</div><div class="post-footer">
-    <a href="/2017/01/hexo-usage/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/hexo/' class="post-tag">Hexo</a></div></div>
+    Finger</a></span>&nbsp;<span class="post-publish" title='2017-07-29 13:44:00'>发布于 <time datetime="2017-07-29">2017-07-29</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/database/" class="post-category" title="分类 - Database"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Database</a>&ensp;<a href="/categories/storage/" class="post-category" title="分类 - Storage"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a></span></div><div class="content">一、背景大量的并发读/写操作，导致单库出现难以承受的负载压力 单表存储数据量过大，导致索引效率低下 二、读写分离将数据库设置为读写分离状态，由Master（主）负责写数据，Salve（从）只负责读数据。主从之间保持数据同步。根据二八法则，80%的数据库操作是读，20%则为写。读写分离后，可以大大提升单库负载压力。
+但是，当Master存在TPS（系统吞吐量）较高的情况，Master和Slave数据库之间数据同步是会存在一定延迟，因此在写入Master之前最好还是要将同一份数据放入缓存中，以避免高并发情况下，从Slave中获取不到指定数据的情况
+三、分库分表随着用户规模的不断上升，仅仅只是依靠数据库的读写分离并不能解决系统瓶颈。因此需要考虑分库分表的解决方案。
+分表 就是将原来冗余在单库中的单个业务表拆分为N个“逻辑相关”的业务子表（如tab_0000, tab_0001, tab_0002&hellip;），不同的业务字表各自负责存储不同区间数据，对外形成一个整体
+分库 就是将分表后的业务子表按照特定的算法和规则分散到N个“逻辑相关”的业务子库中（如db_0000, db_0001, db_0002&hellip;）
+分库分表策略主要原理：分区，取模，数据路由表
+1、按时间区间一定时间区间内产生的数据放到一张表里面，多个时间区间的表放到一个库里面
+比如，
+a、单库多表结构，按月分表可以这样：user_201701, user_201702&hellip;user_201712；按年分表可以这样，user_2016, user_2017&hellip;
+b、多库多表，比如按天分表，每天一张表，当单库超过100张表的时候，进行分库到下一张表。那么假如第一张表在库db0，表名是user_20160201。从db0.user_20160201 - db0.user_20160511就是100张表了，接下来就是分库，进入20160512，就是db1.user_20160512，这个算法就是上线的时候定一个上线日期，具体算法如下：
+1 2 库ID = （当前日期 - 上线日期）/ 100 表ID = user_yyyyMMdd 注：好处是可以直接根据时间经过简单计算定位到哪个库和哪个表
+还有一种算法：
+1 2 表ID = (当前日期 - 上线日期) % 100 表名如下： DB0.user_0001，user_0002 .... user_01000 注：表名和库名都要经过计算，比较麻烦
+c、按月分表，每个月一张表。这种情况，一般就不用分库了，一年12张表说明量也不会特别大，如果量特别大，或者是热点数据，可以一年分一个库，具体算法和上面差不多。
+d、按季度分表，按年度分表（基本不用分库）
+2、按主键ID区间对于自增的主键ID，可以按照ID区间进行分表，以1000万数据量为分界线，对线性的ID进行切割分表，每涨到1000万数据，分到下一张表，超过一定数目的表，进行分库。
+1 2 库ID = 主键ID / 1000万 / 100 表ID = 主键ID / 1000万 % 100 如：</div><div class="post-footer">
+    <a href="/2017/07/database-sharding/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/mysql/' class="post-tag">Mysql</a><a href='/tags/shard/' class="post-tag">Shard</a></div></div>
 </article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2017/01/github-config-usage/">Github 本地配置</a>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2017/07/scrapy-deploy-usage/">Scrapy 部署笔记</a>
   </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span>&nbsp;<span class="post-publish" title='2017-01-13 17:56:00'>发布于 <time datetime="2017-01-13">2017-01-13</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/note/" class="post-category" title="分类 - Note"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Note</a></span></div><div class="content">本地配置github用户名密码1、使用命令1 2 3 git config --global user.name [username] git config --global user.email [email] git config --global credential.helper store 2、配置文件1 2 3 [user] name = finger email = finger_chou@163.com 保存用户名密码1、使用命令1 2 echo &#34;[credential]&#34; &gt;&gt; .git/config echo &#34; helper = store&#34; &gt;&gt; .git/config 2、配置文件1 2 [credential] helper = store 查看配置1 git config --list </div><div class="post-footer">
-    <a href="/2017/01/github-config-usage/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/git/' class="post-tag">Git</a><a href='/tags/github/' class="post-tag">Github</a></div></div>
+    Finger</a></span>&nbsp;<span class="post-publish" title='2017-07-02 10:41:00'>发布于 <time datetime="2017-07-02">2017-07-02</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/python/" class="post-category" title="分类 - Python"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Python</a></span></div><div class="content">关键字：
+scrapy， scrapyd， scrapy-client， spiderkeeper
+一、新建一个scrapy项目1 2 3 4 5 6 7 8 9 10 $ scrapy startproject scrapy_example $ cd scrapy_example # 修改配置文件scrapy.cfg [settings] default = scrapy_example.settings [deploy:scrapyd1] url = http://localhost:6800/ project = scrapy_example 二、安装并启动scrapyd1 2 3 4 $ pip install scrapyd # 启动, 默认的端口是6800。可以在浏览器中查看结果，比如：http://127.0.0.1:6800/。 $ scrapyd 三、发布工程到scrapyd1 2 3 4 5 6 7 8 9 10 # 发布scrapyd需要安装scrapy-client $ pip install scrapy-client # 发布命令：scrapyd-deploy &lt;target&gt; -p &lt;project&gt; $ scrapyd-deploy scrapyd1 -p scrapy_example # 检查发布是否成功 $ scrapyd-deploy -l 或者 scrapyd-deploy -L scrapyd1 # 启动爬虫 $ curl http://127.</div><div class="post-footer">
+    <a href="/2017/07/scrapy-deploy-usage/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/scrapy/' class="post-tag">Scrapy</a><a href='/tags/scrapyd/' class="post-tag">Scrapyd</a><a href='/tags/spiderkeeper/' class="post-tag">SpiderKeeper</a></div></div>
 </article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2017/01/mysql-question/">Mysql遇到的问题笔记</a>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2017/06/docker-build-and-run-your-first-app/">Docker 构建第一个App</a>
   </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span>&nbsp;<span class="post-publish" title='2017-01-03 10:43:00'>发布于 <time datetime="2017-01-03">2017-01-03</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/stroage/" class="post-category" title="分类 - Stroage"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Stroage</a>&ensp;<a href="/categories/database/" class="post-category" title="分类 - Database"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Database</a></span></div><div class="content">问题描述：mysql远程连接错误10038&ndash;navicat for mysql (10038)
-解决方案： 1、授权
-1 2 3 mysql&gt;grant all privileges on *.* to &#39;root&#39;@&#39;%&#39; identified by &#39;youpassword&#39; with grant option; mysql&gt;flush privileges; 2、修改 /etc/mysql/mysql.conf.d
-1 2 3 找到bind-address = 127.0.0.1这一行 改为bind-address = 0.0.0.0即可 如果还没解决可能是远程端口（3306）未对外开放。 需要修改安全组的入站规则。
-问题描述: ERROR 1030 (HY000): Got error 28 from storage engine.
-解决办法: 查了一下，数据库文件所在的盘应该没事，应该是数据库用的临时目录空间不够。或者将tmpdir指向一个硬盘空间很大的目录即可。
-问题描述: Can&rsquo;t open the mysql.plugin table. Please run mysql_upgrade to create it.
-解决办法：
-1 2 3 4 5 6 7 8 sudo vim /etc/apparmor.</div><div class="post-footer">
-    <a href="/2017/01/mysql-question/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/mysql/' class="post-tag">Mysql</a><a href='/tags/database/' class="post-tag">Database</a></div></div>
+    Finger</a></span>&nbsp;<span class="post-publish" title='2017-06-22 23:45:00'>发布于 <time datetime="2017-06-22">2017-06-22</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/python/" class="post-category" title="分类 - Python"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Python</a></span></div><div class="content">测试环境：阿里云 ubuntu14.04
+一、新建Dockerfile文件1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 # Use an official Python runtime as a base image FROM python:2.7-slim # Set the working directory to /app WORKDIR /app # Copy the current directory contents into the container at /app ADD . /app # Install any needed packages specified in requirements.txt RUN pip install -r requirements.</div><div class="post-footer">
+    <a href="/2017/06/docker-build-and-run-your-first-app/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/flask/' class="post-tag">Flask</a><a href='/tags/docker/' class="post-tag">Docker</a><a href='/tags/ubuntu/' class="post-tag">Ubuntu</a></div></div>
 </article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2017/01/python-different-directories-execute/">Python不同目录下的调用情况</a>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2017/06/supervisord-usage/">Supervisord 使用笔记</a>
   </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span>&nbsp;<span class="post-publish" title='2017-01-02 10:40:00'>发布于 <time datetime="2017-01-02">2017-01-02</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/python/" class="post-category" title="分类 - Python"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Python</a></span></div><div class="content">Python包含子目录中的模块方法比较简单，关键是能够在sys.path里面找到通向模块文件的路径。
-下面将具体介绍几种常用情况:
-（1）主程序与模块程序在同一目录下: 如下面程序结构:
-1 2 3 `-- src |-- mod1.py `-- test1.py 若在程序test1.py中导入模块mod1, 则直接使用import mod1或from mod1 import *;
-（2）主程序所在目录是模块所在目录的父(或祖辈)目录 如下面程序结构:
-1 2 3 4 5 `-- src |-- mod1.py |-- mod2 | `-- mod2.py `-- test1.py 若在程序test1.py中导入模块mod2, 需要在mod2文件夹中建立空文件__init__.py文件(也可以在该文件中自定义输出模块接口); 然后使用 from mod2.mod2 import * 或import mod2.mod2.
-（3）主程序导入上层目录中模块或其他目录(平级)下的模块 如下面程序结构:
-1 2 3 4 5 6 7 `-- src |-- mod1.py |-- mod2 | `-- mod2.py |-- sub | `-- test2.py `-- test1.</div><div class="post-footer">
-    <a href="/2017/01/python-different-directories-execute/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/python/' class="post-tag">Python</a></div></div>
+    Finger</a></span>&nbsp;<span class="post-publish" title='2017-06-22 23:40:00'>发布于 <time datetime="2017-06-22">2017-06-22</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/python/" class="post-category" title="分类 - Python"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Python</a></span></div><div class="content">一、安装1 2 3 4 - pip install supervisor - echo_supervisord_conf #或者 - echo_supervisord_conf &gt; supervisord.conf - supervisord -c ./supervisord.conf 二、遇到错误1 2 3 [root@localhost ~]# supervisord -c ./supervisord.conf Error: .ini file does not include supervisord section For help, use /usr/bin/supervisord -h 错误原因是因为配置文件少了 [supervisrod] 配置项
+1 2 3 4 5 6 7 8 9 10 [program:djangotest] user=lzz command=/usr/bin/python /var/www/djangotest/manage.py runserver 0.0.0.0:8000 autostart=true autorestart=true stderr_logfile=/var/logs/err.log stdout_logfile=/var/logs/out.log stopsignal=INT [supervisord] 三、常用命令1 2 supervisord : supervisor的服务器端部分，用于supervisor启动 supervisorctl：启动supervisor的命令行窗口，在该命令行中可执行start、stop、status、reload等操作。 参考文献http://www.</div><div class="post-footer">
+    <a href="/2017/06/supervisord-usage/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/supervisord/' class="post-tag">Supervisord</a></div></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2017/01/ubuntu-install-svn-simple-server/">Ubuntu 安装svn服务</a>
+  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span>&nbsp;<span class="post-publish" title='2017-01-27 20:56:00'>发布于 <time datetime="2017-01-27">2017-01-27</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/note/" class="post-category" title="分类 - Note"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Note</a></span></div><div class="content">一、安装Subversion Server1 apt-get install subversion 二、创建SVN版本库1 2 mkdir /srv/svn # 创建SVN根目录 svnadmin create test # 创建测试项目库 三、SVN配置主要包含以下三个配置文件：
+1. svnserve.conf服务配置：
+1 2 3 4 5 6 [general] anon-access = none # 匿名用户不可读 auth-access = write # 权限用户可写 password-db = passwd # 启用密码文件 authz-db = authz # 启用权限文件 realm = repos # 认证域名称 2. passwd账号配置：
+1 2 [user] finger = 123456 3. authz权限配置：
+1 2 3 4 5 6 [groups] admin = finger [/] @admin = rw # admin组拥有所有读写权限 * = r # 其他只有读权限 四、启动和停止1 2 3 4 5 6 7 启动： svnserve -d -r /srv/svn # -d 表示后台运行 -r 表示根目录 停止： ps -ef | grep svn # 查看svn进程ID kill -9 进程ID 五、测试1 svn co svn://127.</div><div class="post-footer">
+    <a href="/2017/01/ubuntu-install-svn-simple-server/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/svn/' class="post-tag">SVN</a><a href='/tags/ubuntu/' class="post-tag">Ubuntu</a></div></div>
 </article>
 <ul class="pagination"><li class="page-item">
           <span class="page-link">
@@ -228,6 +237,10 @@ Github配置： https://help.github.com/articles/generating-an-ssh-key/ https://
         </li><li class="page-item active">
           <span class="page-link">
             <a href="/page/10/">10</a>
+          </span>
+        </li><li class="page-item">
+          <span class="page-link">
+            <a href="/page/11/">11</a>
           </span>
         </li></ul></div></main><footer class="footer">
     <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
