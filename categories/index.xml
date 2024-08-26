@@ -1,87 +1,87 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
   <channel>
     <title>Categories - 分类 - Finger&#39;s Blog</title>
-    <link>http://localhost:1313/categories/</link>
+    <link>https://hellofinger.tech/categories/</link>
     <description>Categories - 分类 | Finger&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
-      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Mon, 15 Aug 2022 20:14:52 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/categories/" rel="self" type="application/rss+xml" /><item>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Wed, 12 Oct 2022 20:14:52 &#43;0000</lastBuildDate><atom:link href="https://hellofinger.tech/categories/" rel="self" type="application/rss+xml" /><item>
   <title>Container</title>
-  <link>http://localhost:1313/categories/container/</link>
-  <pubDate>Mon, 15 Aug 2022 20:14:52 &#43;0000</pubDate>
+  <link>https://hellofinger.tech/categories/container/</link>
+  <pubDate>Wed, 12 Oct 2022 20:14:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>http://localhost:1313/categories/container/</guid>
+  <guid>https://hellofinger.tech/categories/container/</guid>
   <description><![CDATA[]]></description>
 </item>
 <item>
   <title>Security</title>
-  <link>http://localhost:1313/categories/security/</link>
+  <link>https://hellofinger.tech/categories/security/</link>
   <pubDate>Mon, 15 Aug 2022 20:14:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>http://localhost:1313/categories/security/</guid>
+  <guid>https://hellofinger.tech/categories/security/</guid>
   <description><![CDATA[]]></description>
 </item>
 <item>
   <title>Go</title>
-  <link>http://localhost:1313/categories/go/</link>
+  <link>https://hellofinger.tech/categories/go/</link>
   <pubDate>Fri, 26 Feb 2021 17:27:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>http://localhost:1313/categories/go/</guid>
+  <guid>https://hellofinger.tech/categories/go/</guid>
   <description><![CDATA[]]></description>
 </item>
 <item>
   <title>Database</title>
-  <link>http://localhost:1313/categories/database/</link>
+  <link>https://hellofinger.tech/categories/database/</link>
   <pubDate>Tue, 16 Jun 2020 15:02:52 &#43;0800</pubDate>
   <author>Finger</author>
-  <guid>http://localhost:1313/categories/database/</guid>
+  <guid>https://hellofinger.tech/categories/database/</guid>
   <description><![CDATA[]]></description>
 </item>
 <item>
   <title>Storage</title>
-  <link>http://localhost:1313/categories/storage/</link>
+  <link>https://hellofinger.tech/categories/storage/</link>
   <pubDate>Tue, 16 Jun 2020 15:02:52 &#43;0800</pubDate>
   <author>Finger</author>
-  <guid>http://localhost:1313/categories/storage/</guid>
+  <guid>https://hellofinger.tech/categories/storage/</guid>
   <description><![CDATA[]]></description>
 </item>
 <item>
   <title>IAC</title>
-  <link>http://localhost:1313/categories/iac/</link>
+  <link>https://hellofinger.tech/categories/iac/</link>
   <pubDate>Fri, 28 Feb 2020 18:11:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>http://localhost:1313/categories/iac/</guid>
+  <guid>https://hellofinger.tech/categories/iac/</guid>
   <description><![CDATA[]]></description>
 </item>
 <item>
   <title>CICD</title>
-  <link>http://localhost:1313/categories/cicd/</link>
+  <link>https://hellofinger.tech/categories/cicd/</link>
   <pubDate>Thu, 20 Feb 2020 18:11:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>http://localhost:1313/categories/cicd/</guid>
+  <guid>https://hellofinger.tech/categories/cicd/</guid>
   <description><![CDATA[]]></description>
 </item>
 <item>
   <title>Python</title>
-  <link>http://localhost:1313/categories/python/</link>
+  <link>https://hellofinger.tech/categories/python/</link>
   <pubDate>Thu, 11 Jul 2019 07:31:00 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>http://localhost:1313/categories/python/</guid>
+  <guid>https://hellofinger.tech/categories/python/</guid>
   <description><![CDATA[]]></description>
 </item>
 <item>
   <title>AWS</title>
-  <link>http://localhost:1313/categories/aws/</link>
+  <link>https://hellofinger.tech/categories/aws/</link>
   <pubDate>Sat, 15 Sep 2018 11:37:00 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>http://localhost:1313/categories/aws/</guid>
+  <guid>https://hellofinger.tech/categories/aws/</guid>
   <description><![CDATA[]]></description>
 </item>
 <item>
   <title>ElasticSearch</title>
-  <link>http://localhost:1313/categories/elasticsearch/</link>
+  <link>https://hellofinger.tech/categories/elasticsearch/</link>
   <pubDate>Sat, 26 Aug 2017 10:23:00 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>http://localhost:1313/categories/elasticsearch/</guid>
+  <guid>https://hellofinger.tech/categories/elasticsearch/</guid>
   <description><![CDATA[]]></description>
 </item>
 </channel>

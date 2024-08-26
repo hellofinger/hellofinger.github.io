@@ -1,38 +1,56 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
   <channel>
     <title>Finger&#39;s Blog</title>
-    <link>http://localhost:1313/</link>
+    <link>https://hellofinger.tech/</link>
     <description>Finger&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
-      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Mon, 15 Aug 2022 20:14:52 &#43;0000</lastBuildDate>
-      <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Wed, 12 Oct 2022 20:14:52 &#43;0000</lastBuildDate>
+      <atom:link href="https://hellofinger.tech/index.xml" rel="self" type="application/rss+xml" />
     <item>
+  <title>容器实现原理</title>
+  <link>https://hellofinger.tech/2022/10/container-principle/</link>
+  <pubDate>Wed, 12 Oct 2022 20:14:52 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2022/10/container-principle/</guid>
+  <description><![CDATA[容器实现原理容器到底是什么一回事？它有什么样的特性？又是如何运行起来的呢？下面我们简单介绍一下以Docker容器为主的Linux容器的实现原理。
+容器其实是一种沙盒技术。沙盒就是能够像集装箱一样把你的应用“装”起来。这样，应用与应用之间就有了边界而不至于互相干扰；同时也可以很方便地搬来搬去。
+而容器技术的核心功能，就是通过约束和修改进程的动态表现，从而为其创造一个“边界”。
+对于Docker等大多数Linux容器来说，Cgroups 技术是用来创造约束的主要手段，而 Namespace 技术则是用来修改进程视图的主要方法。
+创造约束，换一种说话就是限制资源的使用量，设置资源的配额上限。
+修改进程视图，换一种说话就是把进程隔离起来，让其他进程看不见。
+隔离技术（Namepsace）容器对资源的隔离主要是通过Namespace技术实现。Namespace是Linux Kernel提供的一种资源隔离方案，不同的Namespace下的资源是独立的，系统可以为容器进程分配不同的Namespace，从而保证各个进程之间对彼此是透明。
+听起来比较抽象，我们以进程资源举个例子，看Namespace是如何实现容器进程间PID的隔离。
+我们用Docker启动一个busybox容器并进入，运行ps指令：
+1 2 3 4 5 6 ~$ docker run -it busybox /bin/sh / # ps -ef PID USER TIME COMMAND 1 root 0:00 /bin/sh 6 root 0:00 ps -ef 我们再启动一个ubuntu容器并进入，运行ps指令：
+1 2 3 4 5 6 ~$ docker run -it ubuntu /bin/sh # ps -ef PID PPID C STIME TTY TIME CMD 1 0 0 10:19 pts/0 00:00:00 /bin/sh 6 1 0 10:19 pts/0 00:00:00 ps -ef 我们在宿主机上运行ps指令：]]></description>
+</item>
+<item>
   <title>CVE-2019-5736容器逃逸漏洞复现</title>
-  <link>http://localhost:1313/2022/08/docker-cve-2019-5736/</link>
+  <link>https://hellofinger.tech/2022/08/docker-cve-2019-5736/</link>
   <pubDate>Mon, 15 Aug 2022 20:14:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>http://localhost:1313/2022/08/docker-cve-2019-5736/</guid>
+  <guid>https://hellofinger.tech/2022/08/docker-cve-2019-5736/</guid>
   <description><![CDATA[一、漏洞概述CVE-2019-5736漏洞是指通过从容器内覆盖并执行主机系统 runc 二进制文件，从而获取主机上的root执行权限。
 二、影响版本OS: Ubuntu 16.04
 Docker: 18.06.0-ce ( docker version &lt; 18.09.02 )
 Docker Runc: 1.0.0-rc5 ( runc version &lt; 1.0-rc6 )
-三、漏洞复现1 2 # 安装 Docker curl https://gist.githubusercontent.com/thinkycx/e2c9090f035d7b09156077903d6afa51/raw -o install.sh &amp;&amp; bash install.sh 1 2 3 4 5 6 7 8 9 10 # 卸载 Docker # Step1, 删除docker及安装时自动安装的所有包 sudo apt-get autoremove docker docker-ce docker-engine docker.io containerd runc # Step2, 查看docker是否卸载干净 sudo dpkg -l | grep docker sudo dpkg -l |grep ^rc|awk &#39;{print $2}&#39; |sudo xargs dpkg -P # 删除无用的相关的配置文件 # Step3, 删除没有删除的相关插件 sudo apt-get autoremove docker-ce-* 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 # 下载POC https://github.]]></description>
+三、漏洞复现1 2 # 安装 Docker curl https://gist.githubusercontent.com/thinkycx/e2c9090f035d7b09156077903d6afa51/raw -o install.sh &amp;&amp; bash install.sh 1 2 3 4 5 6 7 8 9 10 # 卸载 Docker # Step1, 删除docker及安装时自动安装的所有包 sudo apt-get autoremove docker docker-ce docker-engine docker.io containerd runc # Step2, 查看docker是否卸载干净 sudo dpkg -l | grep docker sudo dpkg -l |grep ^rc|awk &#39;{print $2}&#39; |sudo xargs dpkg -P # 删除无用的相关的配置文件 # Step3, 删除没有删除的相关插件 sudo apt-get autoremove docker-ce-* 1 2 3 4 5 6 7 8 9 10 11 12 13 14 # 下载POC https://github.]]></description>
 </item>
 <item>
   <title>Docker特权模式逃逸</title>
-  <link>http://localhost:1313/2022/08/docker-privileged-escape/</link>
+  <link>https://hellofinger.tech/2022/08/docker-privileged-escape/</link>
   <pubDate>Fri, 12 Aug 2022 20:14:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>http://localhost:1313/2022/08/docker-privileged-escape/</guid>
+  <guid>https://hellofinger.tech/2022/08/docker-privileged-escape/</guid>
   <description><![CDATA[一、漏洞说明特权模式逃逸是一种最简单有效的逃逸方法，使用特权模式启动的容器时，docker管理员可通过mount命令将外部宿主机磁盘设备挂载进容器内部，获取对整个宿主机的文件读写权限，可直接通过chroot切换根目录、写ssh公钥和crontab计划任何等逃逸到宿主机。
 二、环境搭建1 2 // 使用特权模式运行容器 docker run -it --privileged ubuntu:18.04 三、漏洞验证1 2 3 // 如果是以特权模式启动，**CapEff** 对应的掩码值应该为: 0000003fffffffff root@43552e476ea7:/# cat /proc/self/status | grep CapEff CapEff: 0000003fffffffff 四、漏洞利用4.1、查看宿主机目录1 2 3 4 5 6 fdisk -l Device Boot Start End Sectors Size Id Type /dev/sda1 * 2048 48234495 48232448 23G 83 Linux /dev/sda2 48236542 52426751 4190210 2G 5 Extended /dev/sda5 48236544 52426751 4190208 2G 82 Linux swap / Solaris 4.]]></description>
 </item>
 <item>
   <title>Docker中Root权限的危害性</title>
-  <link>http://localhost:1313/2022/08/docker-root-danger/</link>
+  <link>https://hellofinger.tech/2022/08/docker-root-danger/</link>
   <pubDate>Fri, 12 Aug 2022 20:14:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>http://localhost:1313/2022/08/docker-root-danger/</guid>
+  <guid>https://hellofinger.tech/2022/08/docker-root-danger/</guid>
   <description><![CDATA[一、在docker使用root用户越权案例如果一个普通用户，并且这个用户在docker组，则这个用户已经是root了。
 方法一假如我们有一个用户demo，它本身不具有sudo的权限，所以就有很多文件无法进行读写操作，例如它无法查看 /root 目录
 1 2 sudo adduser demo sudo groupadd docker 1 2 3 demo@ubuntu-VirtualBox:/home$ sudo ls /root [sudo] password for demo: demo is not in the sudoers file. This incident will be reported. 但是这个用户在docker的group里，具有执行docker的权限
@@ -40,30 +58,30 @@ Docker Runc: 1.0.0-rc5 ( runc version &lt; 1.0-rc6 )
 </item>
 <item>
   <title>Dcoker Remote API未授权访问漏洞</title>
-  <link>http://localhost:1313/2022/08/docker-remote-api-vulnerability-escape/</link>
+  <link>https://hellofinger.tech/2022/08/docker-remote-api-vulnerability-escape/</link>
   <pubDate>Fri, 12 Aug 2022 18:14:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>http://localhost:1313/2022/08/docker-remote-api-vulnerability-escape/</guid>
+  <guid>https://hellofinger.tech/2022/08/docker-remote-api-vulnerability-escape/</guid>
   <description><![CDATA[一、漏洞说明Docker守护进程监听IP为0.0.0.0，导致可以直接通过Docker Remote API操作Docker
 二、影响版本Docker version: 19.03.12 之前版本
 三、漏洞复现3.1、安装docker1 sudo apt-get update 3.2、备份docker服务文件1 cp /lib/systemd/system/docker.service /lib/systemd/system/docker.service.bak 3.3、修改服务文件，将docker监听IP改成0.0.0.01 vim /lib/systemd/system/docker.service	1 2 3 4 # 在文件末尾加上如下代码 [Service] ExecStart= ExecStart=/usr/bin/dockerd -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock 3.4、重启守护进程和docker服务1 2 3 sudo systemctl daemon-reload # 重载守护进程 sudo service docker restart # 重启docker服务 systemctl status docker.service # 查看docker运行情况 3.5、漏洞检测1 2 3 curl http://x.x.x.x:2375 docker -H tcp://x.x.x.x:2375 images 1 2 3 4 5 6 7 8 9 10 ┌──(kali㉿kali)-[~] └─$ docker -H tcp://10.]]></description>
 </item>
 <item>
   <title>Docker Socket 挂载逃逸</title>
-  <link>http://localhost:1313/2022/08/docker-socket-mount-escape/</link>
+  <link>https://hellofinger.tech/2022/08/docker-socket-mount-escape/</link>
   <pubDate>Fri, 12 Aug 2022 18:14:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>http://localhost:1313/2022/08/docker-socket-mount-escape/</guid>
+  <guid>https://hellofinger.tech/2022/08/docker-socket-mount-escape/</guid>
   <description><![CDATA[一、漏洞描述在启动docker容器时，将宿主机/var/run/docker.sock文件挂载到docker容器中，在docker容器中，也可以操作宿主机的docker
 二、环境搭建1 docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock ubuntu:16.04 /bin/bash 三、漏洞验证1 find / -name docker.sock 四、漏洞利用在docker容器中安装docker，利用docker.sock 访问宿主机资源
 1 docker -H unix://var/run/docker.sock images 1 2 3 4 5 6 7 8 9 root@99db92ade596:/# docker -H unix://var/run/docker.sock images REPOSITORY TAG IMAGE ID CREATED SIZE flaskapp-no-root latest 191c96d54d26 25 hours ago 126MB flaskapp-root latest 50d72e86aa68 25 hours ago 126MB alpine latest 7e01a0d0a1dc 3 days ago 7.34MB busybox latest a416a98b71e2 3 weeks ago 4.]]></description>
 </item>
 <item>
   <title>容器安全</title>
-  <link>http://localhost:1313/2022/08/container-securty/</link>
+  <link>https://hellofinger.tech/2022/08/container-securty/</link>
   <pubDate>Thu, 11 Aug 2022 16:14:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>http://localhost:1313/2022/08/container-securty/</guid>
+  <guid>https://hellofinger.tech/2022/08/container-securty/</guid>
   <description><![CDATA[一、 容器概述容器（Container）是一种虚拟化技术，用于在计算机上运行应用程序和服务。与传统的虚拟机不同，容器不需要为每个应用创建独立的操作系统实例。相反，容器共享主机操作系统的内核，但它们有自己的文件系统、进程空间和网络接口。这使得容器能够在一个主机上运行多个隔离的应用程序，并且每个容器之间互不干扰。
 1.1、容器架构容器的架构涉及多个组件和概念，它们共同协作来提供一个高效、隔离和可移植的应用程序运行环境。以下是容器架构的主要组成部分：
 主机操作系统 (Host Operating System) 容器引擎 (Container Engine) 容器镜像 (Container Image) 容器 (Container) 容器编排 (Container Orchestration) 网络 (Networking) 存储 (Storage) 1.2、容器的本质容器的本质是一个特殊的进程，它是由Namespaces，Cgroups和 rootfs 构成。我们可以将它一分为二来看待，Namespace和Cgroups为动态资源，rootfs 为静态资源。
@@ -85,10 +103,10 @@ Docker Runc: 1.0.0-rc5 ( runc version &lt; 1.0-rc6 )
 </item>
 <item>
   <title>Go基础--管道Channel</title>
-  <link>http://localhost:1313/2021/02/go-basic-channel/</link>
+  <link>https://hellofinger.tech/2021/02/go-basic-channel/</link>
   <pubDate>Fri, 26 Feb 2021 17:27:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>http://localhost:1313/2021/02/go-basic-channel/</guid>
+  <guid>https://hellofinger.tech/2021/02/go-basic-channel/</guid>
   <description><![CDATA[ChannelChannel 是Goroutine之间的一种通信机制。这种通信机制有个专业名词叫CSP （ Communicating Sequential Process）即通信顺序进程，是一种并发编程模型。Goroutine 和 Channel 分别对应 CSP 中的实体和传递信息的媒介，Goroutine 之间会通过 Channel 传递数据。
 设计原理在很多主流的编程语言中，多个线程传递数据的方式一般都是共享内存，为了解决线程之间的资源竞争，我们需要限制同一时间能够获取资源的线程数量。
 在Go语言中则设计成：不通过共享内存的方式进行通信，而是通过通信的方式共享内存。
@@ -98,34 +116,26 @@ Docker Runc: 1.0.0-rc5 ( runc version &lt; 1.0-rc6 )
 </item>
 <item>
   <title>Go基础--Context</title>
-  <link>http://localhost:1313/2021/02/go-basic-context/</link>
+  <link>https://hellofinger.tech/2021/02/go-basic-context/</link>
   <pubDate>Fri, 26 Feb 2021 14:07:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>http://localhost:1313/2021/02/go-basic-context/</guid>
+  <guid>https://hellofinger.tech/2021/02/go-basic-context/</guid>
   <description><![CDATA[什么是 ContextContext 是 Go 并发编程中的一种编程模式。 主要指的是 goroutine的上下文，包含 goroutine 的运行状态，环境，现场等信息。 Context 主要用来在goroutine 之间传递上下文信息，包含：取消信号，超时时间，截止时间，k-v等。
 为什么需要 Context在并发程序中，由于超时，取消操作或者一些异常情况，往往需要进行抢占操作或者中断后续的操作。例如：主协程中有多个任务1,2，&hellip;m，主协程对这些任务有超时控制；而其中任务1又有多个子任务1,2，&hellip;n。任务1对这些子任务也有自己的超时控制，那么这些子任务既要感知主协程的取消信号，也需要感知任务1的取消信号。 因此我们需要解决以下问题： 1、上层任务取消后，所有的下层任务都会被取消 2、中间某一层的任务取消后，只会将当前任务的下层任务取消，而不会影响上层的任务以及同级任务。
 Context 的定义1 2 3 4 5 6 7 8 9 10 11 12 13 type Context interface { // 当 context 被取消或者到了 deadline，返回一个被关闭的 channel Done() &lt;-chan struct{} // 在 channel Done 关闭后，返回 context 取消原因 Err() error // 返回 context 是否会被取消以及自动取消时间（即 deadline） Deadline() (deadline time.Time, ok bool) // 获取 key 对应的 value Value(key interface{}) interface{} } Context 是一个接口，定义了4个方法，它们都是幂等的。也就是说连续多次调用同一个方法，得到的结果都是相同的。]]></description>
 </item>
 <item>
   <title>Go Package--gokit介绍</title>
-  <link>http://localhost:1313/2020/08/go-package-gokit/</link>
+  <link>https://hellofinger.tech/2020/08/go-package-gokit/</link>
   <pubDate>Thu, 20 Aug 2020 15:57:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>http://localhost:1313/2020/08/go-package-gokit/</guid>
+  <guid>https://hellofinger.tech/2020/08/go-package-gokit/</guid>
   <description><![CDATA[Go-kit介绍Go kit 是用于在 Go 中构建微服务的编程工具包。用来解决了分布式系统和应用程序体系结构中的常见问题，让使用者可以专注于交付业务价值。
 本身不是一个框架，而是一套微服务工具集，是框架的底层，用它的话来说，如果你希望构建一个框架，而Go-kit 就希望成为你的框架的一部分 可以用Go-kit 做适应自己平台的框架 它自身称为toolkit，并不是framework 它主要是为了满足5大原则，单一职责原则，开放原则，封闭原则，依赖倒置原则，接口隔离原则 三层模型Go-kit最核心是提供了三层模型来解耦业务，这是我们用它的主要目的，模型由上到下分别是 transport -&gt; endpoint -&gt; service
 Transport 可以理解为是个拦截器，负责请求协议的实现和路由转发，请求和响应的序列化和反序列化
 Endpoint 负责功能逻辑转发，这一层会调用Service具体方法
 Service 服务功能具体实现，这样便于测试，只要 mock 传入的依赖参数即可
 参考https://zhuanlan.zhihu.com/p/100226931?utm_source=wechat_session http://gokit.io/examples/stringsvc.html https://github.com/go-kit/kit ]]></description>
-</item>
-<item>
-  <title>Go基础--三个点</title>
-  <link>http://localhost:1313/2020/07/go-basic-three-dot/</link>
-  <pubDate>Wed, 22 Jul 2020 10:14:52 &#43;0000</pubDate>
-  <author>Finger</author>
-  <guid>http://localhost:1313/2020/07/go-basic-three-dot/</guid>
-  <description><![CDATA[三个点可变长的函数参数1 2 3 4 5 6 7 func Sum(nums ...int) int { cnt := 0 for _, n := range nums { cnt += n } return cnt } 调用可变长参数列表的函数1 2 3 primes := []int{2, 3, 5, 7} Sum(primes...) 两个切片合并1 2 3 4 5 6 7 8 9 10 11 12 13 14 var str_1 = []string{ &#34;a&#34;, &#34;b&#34;, &#34;c&#34;, } var str_2 = []string{ &#34;1&#34;, &#34;2&#34;, &#34;3&#34;, } str_1 = append(str_1, str_2.]]></description>
 </item>
 </channel>
 </rss>

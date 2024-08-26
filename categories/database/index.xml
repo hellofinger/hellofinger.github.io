@@ -1,15 +1,15 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
   <channel>
     <title>Database - 分类 - Finger&#39;s Blog</title>
-    <link>http://localhost:1313/categories/database/</link>
+    <link>https://hellofinger.tech/categories/database/</link>
     <description>Database - 分类 | Finger&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
-      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Tue, 16 Jun 2020 15:02:52 &#43;0800</lastBuildDate><atom:link href="http://localhost:1313/categories/database/" rel="self" type="application/rss+xml" /><item>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Tue, 16 Jun 2020 15:02:52 &#43;0800</lastBuildDate><atom:link href="https://hellofinger.tech/categories/database/" rel="self" type="application/rss+xml" /><item>
   <title>Neo4j 基础知识</title>
-  <link>http://localhost:1313/2020/06/neo4j-basic/</link>
+  <link>https://hellofinger.tech/2020/06/neo4j-basic/</link>
   <pubDate>Tue, 16 Jun 2020 15:02:52 &#43;0800</pubDate>
   <author>Finger</author>
-  <guid>http://localhost:1313/2020/06/neo4j-basic/</guid>
+  <guid>https://hellofinger.tech/2020/06/neo4j-basic/</guid>
   <description><![CDATA[<h2 id="简介" class="heading-element"><span>简介</span>
   <a href="#%e7%ae%80%e4%bb%8b" class="heading-mark">
     <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
@@ -192,10 +192,10 @@
 </item>
 <item>
   <title>InfluxDB 基础知识</title>
-  <link>http://localhost:1313/2019/11/influxdb-basic/</link>
+  <link>https://hellofinger.tech/2019/11/influxdb-basic/</link>
   <pubDate>Fri, 15 Nov 2019 11:51:52 &#43;0800</pubDate>
   <author>Finger</author>
-  <guid>http://localhost:1313/2019/11/influxdb-basic/</guid>
+  <guid>https://hellofinger.tech/2019/11/influxdb-basic/</guid>
   <description><![CDATA[<h2 id="简介" class="heading-element"><span>简介</span>
   <a href="#%e7%ae%80%e4%bb%8b" class="heading-mark">
     <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
@@ -452,10 +452,10 @@
 </item>
 <item>
   <title>数据库分库分表</title>
-  <link>http://localhost:1313/2017/07/database-sharding/</link>
+  <link>https://hellofinger.tech/2017/07/database-sharding/</link>
   <pubDate>Sat, 29 Jul 2017 13:44:00 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>http://localhost:1313/2017/07/database-sharding/</guid>
+  <guid>https://hellofinger.tech/2017/07/database-sharding/</guid>
   <description><![CDATA[一、背景大量的并发读/写操作，导致单库出现难以承受的负载压力 单表存储数据量过大，导致索引效率低下 二、读写分离将数据库设置为读写分离状态，由Master（主）负责写数据，Salve（从）只负责读数据。主从之间保持数据同步。根据二八法则，80%的数据库操作是读，20%则为写。读写分离后，可以大大提升单库负载压力。
 但是，当Master存在TPS（系统吞吐量）较高的情况，Master和Slave数据库之间数据同步是会存在一定延迟，因此在写入Master之前最好还是要将同一份数据放入缓存中，以避免高并发情况下，从Slave中获取不到指定数据的情况
 三、分库分表随着用户规模的不断上升，仅仅只是依靠数据库的读写分离并不能解决系统瓶颈。因此需要考虑分库分表的解决方案。
@@ -476,10 +476,10 @@ d、按季度分表，按年度分表（基本不用分库）
 </item>
 <item>
   <title>Mysql遇到的问题笔记</title>
-  <link>http://localhost:1313/2017/01/mysql-question/</link>
+  <link>https://hellofinger.tech/2017/01/mysql-question/</link>
   <pubDate>Tue, 03 Jan 2017 10:43:00 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>http://localhost:1313/2017/01/mysql-question/</guid>
+  <guid>https://hellofinger.tech/2017/01/mysql-question/</guid>
   <description><![CDATA[问题描述：mysql远程连接错误10038&ndash;navicat for mysql (10038)
 解决方案： 1、授权
 1 2 3 mysql&gt;grant all privileges on *.* to &#39;root&#39;@&#39;%&#39; identified by &#39;youpassword&#39; with grant option; mysql&gt;flush privileges; 2、修改 /etc/mysql/mysql.conf.d

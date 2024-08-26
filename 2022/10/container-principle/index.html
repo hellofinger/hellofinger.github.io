@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>容器实现原理 - Finger&#39;s Blog</title><meta name="author" content="Finger">
+<meta name="author-link" content="https://github.com/hellofinger">
+<meta name="description" content="容器实现原理容器到底是什么一回事？它有什么样的特性？又是如何运行起来的呢？下面我们简单介绍一下以Docker容器为主的Linux容器的实现原理。
+容器其实是一种沙盒技术。沙盒就是能够像集装箱一样把你的应用“装”起来。这样，应用与应用之间就有了边界而不至于互相干扰；同时也可以很方便地搬来搬去。
+而容器技术的核心功能，就是通过约束和修改进程的动态表现，从而为其创造一个“边界”。
+对于Docker等大多数Linux容器来说，Cgroups 技术是用来创造约束的主要手段，而 Namespace 技术则是用来修改进程视图的主要方法。
+创造约束，换一种说话就是限制资源的使用量，设置资源的配额上限。
+修改进程视图，换一种说话就是把进程隔离起来，让其他进程看不见。
+隔离技术（Namepsace）容器对资源的隔离主要是通过Namespace技术实现。Namespace是Linux Kernel提供的一种资源隔离方案，不同的Namespace下的资源是独立的，系统可以为容器进程分配不同的Namespace，从而保证各个进程之间对彼此是透明。
+听起来比较抽象，我们以进程资源举个例子，看Namespace是如何实现容器进程间PID的隔离。
+我们用Docker启动一个busybox容器并进入，运行ps指令：
+1 2 3 4 5 6 ~$ docker run -it busybox /bin/sh / # ps -ef PID USER TIME COMMAND 1 root 0:00 /bin/sh 6 root 0:00 ps -ef 我们再启动一个ubuntu容器并进入，运行ps指令：
+1 2 3 4 5 6 ~$ docker run -it ubuntu /bin/sh # ps -ef PID PPID C STIME TTY TIME CMD 1 0 0 10:19 pts/0 00:00:00 /bin/sh 6 1 0 10:19 pts/0 00:00:00 ps -ef 我们在宿主机上运行ps指令：" /><meta name="keywords" content='Docker, Container' />
+  <meta itemprop="name" content="容器实现原理">
+  <meta itemprop="description" content="容器实现原理容器到底是什么一回事？它有什么样的特性？又是如何运行起来的呢？下面我们简单介绍一下以Docker容器为主的Linux容器的实现原理。
+容器其实是一种沙盒技术。沙盒就是能够像集装箱一样把你的应用“装”起来。这样，应用与应用之间就有了边界而不至于互相干扰；同时也可以很方便地搬来搬去。
+而容器技术的核心功能，就是通过约束和修改进程的动态表现，从而为其创造一个“边界”。
+对于Docker等大多数Linux容器来说，Cgroups 技术是用来创造约束的主要手段，而 Namespace 技术则是用来修改进程视图的主要方法。
+创造约束，换一种说话就是限制资源的使用量，设置资源的配额上限。
+修改进程视图，换一种说话就是把进程隔离起来，让其他进程看不见。
+隔离技术（Namepsace）容器对资源的隔离主要是通过Namespace技术实现。Namespace是Linux Kernel提供的一种资源隔离方案，不同的Namespace下的资源是独立的，系统可以为容器进程分配不同的Namespace，从而保证各个进程之间对彼此是透明。
+听起来比较抽象，我们以进程资源举个例子，看Namespace是如何实现容器进程间PID的隔离。
+我们用Docker启动一个busybox容器并进入，运行ps指令：
+1 2 3 4 5 6 ~$ docker run -it busybox /bin/sh / # ps -ef PID USER TIME COMMAND 1 root 0:00 /bin/sh 6 root 0:00 ps -ef 我们再启动一个ubuntu容器并进入，运行ps指令：
+1 2 3 4 5 6 ~$ docker run -it ubuntu /bin/sh # ps -ef PID PPID C STIME TTY TIME CMD 1 0 0 10:19 pts/0 00:00:00 /bin/sh 6 1 0 10:19 pts/0 00:00:00 ps -ef 我们在宿主机上运行ps指令：">
+  <meta itemprop="datePublished" content="2022-10-12T20:14:52+00:00">
+  <meta itemprop="dateModified" content="2022-10-12T20:14:52+00:00">
+  <meta itemprop="wordCount" content="428">
+  <meta itemprop="keywords" content="Docker,Container"><meta property="og:url" content="https://hellofinger.tech/2022/10/container-principle/">
+  <meta property="og:site_name" content="Finger&#39;s Blog">
+  <meta property="og:title" content="容器实现原理">
+  <meta property="og:description" content="容器实现原理容器到底是什么一回事？它有什么样的特性？又是如何运行起来的呢？下面我们简单介绍一下以Docker容器为主的Linux容器的实现原理。
+容器其实是一种沙盒技术。沙盒就是能够像集装箱一样把你的应用“装”起来。这样，应用与应用之间就有了边界而不至于互相干扰；同时也可以很方便地搬来搬去。
+而容器技术的核心功能，就是通过约束和修改进程的动态表现，从而为其创造一个“边界”。
+对于Docker等大多数Linux容器来说，Cgroups 技术是用来创造约束的主要手段，而 Namespace 技术则是用来修改进程视图的主要方法。
+创造约束，换一种说话就是限制资源的使用量，设置资源的配额上限。
+修改进程视图，换一种说话就是把进程隔离起来，让其他进程看不见。
+隔离技术（Namepsace）容器对资源的隔离主要是通过Namespace技术实现。Namespace是Linux Kernel提供的一种资源隔离方案，不同的Namespace下的资源是独立的，系统可以为容器进程分配不同的Namespace，从而保证各个进程之间对彼此是透明。
+听起来比较抽象，我们以进程资源举个例子，看Namespace是如何实现容器进程间PID的隔离。
+我们用Docker启动一个busybox容器并进入，运行ps指令：
+1 2 3 4 5 6 ~$ docker run -it busybox /bin/sh / # ps -ef PID USER TIME COMMAND 1 root 0:00 /bin/sh 6 root 0:00 ps -ef 我们再启动一个ubuntu容器并进入，运行ps指令：
+1 2 3 4 5 6 ~$ docker run -it ubuntu /bin/sh # ps -ef PID PPID C STIME TTY TIME CMD 1 0 0 10:19 pts/0 00:00:00 /bin/sh 6 1 0 10:19 pts/0 00:00:00 ps -ef 我们在宿主机上运行ps指令：">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2022-10-12T20:14:52+00:00">
+    <meta property="article:modified_time" content="2022-10-12T20:14:52+00:00">
+    <meta property="article:tag" content="Docker">
+    <meta property="article:tag" content="Container">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="容器实现原理">
+  <meta name="twitter:description" content="容器实现原理容器到底是什么一回事？它有什么样的特性？又是如何运行起来的呢？下面我们简单介绍一下以Docker容器为主的Linux容器的实现原理。
+容器其实是一种沙盒技术。沙盒就是能够像集装箱一样把你的应用“装”起来。这样，应用与应用之间就有了边界而不至于互相干扰；同时也可以很方便地搬来搬去。
+而容器技术的核心功能，就是通过约束和修改进程的动态表现，从而为其创造一个“边界”。
+对于Docker等大多数Linux容器来说，Cgroups 技术是用来创造约束的主要手段，而 Namespace 技术则是用来修改进程视图的主要方法。
+创造约束，换一种说话就是限制资源的使用量，设置资源的配额上限。
+修改进程视图，换一种说话就是把进程隔离起来，让其他进程看不见。
+隔离技术（Namepsace）容器对资源的隔离主要是通过Namespace技术实现。Namespace是Linux Kernel提供的一种资源隔离方案，不同的Namespace下的资源是独立的，系统可以为容器进程分配不同的Namespace，从而保证各个进程之间对彼此是透明。
+听起来比较抽象，我们以进程资源举个例子，看Namespace是如何实现容器进程间PID的隔离。
+我们用Docker启动一个busybox容器并进入，运行ps指令：
+1 2 3 4 5 6 ~$ docker run -it busybox /bin/sh / # ps -ef PID USER TIME COMMAND 1 root 0:00 /bin/sh 6 root 0:00 ps -ef 我们再启动一个ubuntu容器并进入，运行ps指令：
+1 2 3 4 5 6 ~$ docker run -it ubuntu /bin/sh # ps -ef PID PPID C STIME TTY TIME CMD 1 0 0 10:19 pts/0 00:00:00 /bin/sh 6 1 0 10:19 pts/0 00:00:00 ps -ef 我们在宿主机上运行ps指令：">
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://hellofinger.tech/2022/10/container-principle/" /><link rel="prev" href="https://hellofinger.tech/2022/08/docker-cve-2019-5736/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "容器实现原理",
+    "inLanguage": "zh-CN",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/hellofinger.tech\/2022\/10\/container-principle\/"
+    },"genre": "posts","keywords": "Docker, Container","wordcount":  428 ,
+    "url": "https:\/\/hellofinger.tech\/2022\/10\/container-principle\/","datePublished": "2022-10-12T20:14:52+00:00","dateModified": "2022-10-12T20:14:52+00:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Finger"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper" data-github-corner="right">
+    <div class="header-title">
+      <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/about/"
+                
+                
+              ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item delimiter"></li><li class="menu-item search" id="search-desktop">
+            <input type="text" placeholder="搜索文章标题或内容……" id="search-input-desktop">
+            <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+              <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+            </a>
+            <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+              <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+            </a>
+            <span class="search-button search-loading" id="search-loading-desktop">
+              <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+            </span>
+          </li><li class="menu-item theme-switch" title="切换主题">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li class="search-wrapper">
+            <div class="search mobile" id="search-mobile">
+              <input type="text" placeholder="搜索文章标题或内容……" id="search-input-mobile">
+              <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+              </a>
+              <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+              </a>
+              <span class="search-button search-loading" id="search-loading-mobile">
+                <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+              </span>
+            </div>
+            <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+              取消
+            </a>
+          </li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/about/"
+                  
+                  
+                ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="切换主题"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+  </div>
+  <div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+  </div><nav aria-label="breadcrumb" class="breadcrumb-container">
+    <ol class="breadcrumb"><li class="breadcrumb-item"><a href="/posts/" title="Posts">文章</a></li><li class="breadcrumb-item active" aria-current="page">容器实现原理</li>
+    </ol>
+  </nav><main class="container"><aside class="aside-collection animate__animated animate__fadeIn animate__faster" aria-label="合集"></aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>容器实现原理</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/container/" class="post-category" title="分类 - Container"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Container</a></span></div><div class="post-meta-line"><span title="发布于 2022-10-12 20:14:52"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2022-10-12">2022-10-12</time></span>&nbsp;<span title="428 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 500 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 3 分钟</span>&nbsp;<span id="busuanzi_container_page_pv" class="busuanzi_visitors comment-visitors" data-flag-title="容器实现原理"><i class="fa-regular fa-eye fa-fw me-1" aria-hidden="true"></i><span id="busuanzi_value_page_pv">-</span>&nbsp;次阅读
+          </span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>目录</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#容器实现原理">容器实现原理</a>
+      <ul>
+        <li><a href="#隔离技术namepsace">隔离技术（Namepsace）</a></li>
+        <li><a href="#资源限制cgroups">资源限制（Cgroups）</a></li>
+        <li><a href="#镜像原理union-fs">镜像原理（Union FS）</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><div class="details admonition warning open">
+      <div class="details-summary admonition-title">
+        <i class="icon fa-solid fa-exclamation-triangle fa-fw" aria-hidden="true"></i>警告<i class="details-icon fa-solid fa-angle-right fa-fw" aria-hidden="true"></i>
+      </div>
+      <div class="details-content">
+        <div class="admonition-content">本文最后更新于 2022-10-12，文中内容可能已过时。</div>
+      </div>
+    </div><h2 id="容器实现原理" class="heading-element"><span>容器实现原理</span>
+  <a href="#%e5%ae%b9%e5%99%a8%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>容器到底是什么一回事？它有什么样的特性？又是如何运行起来的呢？下面我们简单介绍一下以Docker容器为主的Linux容器的实现原理。</p>
+<p>容器其实是一种沙盒技术。沙盒就是能够像集装箱一样把你的应用“装”起来。这样，应用与应用之间就有了边界而不至于互相干扰；同时也可以很方便地搬来搬去。</p>
+<p>而容器技术的核心功能，就是通过约束和修改进程的动态表现，从而为其创造一个“边界”。</p>
+<p>对于Docker等大多数Linux容器来说，<strong>Cgroups</strong> 技术是用来<strong>创造约束</strong>的主要手段，而 <strong>Namespace</strong> 技术则是用来<strong>修改进程视图</strong>的主要方法。</p>
+<p>创造约束，换一种说话就是限制资源的使用量，设置资源的配额上限。</p>
+<p>修改进程视图，换一种说话就是把进程隔离起来，让其他进程看不见。</p>
+<h3 id="隔离技术namepsace" class="heading-element"><span>隔离技术（Namepsace）</span>
+  <a href="#%e9%9a%94%e7%a6%bb%e6%8a%80%e6%9c%afnamepsace" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>容器对资源的隔离主要是通过Namespace技术实现。Namespace是Linux Kernel提供的一种资源隔离方案，不同的Namespace下的资源是独立的，系统可以为容器进程分配不同的Namespace，从而保证各个进程之间对彼此是透明。</p>
+<p>听起来比较抽象，我们以进程资源举个例子，看Namespace是如何实现容器进程间PID的隔离。</p>
+<p>我们用Docker启动一个busybox容器并进入，运行ps指令：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">~$ docker run -it busybox /bin/sh
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">/ <span class="c1"># ps -ef  </span>
+</span></span><span class="line"><span class="cl"> PID   USER     TIME  COMMAND  
+</span></span><span class="line"><span class="cl"> <span class="m">1</span> 	   root      0:00 /bin/sh  
+</span></span><span class="line"><span class="cl"> <span class="m">6</span> 	   root      0:00 ps -ef  </span></span></code></pre></td></tr></table>
+</div>
+</div><p>我们再启动一个ubuntu容器并进入，运行ps指令：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">~$ docker run -it ubuntu /bin/sh
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># ps -ef  </span>
+</span></span><span class="line"><span class="cl">PID  PPID  C STIME TTY          TIME CMD  
+</span></span><span class="line"><span class="cl"><span class="m">1</span>     <span class="m">0</span>  <span class="m">0</span> 10:19 pts/0    00:00:00 /bin/sh  
+</span></span><span class="line"><span class="cl"><span class="m">6</span>     <span class="m">1</span>  <span class="m">0</span> 10:19 pts/0    00:00:00 ps -ef  </span></span></code></pre></td></tr></table>
+</div>
+</div><p>我们在宿主机上运行ps指令：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">~$ ps -ef  
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">UID        PID  PPID  	C STIME TTY          TIME CMD 
+</span></span><span class="line"><span class="cl">root         <span class="m">1</span>     <span class="m">0</span>  	<span class="m">0</span> May13 ?        00:00:00 /init  
+</span></span><span class="line"><span class="cl">root        <span class="m">15</span>     <span class="m">1</span>  	<span class="m">0</span> May13 ?        00:00:00 /init 
+</span></span><span class="line"><span class="cl">ubuntu      <span class="m">1404</span>  <span class="m">1069</span>  <span class="m">0</span> 18:15 pts/1    00:00:00 docker run -it busybox /bin/sh 
+</span></span><span class="line"><span class="cl">root      	<span class="m">28378</span>  <span class="m">1426</span>  <span class="m">0</span> 18:15 ?        00:00:00 /bin/sh  
+</span></span><span class="line"><span class="cl">ubuntu      <span class="m">1711</span>  <span class="m">1491</span>  <span class="m">0</span> 18:19 pts/3    00:00:00 docker run -it ubuntu /bin/sh
+</span></span><span class="line"><span class="cl">root      	<span class="m">28613</span>  <span class="m">1732</span>  <span class="m">0</span> 18:19 ?        00:00:00 /bin/sh  
+</span></span><span class="line"><span class="cl">...</span></span></code></pre></td></tr></table>
+</div>
+</div><p>我们可以看到，busybox、ubuntu和宿主机上的进程，看到的PID都是不一样的，这就是所谓的进程资源的视图隔离；而且我们看到，busybox和ubuntu两个容器进程的初始化PID都是<strong>1</strong>，但是在宿主机进程中，我们发现他们真正的PID分别是<strong>28378</strong>和<strong>28613</strong>。这种机制其实就是对被隔离的应用进程做了“障眼法”，使得我们在容器中看到容器进程本身是1号进程（PID=1），而实际在宿主机上还是原来的进程PID。</p>
+<p><img loading="lazy" src="imgs/pid-namespace.png" alt="image-20230307160632524" srcset="imgs/pid-namespace.png?size=small, imgs/pid-namespace.png?size=medium 1.5x, imgs/pid-namespace.png?size=large 2x" data-title="image-20230307160632524" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p>另外，除了PID Namespace之外，Linux Kernel 还提供了Network、Mount和User等其他类型的隔离，用来对进程各种上下文进行资源隔离。</p>
+<p>我们可以在 /proc 目录下找到刚刚启动的busybox进程中的所有Namespace：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">/proc/xxx$ sudo ls -la /proc/&lt;pid&gt;/ns</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img loading="lazy" src="imgs/ls-proc-ns.png" alt="image-20230315082820515" srcset="imgs/ls-proc-ns.png?size=small, imgs/ls-proc-ns.png?size=medium 1.5x, imgs/ls-proc-ns.png?size=large 2x" data-title="image-20230315082820515" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p>由此可见，容器实际上是一种特殊的进程，就是在创建的时候指定了一组Namespace参数，使容器拥有了自己独特的文件系统、网络信息、用户和存储等，并保证容器内只能“看到”自己的资源。从而实现容器间资源的隔离。容器的本质就是一个加了限定参数的进程。</p>
+<p><img loading="lazy" src="imgs/linux-namespace.png" alt="image-20230315082851946" srcset="imgs/linux-namespace.png?size=small, imgs/linux-namespace.png?size=medium 1.5x, imgs/linux-namespace.png?size=large 2x" data-title="image-20230315082851946" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<h3 id="资源限制cgroups" class="heading-element"><span>资源限制（Cgroups）</span>
+  <a href="#%e8%b5%84%e6%ba%90%e9%99%90%e5%88%b6cgroups" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>虽然通过Namespace修改了进程的视图，使用“障眼法”让容器进程只能看到自己Namespace下的各种资源，但Namespace只是限定了进程的“视线”，它和其他进程一样共享宿主机的资源，这意味它所能够使用的资源(如CPU，内存)，随时可以被宿主机上的其他进程占用。同样它也能用光宿主机的所有资源，让其他进程无资源可用。</p>
+<p>因此，我们需要使用另一种技术对资源进行限制。而Cgroups技术就是Linux下用于对一个或一组进程进行资源(CPU、内存、磁盘I/O、网络宽带)控制和监控的机制。简单点说它的主要作用就是限制一个进程能够使用CPU、内存、磁盘、网络带宽等资源的上限。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">~$ mount -t cgroup
+</span></span><span class="line"><span class="cl">...</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Cgroups有十几个子系统，这些子系统就是用来控制每一种类型的资源。如cpu就是用来限制进程的cpu使用率。这些子系统是一系列文件系统目录，他们在 /sys/fs/cgroup目录下。针对不同的资源限制，只要将限制策略在不同的子系统目录中进行配置即可。</p>
+<p>我们用一个例子来看一下，如何限制进程的cpu使用率的。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># 1. 在 /sys/fs/cgroup/cpu目录下创建一个子目录 mydocker</span>
+</span></span><span class="line"><span class="cl">	
+</span></span><span class="line"><span class="cl">	mkdir /sys/fs/cgroup/cpu/mydocker
+</span></span><span class="line"><span class="cl">	ls -l /sys/fs/cgroup/cpu/mydocker   <span class="c1"># 可以看到mydocker目录下，自动生成了子系统对应的资源限制文件。</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># cpu.cfs_quota_us文件就是用来限制cpu使用时间的</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># cpu.cfs_quota_us的初始值为-1，表示还没有任何cpu时间的限制</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 2. 把当前运行的shell进程PID写入到mydocker cgroup的tasks文件</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nb">cd</span> /sys/fs/cgroup/cpu/mydocker
+</span></span><span class="line"><span class="cl">	<span class="nb">echo</span> <span class="nv">$$</span> &gt; tasks
+</span></span><span class="line"><span class="cl">	<span class="nb">echo</span> <span class="nv">$$</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 3. 在当前shell运行CPU耗时任务</span>
+</span></span><span class="line"><span class="cl">	<span class="k">while</span> : <span class="p">;</span> <span class="k">do</span> : <span class="p">;</span> <span class="k">done</span><span class="p">&amp;</span>	<span class="c1"># 查看cpu占用率: top， 可以看到CPU的使用率已经达到100%了。</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 4. 设置mydocker进程只能使用20%的CPU</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">echo</span>  <span class="m">20000</span> &gt; /sys/fs/cgroup/cpu/mydocker/cpu.cfs_quota_us
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 5. 再次查看cpu占用率: top，可以看到，该进程的cpu使用率立即降到了20%左右</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>通过上述例子我们了解到 Cgropus 控制进程的方法，简而言之，它就是一个子系统目录（mydocker）加上一组资源限制文件的组合。然后在启动容器进程之后，再把这个进程的PID写到对应的tasks文件。这样就达到了限制进程资源的效果。</p>
+<p>回到Docker容器本身，Docker会将上述示例的操作自动完成。自动在 Cgroups 每个子系统中创建相应的目录，目录名会以container id为名，同时将容器进程的PID写入到tasks文件，从而完成对容器进程的各种资源限制。</p>
+<p>到现在为止，我们知道了Namespace的作用是“隔离”，它让应用进程只能看到自己Namespace内的“世界”；而 Cgroups 的作用是“限制”，它给这个“世界”围上了一圈看不见的墙。这么一折腾，进程就真的被“装”在了一个与世隔绝的房间里，而这些房间就是我们一开始讲的“沙盒”。容器技术就是一种沙盒技术。</p>
+<h3 id="镜像原理union-fs" class="heading-element"><span>镜像原理（Union FS）</span>
+  <a href="#%e9%95%9c%e5%83%8f%e5%8e%9f%e7%90%86union-fs" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>通过对Namespace和Cgroups技术的了解，我们知道了容器是怎么运行的。回过头来，我们再看一下容器的镜像是如何生成的。</p>
+<p>Docker镜像实际上是由一层一层的文件系统组成，这种层级的文件系统就是Union FS。</p>
+<p>Union FS（Union File System，联合文件系统），是一种分层、轻量级并且高性能的文件系统，它支持对文件系统的修改作为一次提交来一层层的叠加，同时可以将不同目录挂载到同一个虚拟文件系统下，简单来说就是将不同位置的目录联合挂载到同一个目录下。</p>
+<p>例如，我现在有两个目录A和B，它们分别有两个文件：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">~$ tree
+</span></span><span class="line"><span class="cl">.
+</span></span><span class="line"><span class="cl"><span class="p">|</span>---A
+</span></span><span class="line"><span class="cl"><span class="p">|</span>	<span class="p">|</span>---a
+</span></span><span class="line"><span class="cl"><span class="p">|</span>	<span class="p">|</span>---x
+</span></span><span class="line"><span class="cl"><span class="p">|</span>---B
+</span></span><span class="line"><span class="cl">	<span class="p">|</span>---b
+</span></span><span class="line"><span class="cl">	<span class="p">|</span>---x</span></span></code></pre></td></tr></table>
+</div>
+</div><p>然后，我使用联合挂载的方式，将这两个目录挂载到了一个公共的目录C上：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">~$ mkdir C
+</span></span><span class="line"><span class="cl">~$ mount -t aufs -o <span class="nv">dirs</span><span class="o">=</span>./A:./B none ./C</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这时，我再查看目录C的内容，就能看到目录A和B下的文件被合并到了一起：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">~$ tree ./C
+</span></span><span class="line"><span class="cl">./C
+</span></span><span class="line"><span class="cl"><span class="p">|</span>---a
+</span></span><span class="line"><span class="cl"><span class="p">|</span>---b
+</span></span><span class="line"><span class="cl"><span class="p">|</span>---x	</span></span></code></pre></td></tr></table>
+</div>
+</div><p>我们可以看到，在这个合并后的目录C里，有a、b、x三个文件，并且 x 文件只有一份。这就是“合并”的含义。此外，如果你在目录C里对</p>
+<p>a、b、x文件做了修改，也会在对应的目录A、B中生效。</p>
+<p>容器镜像就是通过这种分层和联合挂载机制进行制作的。一个容器镜像包含应用程序可用的文件系统和其他元数据，如代码，工具包、代理、可执行文件等，这些镜像信息都是以不同的层级堆叠到一起，这些增量的层最后合并生成一个容器镜像。</p>
+<p>最直观的体现就是我们下载docker镜像时输出的一层一层的pull complete信息。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">~$ docker pull redis
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Using default tag: latest
+</span></span><span class="line"><span class="cl">latest: Pulling from library/redis
+</span></span><span class="line"><span class="cl">33847f680f63: Pull <span class="nb">complete</span>
+</span></span><span class="line"><span class="cl">1a847f6b0f32: Pull <span class="nb">complete</span>
+</span></span><span class="line"><span class="cl">...</span></span></code></pre></td></tr></table>
+</div>
+</div><p>我们可以通过 inspect 命令查看到镜像的具体分层信息。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">~$ docker image inspect redis:latest
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> <span class="s2">&#34;RootFS&#34;</span>: <span class="o">{</span>  
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;Type&#34;</span>: <span class="s2">&#34;layers&#34;</span>,  
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;Layers&#34;</span>: <span class="o">[</span>  
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;sha256:2edcec3590a4ec7f40cf0743c15d78fb39d8326bc029073b41ef9727da6c851f&#34;</span>,  
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;sha256:e379e8aedd4d72bb4c529a4ca07a4e4d230b5a1d3f7a61bc80179e8f02421ad8&#34;</span>,  
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;sha256:b8d6e692a25e11b0d32c5c3dd544b71b1085ddc1fddad08e68cbd7fda7f70221&#34;</span>,  
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;sha256:f1db227348d0a5e0b99b15a096d930d1a69db7474a1847acbc31f05e4ef8df8c&#34;</span>,  
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;sha256:32ce5f6a5106cc637d09a98289782edf47c32cb082dc475dd47cbf19a4f866da&#34;</span>,  
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;sha256:d874fd2bc83bb3322b566df739681fbd2248c58d3369cb25908d68e7ed6040a6&#34;</span>  
+</span></span><span class="line"><span class="cl">    <span class="o">]</span>  
+</span></span><span class="line"><span class="cl"><span class="o">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>从上面我们可以看到 redis镜像由6个镜像层组成。一层一层叠加，组合成为一个整体。</p>
+<p>为什么要分层？最大的一个好处就是 - 共享资源</p>
+<p>比如：有多个镜像都从相同的 Base镜像构建而来，那么宿主机只需在磁盘上保存一份Base镜像，同时内存中也只需加载一份Base镜像，就可以为宿主机上所有容器服务了。并且镜像的每一层都是可以被共享的。</p>
+<p>另外一个问题，如果在容器运行的时候，修改了基础层的文件内容，那么势必会影响其他镜像引用。如何在基础层不被修改的前提下，实现容器修改的需求，从而保证Base镜像的一致性呢？</p>
+<p>我们要知道Docker获取某个文件，会从容器层自上而下往下一层的镜像层去获取文件，如果该层文件不存在，那么就会继续往下一镜像层去寻找，直到最后一层。</p>
+<p><img loading="lazy" src="imgs/container-layer.png" alt="image-20230306223615848" srcset="imgs/container-layer.png?size=small, imgs/container-layer.png?size=medium 1.5x, imgs/container-layer.png?size=large 2x" data-title="image-20230306223615848" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p>如上图所示，当容器启动时，被加载到镜像的顶部的这层就是容器层，这一层是可读可写的。而容器层之下的叫做镜像层。所有的镜像层都是只读的。最底部的是系统内核层。当我们要对基础镜像做修改时，Docker则会先将此文件从镜像层Copy到容器层，然后再修改。这种修改方式叫<strong>Copy-on-Write</strong>(写时复制)。根据上述Union FS合并原理，上层文件覆盖下层文件，因此修改的仅仅只是该文件在容器层的拷贝。</p>
+<p><strong>Docker 镜像加载原理</strong></p>
+<p>启动一个Linux 容器一般需要运行两个文件系统，bootfs + rootfs</p>
+<p>bootfs 主要包含 bootloader 和 kernel，bootloader就是我们windows系统开机所看到的引导系统，当bootloader 加载完后，我们就能登录到系统，此时系统使用权就都交到kernel。同时系统也会卸载掉bootloader。</p>
+<p>进入系统后，我们看到的文件系统就是 rootfs，Linux系统中所看到的是/dev, /bin, /etc等目录和文件。</p>
+<p>综上所述，一个容器，实际上是由Linux Namespace、Linux Cgroups和Union FS三种技术构建出来的进程的隔离环境。</p>
+</div><hr class="awesome-hr" />
+    <h2 id="see-also">相关内容</h2>
+    <ul><li>
+          <a href="/2022/08/docker-cve-2019-5736/" title="CVE-2019-5736容器逃逸漏洞复现">CVE-2019-5736容器逃逸漏洞复现</a></li><li>
+          <a href="/2022/08/docker-root-danger/" title="Docker中Root权限的危害性">Docker中Root权限的危害性</a></li><li>
+          <a href="/2022/08/docker-privileged-escape/" title="Docker特权模式逃逸">Docker特权模式逃逸</a></li><li>
+          <a href="/2022/08/docker-remote-api-vulnerability-escape/" title="Dcoker Remote API未授权访问漏洞">Dcoker Remote API未授权访问漏洞</a></li><li>
+          <a href="/2022/08/docker-socket-mount-escape/" title="Docker Socket 挂载逃逸">Docker Socket 挂载逃逸</a></li></ul><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="更新于 2022-10-12 20:14:52">更新于 2022-10-12&nbsp;</span>
+      </div><div class="post-info-license">
+            <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
+          </div></div><div class="post-info-line">
+        <div class="post-info-md"></div>
+        <div class="post-info-share">
+          <span><a href="javascript:void(0);" title="分享到 X" data-sharer="twitter" data-url="https://hellofinger.tech/2022/10/container-principle/" data-title="容器实现原理" data-hashtags="Docker,Container"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://hellofinger.tech/2022/10/container-principle/" data-hashtag="Docker"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://hellofinger.tech/2022/10/container-principle/" data-title="容器实现原理"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 百度" data-sharer="baidu" data-url="https://hellofinger.tech/2022/10/container-principle/" data-title="容器实现原理"><i data-svg-src="/lib/simple-icons/icons/baidu.min.svg" aria-hidden="true"></i></a>
+  </span>
+        </div>
+      </div></div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href="/tags/docker/" class="post-tag" title="标签 - Docker">Docker</a><a href="/tags/container/" class="post-tag" title="标签 - Container">Container</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+    </section>
+  </div><div class="post-nav"><a href="/2022/08/docker-cve-2019-5736/" class="post-nav-item" rel="prev" title="CVE-2019-5736容器逃逸漏洞复现"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>CVE-2019-5736容器逃逸漏洞复现</a></div>
+</div>
+<div class="post-reward">
+    <div class="comment">Buy me a coffee</div>
+    <input type="checkbox" class="reward-input" name="reward" id="fi-reward" hidden />
+    <label class="reward-button" for="fi-reward"><i class="fa-solid fa-qrcode fa-fw" aria-hidden="true"></i>赞赏</label>
+    <div class="reward-ways" data-mode="static"><div><img loading="lazy" src="/images/alipay.jpg" alt="Finger 支付宝" data-title="Finger 支付宝" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/><span>支付宝</span>
+          </div><div><img loading="lazy" src="/images/wechatpay.jpg" alt="Finger 微信" data-title="Finger 微信" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/><span>微信</span>
+          </div></div>
+  </div><div id="comments"></div></article>
+
+  <aside class="toc" id="toc-auto" aria-label="目录"><h2 class="toc-title">目录&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2017 - 2024</span><span class="author" itemprop="copyrightHolder">
+              <a href="https://github.com/hellofinger"target="_blank" rel="external nofollow noopener noreferrer">Finger</a></span><span class="license footer-divider"><a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"></div><div class="footer-line visitor">
+          <span id="busuanzi_container_site_uv" title='总访客数'><i class="fa-regular fa-user fa-fw me-1" aria-hidden="true"></i><span id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span></span><span id="busuanzi_container_site_pv" class="footer-divider" title='总访问量'><i class="fa-regular fa-eye fa-fw me-1" aria-hidden="true"></i><span id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span></span>
+        </div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="回到顶部"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric">0%</span>
+        </div><div class="fixed-button view-comments d-none" role="button" aria-label="查看评论"><i class="fa-solid fa-comment fa-fw" aria-hidden="true"></i></div></div><a href="https://github.com/hellofinger" title="View source on GitHub"target="_blank" rel="external nofollow" class="github-corner right d-none-mobile"><svg viewBox="0 0 250 250" aria-hidden="true" width="56" height="56"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><div id="mask"></div><div class="reading-progress-bar" style="left: 0;top: 0;"></div><noscript>
+    <div class="noscript-warning">该网站在启用 JavaScript 的情况下效果最佳。</div>
+  </noscript>
+</div><link rel="preload" href="/lib/katex/katex.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/katex/katex.min.css"></noscript><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script src="/lib/autocomplete/autocomplete.min.js" defer></script><script src="/lib/fuse/fuse.min.js" defer></script><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/copy-tex.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="https://vercount.one/js" async defer></script><script src="/js/flyfish.js" defer></script><script>window.config={"code":{"copyTitle":"复制到剪贴板","editLockTitle":"锁定可编辑代码块","editUnLockTitle":"解锁可编辑代码块","editable":true,"maxShownLines":10},"comment":{"enable":true,"expired":false},"cookieconsent":{"content":{"dismiss":"同意","link":"了解更多","message":"本网站使用 Cookies 来改善您的浏览体验。"},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"distance":100,"findAllMatches":false,"highlightTag":"em","ignoreFieldNorm":false,"ignoreLocation":false,"isCaseSensitive":false,"location":0,"maxResultLength":10,"minMatchCharLength":2,"noResultsFound":"没有找到结果","snippetLength":30,"threshold":0.3,"useExtendedSearch":false},"version":"v0.3.10-c936e541"};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

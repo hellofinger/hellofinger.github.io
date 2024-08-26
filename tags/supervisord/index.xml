@@ -1,15 +1,15 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
   <channel>
     <title>Supervisord - 标签 - Finger&#39;s Blog</title>
-    <link>http://localhost:1313/tags/supervisord/</link>
+    <link>https://hellofinger.tech/tags/supervisord/</link>
     <description>Supervisord - 标签 | Finger&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
-      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Thu, 22 Jun 2017 23:40:00 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/supervisord/" rel="self" type="application/rss+xml" /><item>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Thu, 22 Jun 2017 23:40:00 &#43;0000</lastBuildDate><atom:link href="https://hellofinger.tech/tags/supervisord/" rel="self" type="application/rss+xml" /><item>
   <title>Supervisord 使用笔记</title>
-  <link>http://localhost:1313/2017/06/supervisord-usage/</link>
+  <link>https://hellofinger.tech/2017/06/supervisord-usage/</link>
   <pubDate>Thu, 22 Jun 2017 23:40:00 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>http://localhost:1313/2017/06/supervisord-usage/</guid>
+  <guid>https://hellofinger.tech/2017/06/supervisord-usage/</guid>
   <description><![CDATA[一、安装1 2 3 4 - pip install supervisor - echo_supervisord_conf #或者 - echo_supervisord_conf &gt; supervisord.conf - supervisord -c ./supervisord.conf 二、遇到错误1 2 3 [root@localhost ~]# supervisord -c ./supervisord.conf Error: .ini file does not include supervisord section For help, use /usr/bin/supervisord -h 错误原因是因为配置文件少了 [supervisrod] 配置项
 1 2 3 4 5 6 7 8 9 10 [program:djangotest] user=lzz command=/usr/bin/python /var/www/djangotest/manage.py runserver 0.0.0.0:8000 autostart=true autorestart=true stderr_logfile=/var/logs/err.log stdout_logfile=/var/logs/out.log stopsignal=INT [supervisord] 三、常用命令1 2 supervisord : supervisor的服务器端部分，用于supervisor启动 supervisorctl：启动supervisor的命令行窗口，在该命令行中可执行start、stop、status、reload等操作。 参考文献http://www.]]></description>
 </item>

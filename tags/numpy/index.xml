@@ -1,15 +1,15 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
   <channel>
     <title>Numpy - 标签 - Finger&#39;s Blog</title>
-    <link>http://localhost:1313/tags/numpy/</link>
+    <link>https://hellofinger.tech/tags/numpy/</link>
     <description>Numpy - 标签 | Finger&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
-      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Thu, 23 Aug 2018 22:19:00 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/numpy/" rel="self" type="application/rss+xml" /><item>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Thu, 23 Aug 2018 22:19:00 &#43;0000</lastBuildDate><atom:link href="https://hellofinger.tech/tags/numpy/" rel="self" type="application/rss+xml" /><item>
   <title>Numpy基础</title>
-  <link>http://localhost:1313/2018/08/numpy-basis/</link>
+  <link>https://hellofinger.tech/2018/08/numpy-basis/</link>
   <pubDate>Thu, 23 Aug 2018 22:19:00 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>http://localhost:1313/2018/08/numpy-basis/</guid>
+  <guid>https://hellofinger.tech/2018/08/numpy-basis/</guid>
   <description><![CDATA[原文地址：https://www.jiqizhixin.com/articles/2018-07-18-2
 介绍numpy是专门为科学计算设计的一个python扩展包，为python提供高效率的多维数组，也被称为面向阵列计算（array oriented computing），同时numpy也是github上的一个开源项目：numpy，numpy是基于c语言开发，所以这使得numpy的运行速度很快，高效率运行就是numpy的一大优势。
 用numpy生成一维数组
@@ -19,10 +19,10 @@
 </item>
 <item>
   <title>用Numpy求矩阵的逆</title>
-  <link>http://localhost:1313/2018/06/inverse-matrix-with-numpy/</link>
+  <link>https://hellofinger.tech/2018/06/inverse-matrix-with-numpy/</link>
   <pubDate>Sun, 24 Jun 2018 19:02:00 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>http://localhost:1313/2018/06/inverse-matrix-with-numpy/</guid>
+  <guid>https://hellofinger.tech/2018/06/inverse-matrix-with-numpy/</guid>
   <description><![CDATA[定义一个n阶方阵A称为可逆的，或非奇异的，如果存在一个n阶方阵B，使得
 AB = BA = E
 并称B是A的一个逆矩阵。A的逆矩阵记作A^-1。
@@ -39,20 +39,20 @@ AB = BA = E
 </item>
 <item>
   <title>用Numpy解线性方程组</title>
-  <link>http://localhost:1313/2018/06/solution-of-linear-equations-with-numpy/</link>
+  <link>https://hellofinger.tech/2018/06/solution-of-linear-equations-with-numpy/</link>
   <pubDate>Sun, 24 Jun 2018 10:02:00 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>http://localhost:1313/2018/06/solution-of-linear-equations-with-numpy/</guid>
+  <guid>https://hellofinger.tech/2018/06/solution-of-linear-equations-with-numpy/</guid>
   <description><![CDATA[矩阵可以通过线性方式把一个向量变换成另一个向量，因此从数值计算的角度看， 这种操作对应于一个线性方程组。Numpy.linalg中的 solve() 子例程可以求解类似 Ax=b 这种形式的线性方程组，其中A是一个矩阵，b是一维或者二维数组，二x是未知量。下面介绍如何使用 dot() 函数来计算两个浮点型数组的点积(dot product)。
 这里举例说明解线性方程组的过程，具体步骤如下所示：
 1、创建矩阵A和数组b1 2 3 4 5 6 7 8 9 &gt;&gt;&gt; import numpy as np &gt;&gt;&gt; A = np.mat(&#34;1 -2 1; 0 2 -8; -4 5 9&#34;) # mat函数可以将目标数据的类型转换为矩阵（matrix） &gt;&gt;&gt; A matrix([[ 1, -2, 1], [ 0, 2, -8], [-4, 5, 9]]) &gt;&gt;&gt; b = np.array([0, 8, -9]) &gt;&gt;&gt; b array([ 0, 8, -9]) 2、调用solve()函数1 2 3 &gt;&gt;&gt; x = np.]]></description>
 </item>
 <item>
   <title>深度学习矩阵运算的概念和代码实现(Numpy)</title>
-  <link>http://localhost:1313/2018/06/matrix-with-numpy/</link>
+  <link>https://hellofinger.tech/2018/06/matrix-with-numpy/</link>
   <pubDate>Sun, 10 Jun 2018 09:51:00 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>http://localhost:1313/2018/06/matrix-with-numpy/</guid>
+  <guid>https://hellofinger.tech/2018/06/matrix-with-numpy/</guid>
   <description><![CDATA[本文从向量的概念与运算扩展到矩阵运算的概念与代码实现，对机器学习或者是深度学习的入门者提供最基础，也是最实用的教程指导，为以后的机器学习模型开发打下基础。
 在我们学习机器学习时，常常遇到需要使用矩阵提高计算效率的时候。如在使用批量梯度下降迭代求最优解时，正规方程会采用更简洁的矩阵形式提供权重的解析解法。而如果不了解矩阵的运算法则及意义，甚至我们都很难去理解一些如矩阵因子分解法和反向传播算法之类的基本概念。同时由于特征和权重都以向量储存，那如果我们不了解矩阵运算，代码实现将变得十分艰难。
 1、什么是线性代数？在深度学习中，线性代数是一个强大的数学工具箱，它提供同时计算多维数组的方法。线性代数不仅会提供如同向量和矩阵那样的结构来储存这些数字，还会提供矩阵的加，减，乘，除和其他运算规则。
