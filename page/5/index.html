@@ -164,6 +164,29 @@
     </a><a href="mailto:finger.zhou@gmail.com" title="Email"target="_blank" rel="external nofollow noopener noreferrer me"><i class="fa-regular fa-envelope fa-fw" aria-hidden="true"></i>
     </a><a href="/index.xml" title="RSS"target="_blank" rel="external nofollow noopener noreferrer me"><i class="fa-solid fa-rss fa-fw" aria-hidden="true"></i>
     </a></div></div>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2020/02/terraform-modules/">Terraform基础--模块基础</a>
+  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span>&nbsp;<span class="post-publish" title='2020-02-03 09:22:52'>发布于 <time datetime="2020-02-03">2020-02-03</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/iac/" class="post-category" title="分类 - IAC"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> IAC</a></span></div><div class="content">什么是Terraform ModuleModule 是 Terraform 为了管理单元化资源而设计的，是子节点，子资源，子架构模板的整合和抽象。在实际复杂的技术架构中，涉及到的资源多种多样，资源与资源之间的关系错综复杂，资源模版的编写，扩展，维护等多个问题的成本都会不断增加。将多种可以复用的资源定义为一个module，通过对 module 的管理简化模板的架构，降低模板管理的复杂度，这就是module的作用。
+除此之外，对开发者和用户而言，只需关心 module 的 input 参数即可，无需关心module中资源的定义，参数，语法等细节问题，抽出更多的时间和精力投入到架构设计和资源关系整合上。
+Module的标准结构官方建议Module标准结构包含：main.tf，variables.tf，outputs.tf，README.md。这些是最小模块的建议文件名，即使它们为空。
+main.tf：资源的定义模板 variables.tf：模板所依赖的参数定义和参数值 outputs.tf：资源的输出值 README.md：模板的简单介绍和使用说明以及该模块可用的许可证 对于一个简单的模块，main.tf 是主要入口点。包含了创建资源的主要内容。对于复杂的模块，可以将资源创建分为多个文件，但是任何嵌套的模块调用都应位于主文件中。variables.tf 并且outputs.tf应分别包含变量和输出的声明。
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 # 简单的模块 $ basic-module/ . ├── README.md ├── main.tf ├── variables.tf ├── outputs.tf # 复杂的模块 $ complete-module/ . ├── README.</div><div class="post-footer">
+    <a href="/2020/02/terraform-modules/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/terraform/' class="post-tag">Terraform</a><a href='/tags/iac/' class="post-tag">IAC</a></div></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2020/02/terraform-variables/">Terraform基础--变量详解</a>
+  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span>&nbsp;<span class="post-publish" title='2020-02-02 04:23:52'>发布于 <time datetime="2020-02-02">2020-02-02</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/iac/" class="post-category" title="分类 - IAC"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> IAC</a></span></div><div class="content">定义变量创建 variables.tf文件，定义变量名为：aws_region。设置默认值：ap-southeast-1。默认值是可选的。如果未设置默认值，则该变量是必需的。
+1 2 3 4 5 # variables.tf variable &#34;aws_region&#34; { default = &#34;ap-southeast-1&#34; } 注意：该文件可以命名为任何名称，因为Terraform加载目录下以*.tf结尾的所有文件。
+使用变量通过使用占位符 ${}和var关键字引用定义的变量名。
+1 2 3 provider &#34;aws&#34; { region = &#34;${var.aws_region}&#34; } 分配变量分配变量有多种方法。以变量的优先级考虑，从高到底的顺序主要的方法如下：
+命令行可以直接在命令行中使用-var标志设置变量 。在该Terraform检查配置的任何命令接受该标志，如apply 和 plan。
+1 2 terraform apply \ -var &#39;aws_region=ap-southeast-1&#39; 注意：以这种方式设置变量不会保存它们，并且在执行命令时必须重复输入它们。
+*.tfvars 文件变量如果想保留变量或者变量是一个固定的值，可以考虑创建后缀为 *.tfvars的文件。文件内容如下：
+1 2 3 # terraform.tfvars aws_region = &#34;ap-southeast-1&#34; 对于当前目录中匹配 terraform.tfvars 或 *.auto.tfvars 存在的所有文件，Terraform会自动加载它们以填充变量。如果文件名为其他名称，则可以-var-file直接使用该标志指定文件。这些文件与Terraform配置文件的语法相同。与Terraform配置文件一样，这些文件也可以是JSON。
+1 terraform apply -var-file=&#34;xxx.tfvars&#34; 注意：不建议将用户名和密码保存到版本控制中，但是可以创建一个本地秘钥变量文件用-var-file加载。
+-var-file 可以使用多次，指定不同的变量文件。例如：</div><div class="post-footer">
+    <a href="/2020/02/terraform-variables/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/terraform/' class="post-tag">Terraform</a><a href='/tags/iac/' class="post-tag">IAC</a></div></div>
+</article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2020/02/terraform-basic/">Terraform基础--基本语法</a>
   </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
     Finger</a></span>&nbsp;<span class="post-publish" title='2020-02-01 11:17:52'>发布于 <time datetime="2020-02-01">2020-02-01</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/iac/" class="post-category" title="分类 - IAC"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> IAC</a></span></div><div class="content">语法Terraform语言也就是HCL(HashiCorp Configuration Language)，是一种丰富的语言。他的语法结构类似于JSON语法。主要由参数和块构成。
@@ -454,34 +477,6 @@ Terraform 有一个 plan 步骤，它生成一个执行计划。执行计划显�
 </ul></div><div class="post-footer">
     <a href="/2019/11/influxdb-basic/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/influxdb/' class="post-tag">InfluxDB</a></div></div>
 </article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2019/07/about-the-cache/">关于缓存</a>
-  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span>&nbsp;<span class="post-publish" title='2019-07-13 18:23:00'>发布于 <time datetime="2019-07-13">2019-07-13</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/storage/" class="post-category" title="分类 - Storage"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a></span></div><div class="content">缓存模式（Cache Aside Pattern）什么是&quot;Cache Aside Pattern&quot;?答： 旁路缓存方案的经验实践，这个实践又分读实践，写实践。
-对于读请求先读cache，再读db 如果，cache hit，则直接返回数据 如果，cache miss，则访问db，并将数据set回缓存 如上图：
-先从cache中尝试get数据，结果miss了 再从db中读取数据，从库，读写分离 最后把数据set回cache，方便下次读命中 对于写请求淘汰缓存，而不是更新缓存 先操作数据库，再淘汰缓存 如上图：
-第一步要操作数据库，第二步操作缓存 缓存，采用delete淘汰，而不是set更新 Cache Aside Pattern为什么建议淘汰缓存，而不是更新缓存？答： 如果更新缓存，在并发写时，可能出现数据不一致。
-如上图所示，如果采用set缓存。
-在1和2两个并发写发生时，由于无法保证时序，此时不管先操作缓存还是先操作数据库，都可能出现：
-请求1先操作数据库，请求2后操作数据库 请求2先set了缓存，请求1后set了缓存 导致，数据库与缓存之间的数据不一致。
-所以，Cache Aside Pattern建议，delete缓存，而不是set缓存。
-Cache Aside Pattern为什么建议先操作数据库，再操作缓存？答： 如果先操作缓存，在读写并发时，可能出现数据不一致。
-如上图所示，如果先操作缓存。
-在1和2并发读写发生时，由于无法保证时序，可能出现：
-写请求淘汰了缓存 写请求操作了数据库（主从同步没有完成） 读请求读了缓存（cache miss） 读请求读了从库（读了一个旧数据） 读请求set回缓存（set了一个旧数据） 数据库主从同步完成 导致，数据库与缓存的数据不一致。 所以，Cache Aside Pattern建议，先操作数据库，再操作缓存。
-Cache Aside Pattern方案存在什么问题？答： 如果先操作数据库，再淘汰缓存，在原子性被破坏时：
-修改数据库成功了 淘汰缓存失败了 导致，数据库与缓存的数据不一致。
-原文来自58沈剑: https://cloud.tencent.com/info/5e258c6f840423de68eda937db3e1c90.html
-缓存问题用一张脑图总结如下：</div><div class="post-footer">
-    <a href="/2019/07/about-the-cache/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/cache/' class="post-tag">Cache</a></div></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2019/07/python-notes-1/">Python 杂记(一)</a>
-  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span>&nbsp;<span class="post-publish" title='2019-07-11 07:31:00'>发布于 <time datetime="2019-07-11">2019-07-11</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/python/" class="post-category" title="分类 - Python"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Python</a></span></div><div class="content">使用 slots__slots__变量是用来限制class能添加的属性
-例如
-1 2 3 &gt;&gt;&gt; class Student(object): ... __slots__ = (&#39;name&#39;, &#39;age&#39;) # 用tuple定义允许绑定的属性名称 ... 1 2 3 4 5 6 7 &gt;&gt;&gt; s = Student() # 创建新的实例 &gt;&gt;&gt; s.name = &#39;Michael&#39; # 绑定属性&#39;name&#39; &gt;&gt;&gt; s.age = 25 # 绑定属性&#39;age&#39; &gt;&gt;&gt; s.score = 99 # 绑定属性&#39;score&#39; Traceback (most recent call last): File &#34;&lt;stdin&gt;&#34;, line 1, in &lt;module&gt; AttributeError: &#39;Student&#39; object has no attribute &#39;score&#39; 从上面代码示例我们可以看到由于score没有被放到__slots__中，所以不能绑定score属性，试图绑定score将得到AttributeError的错误。 使用__slots__要注意，__slots__定义的属性仅对当前类起作用，对继承的子类是不起作用的：
-1 2 3 4 5 &gt;&gt;&gt; class GraduateStudent(Student): .</div><div class="post-footer">
-    <a href="/2019/07/python-notes-1/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/python/' class="post-tag">Python</a></div></div>
-</article>
 <ul class="pagination"><li class="page-item">
           <span class="page-link">
             <a href="/">1</a>
@@ -512,7 +507,7 @@ Cache Aside Pattern方案存在什么问题？答： 如果先操作数据库�
           <span class="page-link" aria-hidden="true">&hellip;</span>
         </li><li class="page-item">
           <span class="page-link">
-            <a href="/page/11/">11</a>
+            <a href="/page/12/">12</a>
           </span>
         </li></ul></div></main><footer class="footer">
     <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>

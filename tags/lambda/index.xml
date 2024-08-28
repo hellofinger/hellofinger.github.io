@@ -1,0 +1,23 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>Lambda - 标签 - Finger&#39;s Blog</title>
+    <link>https://hellofinger.tech/tags/lambda/</link>
+    <description>Lambda - 标签 | Finger&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Sun, 23 Feb 2020 22:37:00 &#43;0000</lastBuildDate><atom:link href="https://hellofinger.tech/tags/lambda/" rel="self" type="application/rss+xml" /><item>
+  <title>AWS实战--Lambda&#43;SNS&#43;S3实现自动生成统计图表工具</title>
+  <link>https://hellofinger.tech/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/</link>
+  <pubDate>Sun, 23 Feb 2020 22:37:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/</guid>
+  <description><![CDATA[需求概述通过一个种标准的数据结构。生成相应的数据统计图(线形图，柱状图，饼状图等)。
+实现方案基于AWS服务，将S3的存储桶作为事件触发源，用户只要上传数据到该存储桶，就广播通知，订阅该通知的消息队列则触发到具体的Lambda函数。Lambda函数完成绘图逻辑，并生成统计图上传到S3的存储桶。
+具体设计图如下： 具体流程Step1、创建一个S3存储桶，选择 Properties -&gt;Advanced settings -&gt; Events。
+然后，Add notification。我们选择 Events为PUT。指定前缀和后缀。选择发送通知到SNS Topic。
+Step2、在创建Events之前，我们需要先创建一个SNS Topic。并给S3存储桶授予访问权限。否则无法保存Events。
+Step3、新建一个SQS，并给上一步创建的SNS增加权限。这样我们就可以在SNS上进行订阅。 Step4、新建Lambda。将其添加到SQS的Triggers。 到这里，我们的整个流程已经基本完成。由S3监听用户上传的数据文件，然后由SNS通知到SQS，SQS触发到Lambda。最后就是具体编码实现了。
+编码实现定义数据结构：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 { &#34;title&#34;: { &#34;name&#34;: &#34;&#34;, // 图例名称 &#34;loc&#34;: &#34;top, bottom, left, right&#34; // 显示位置 }, &#34;name&#34;: &#34;图表保存到S3的名称。&#34;, &#34;size&#34;: [6, 7], // 图表的大小 &#34;chart_kind&#34;: &#34;pie, line, bar.]]></description>
+</item>
+</channel>
+</rss>

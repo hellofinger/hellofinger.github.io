@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>AWS实战--配置ECR Replication - Finger&#39;s Blog</title><meta name="author" content="Finger">
+<meta name="author-link" content="https://github.com/hellofinger">
+<meta name="description" content="Amazon ECR 可以配置跨区域(region)或跨账号(account)复制。配置复制后，推送(Push)到源存储库的镜像会自动复制到目标存储库(ECR)。
+本例以跨区域复制为例：源ECR（ap-southeast-1）==&gt; 目标ECR （us-east-1）
+配置源 ECR登录到 AWS ap-southeast-1 region的ECR页面。选择 Private registry &ndash;&gt; Replication菜单。点击 Edit 按钮. 进入到Replication configuration页面后，点击 Add rule。 选择复制的目标类型，我们选择允许跨区域复制(Cross-region)，点击Next。 选择目标region(us-east-1)。添加镜像名字过滤条件(本例为hello前缀的镜像仓库)。默认为前缀匹配。最后Submit rule。
+配置完成后可以查看 JSON格式的内容
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 { &#34;rules&#34;: [ { &#34;destinations&#34;: [ { &#34;region&#34;: &#34;us-east-1&#34;, &#34;registryId&#34;: &#34;&lt;your-aws-account-id&gt;&#34; } ], &#34;repositoryFilters&#34;: [ { &#34;filter&#34;: &#34;hello&#34;, &#34;filterType&#34;: &#34;PREFIX_MATCH&#34; } ] } ] } 配置目标ECR创建一个和源名字一样的私有镜像仓库(本例为hello-app)" /><meta name="keywords" content='ECR, AWS' />
+  <meta itemprop="name" content="AWS实战--配置ECR Replication">
+  <meta itemprop="description" content="Amazon ECR 可以配置跨区域(region)或跨账号(account)复制。配置复制后，推送(Push)到源存储库的镜像会自动复制到目标存储库(ECR)。
+本例以跨区域复制为例：源ECR（ap-southeast-1）==&gt; 目标ECR （us-east-1）
+配置源 ECR登录到 AWS ap-southeast-1 region的ECR页面。选择 Private registry –&gt; Replication菜单。点击 Edit 按钮. 进入到Replication configuration页面后，点击 Add rule。 选择复制的目标类型，我们选择允许跨区域复制(Cross-region)，点击Next。 选择目标region(us-east-1)。添加镜像名字过滤条件(本例为hello前缀的镜像仓库)。默认为前缀匹配。最后Submit rule。
+配置完成后可以查看 JSON格式的内容
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 { &#34;rules&#34;: [ { &#34;destinations&#34;: [ { &#34;region&#34;: &#34;us-east-1&#34;, &#34;registryId&#34;: &#34;&lt;your-aws-account-id&gt;&#34; } ], &#34;repositoryFilters&#34;: [ { &#34;filter&#34;: &#34;hello&#34;, &#34;filterType&#34;: &#34;PREFIX_MATCH&#34; } ] } ] } 配置目标ECR创建一个和源名字一样的私有镜像仓库(本例为hello-app)">
+  <meta itemprop="datePublished" content="2022-01-17T10:51:00+00:00">
+  <meta itemprop="dateModified" content="2022-01-17T10:51:00+00:00">
+  <meta itemprop="wordCount" content="121">
+  <meta itemprop="keywords" content="ECR,AWS"><meta property="og:url" content="https://hellofinger.tech/2022/01/aws-setting-ecr-replication/">
+  <meta property="og:site_name" content="Finger&#39;s Blog">
+  <meta property="og:title" content="AWS实战--配置ECR Replication">
+  <meta property="og:description" content="Amazon ECR 可以配置跨区域(region)或跨账号(account)复制。配置复制后，推送(Push)到源存储库的镜像会自动复制到目标存储库(ECR)。
+本例以跨区域复制为例：源ECR（ap-southeast-1）==&gt; 目标ECR （us-east-1）
+配置源 ECR登录到 AWS ap-southeast-1 region的ECR页面。选择 Private registry –&gt; Replication菜单。点击 Edit 按钮. 进入到Replication configuration页面后，点击 Add rule。 选择复制的目标类型，我们选择允许跨区域复制(Cross-region)，点击Next。 选择目标region(us-east-1)。添加镜像名字过滤条件(本例为hello前缀的镜像仓库)。默认为前缀匹配。最后Submit rule。
+配置完成后可以查看 JSON格式的内容
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 { &#34;rules&#34;: [ { &#34;destinations&#34;: [ { &#34;region&#34;: &#34;us-east-1&#34;, &#34;registryId&#34;: &#34;&lt;your-aws-account-id&gt;&#34; } ], &#34;repositoryFilters&#34;: [ { &#34;filter&#34;: &#34;hello&#34;, &#34;filterType&#34;: &#34;PREFIX_MATCH&#34; } ] } ] } 配置目标ECR创建一个和源名字一样的私有镜像仓库(本例为hello-app)">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2022-01-17T10:51:00+00:00">
+    <meta property="article:modified_time" content="2022-01-17T10:51:00+00:00">
+    <meta property="article:tag" content="ECR">
+    <meta property="article:tag" content="AWS">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="AWS实战--配置ECR Replication">
+  <meta name="twitter:description" content="Amazon ECR 可以配置跨区域(region)或跨账号(account)复制。配置复制后，推送(Push)到源存储库的镜像会自动复制到目标存储库(ECR)。
+本例以跨区域复制为例：源ECR（ap-southeast-1）==&gt; 目标ECR （us-east-1）
+配置源 ECR登录到 AWS ap-southeast-1 region的ECR页面。选择 Private registry –&gt; Replication菜单。点击 Edit 按钮. 进入到Replication configuration页面后，点击 Add rule。 选择复制的目标类型，我们选择允许跨区域复制(Cross-region)，点击Next。 选择目标region(us-east-1)。添加镜像名字过滤条件(本例为hello前缀的镜像仓库)。默认为前缀匹配。最后Submit rule。
+配置完成后可以查看 JSON格式的内容
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 { &#34;rules&#34;: [ { &#34;destinations&#34;: [ { &#34;region&#34;: &#34;us-east-1&#34;, &#34;registryId&#34;: &#34;&lt;your-aws-account-id&gt;&#34; } ], &#34;repositoryFilters&#34;: [ { &#34;filter&#34;: &#34;hello&#34;, &#34;filterType&#34;: &#34;PREFIX_MATCH&#34; } ] } ] } 配置目标ECR创建一个和源名字一样的私有镜像仓库(本例为hello-app)">
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://hellofinger.tech/2022/01/aws-setting-ecr-replication/" /><link rel="prev" href="https://hellofinger.tech/2021/02/go-basic-channel/" /><link rel="next" href="https://hellofinger.tech/2022/08/container-securty/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "AWS实战--配置ECR Replication",
+    "inLanguage": "zh-CN",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/hellofinger.tech\/2022\/01\/aws-setting-ecr-replication\/"
+    },"genre": "posts","keywords": "ECR, AWS","wordcount":  121 ,
+    "url": "https:\/\/hellofinger.tech\/2022\/01\/aws-setting-ecr-replication\/","datePublished": "2022-01-17T10:51:00+00:00","dateModified": "2022-01-17T10:51:00+00:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Finger"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper" data-github-corner="right">
+    <div class="header-title">
+      <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/about/"
+                
+                
+              ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item delimiter"></li><li class="menu-item search" id="search-desktop">
+            <input type="text" placeholder="搜索文章标题或内容……" id="search-input-desktop">
+            <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+              <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+            </a>
+            <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+              <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+            </a>
+            <span class="search-button search-loading" id="search-loading-desktop">
+              <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+            </span>
+          </li><li class="menu-item theme-switch" title="切换主题">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li class="search-wrapper">
+            <div class="search mobile" id="search-mobile">
+              <input type="text" placeholder="搜索文章标题或内容……" id="search-input-mobile">
+              <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+              </a>
+              <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+              </a>
+              <span class="search-button search-loading" id="search-loading-mobile">
+                <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+              </span>
+            </div>
+            <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+              取消
+            </a>
+          </li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/about/"
+                  
+                  
+                ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="切换主题"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+  </div>
+  <div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+  </div><nav aria-label="breadcrumb" class="breadcrumb-container">
+    <ol class="breadcrumb"><li class="breadcrumb-item"><a href="/posts/" title="Posts">文章</a></li><li class="breadcrumb-item active" aria-current="page">AWS实战--配置ECR Replication</li>
+    </ol>
+  </nav><main class="container"><aside class="aside-collection animate__animated animate__fadeIn animate__faster" aria-label="合集"></aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>AWS实战--配置ECR Replication</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/aws/" class="post-category" title="分类 - AWS"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> AWS</a></span></div><div class="post-meta-line"><span title="发布于 2022-01-17 10:51:00"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2022-01-17">2022-01-17</time></span>&nbsp;<span title="121 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 200 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 1 分钟</span>&nbsp;<span id="busuanzi_container_page_pv" class="busuanzi_visitors comment-visitors" data-flag-title="AWS实战--配置ECR Replication"><i class="fa-regular fa-eye fa-fw me-1" aria-hidden="true"></i><span id="busuanzi_value_page_pv">-</span>&nbsp;次阅读
+          </span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>目录</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#配置源-ecr">配置源 ECR</a></li>
+    <li><a href="#配置目标ecr">配置目标ECR</a></li>
+    <li><a href="#测试">测试</a></li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><div class="details admonition warning open">
+      <div class="details-summary admonition-title">
+        <i class="icon fa-solid fa-exclamation-triangle fa-fw" aria-hidden="true"></i>警告<i class="details-icon fa-solid fa-angle-right fa-fw" aria-hidden="true"></i>
+      </div>
+      <div class="details-content">
+        <div class="admonition-content">本文最后更新于 2022-01-17，文中内容可能已过时。</div>
+      </div>
+    </div><p>Amazon ECR 可以配置跨区域(region)或跨账号(account)复制。配置复制后，推送(Push)到源存储库的镜像会自动复制到目标存储库(ECR)。</p>
+<p>本例以跨区域复制为例：源ECR（ap-southeast-1）==&gt; 目标ECR （us-east-1）</p>
+<h2 id="配置源-ecr" class="heading-element"><span>配置源 ECR</span>
+  <a href="#%e9%85%8d%e7%bd%ae%e6%ba%90-ecr" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><ol>
+<li>登录到 AWS ap-southeast-1 region的ECR页面。选择 Private registry &ndash;&gt; Replication菜单。点击 Edit 按钮.</li>
+</ol>
+<p><img loading="lazy" src="imgs/ecr-source-replication.png" alt="ecr-private-registry-source-replication" srcset="imgs/ecr-source-replication.png?size=small, imgs/ecr-source-replication.png?size=medium 1.5x, imgs/ecr-source-replication.png?size=large 2x" data-title="ecr-private-registry-source-replication" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<ol start="2">
+<li>
+<p>进入到Replication configuration页面后，点击 Add rule。
+<img loading="lazy" src="imgs/ecr-source-replication-add-rule.png" alt="ecr-source-replication-add-rule" srcset="imgs/ecr-source-replication-add-rule.png?size=small, imgs/ecr-source-replication-add-rule.png?size=medium 1.5x, imgs/ecr-source-replication-add-rule.png?size=large 2x" data-title="ecr-source-replication-add-rule" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+</li>
+<li>
+<p>选择复制的目标类型，我们选择允许跨区域复制(Cross-region)，点击Next。
+<img loading="lazy" src="imgs/ecr-source-replication-choose-destination-types.png" alt="ecr-source-replication-choose-destination-types" srcset="imgs/ecr-source-replication-choose-destination-types.png?size=small, imgs/ecr-source-replication-choose-destination-types.png?size=medium 1.5x, imgs/ecr-source-replication-choose-destination-types.png?size=large 2x" data-title="ecr-source-replication-choose-destination-types" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+</li>
+<li>
+<p>选择目标region(us-east-1)。添加镜像名字过滤条件(本例为hello前缀的镜像仓库)。默认为前缀匹配。最后Submit rule。</p>
+</li>
+</ol>
+<p><img loading="lazy" src="imgs/ecr-source-replication-cross-region.png" alt="ecr-source-replication-cross-region" srcset="imgs/ecr-source-replication-cross-region.png?size=small, imgs/ecr-source-replication-cross-region.png?size=medium 1.5x, imgs/ecr-source-replication-cross-region.png?size=large 2x" data-title="ecr-source-replication-cross-region" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p><img loading="lazy" src="imgs/ecr-source-replication-rule-filters.png" alt="ecr-source-replication-rule-filters" srcset="imgs/ecr-source-replication-rule-filters.png?size=small, imgs/ecr-source-replication-rule-filters.png?size=medium 1.5x, imgs/ecr-source-replication-rule-filters.png?size=large 2x" data-title="ecr-source-replication-rule-filters" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p><img loading="lazy" src="imgs/ecr-source-replication-submit-rule.png" alt="ecr-source-replication-submit-rule" srcset="imgs/ecr-source-replication-submit-rule.png?size=small, imgs/ecr-source-replication-submit-rule.png?size=medium 1.5x, imgs/ecr-source-replication-submit-rule.png?size=large 2x" data-title="ecr-source-replication-submit-rule" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p>配置完成后可以查看 JSON格式的内容</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;rules&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;destinations&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&#34;region&#34;</span><span class="p">:</span> <span class="s2">&#34;us-east-1&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&#34;registryId&#34;</span><span class="p">:</span> <span class="s2">&#34;&lt;your-aws-account-id&gt;&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="p">],</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;repositoryFilters&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&#34;filter&#34;</span><span class="p">:</span> <span class="s2">&#34;hello&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">          <span class="nt">&#34;filterType&#34;</span><span class="p">:</span> <span class="s2">&#34;PREFIX_MATCH&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="配置目标ecr" class="heading-element"><span>配置目标ECR</span>
+  <a href="#%e9%85%8d%e7%bd%ae%e7%9b%ae%e6%a0%87ecr" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><ol>
+<li>
+<p>创建一个和源名字一样的私有镜像仓库(本例为hello-app)</p>
+</li>
+<li>
+<p>选择Private registry菜单。点击 Permissions 的 Edit按钮</p>
+<p><img loading="lazy" src="imgs/ecr-dest-permissions.png" alt="ecr-dest-permissions" srcset="imgs/ecr-dest-permissions.png?size=small, imgs/ecr-dest-permissions.png?size=medium 1.5x, imgs/ecr-dest-permissions.png?size=large 2x" data-title="ecr-dest-permissions" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+</li>
+<li>
+<p>点击 Generate statement按钮。</p>
+</li>
+</ol>
+<p><img loading="lazy" src="imgs/ecr-dest-permissions-generate-statement.png" alt="ecr-dest-permissions-generate-statement" srcset="imgs/ecr-dest-permissions-generate-statement.png?size=small, imgs/ecr-dest-permissions-generate-statement.png?size=medium 1.5x, imgs/ecr-dest-permissions-generate-statement.png?size=large 2x" data-title="ecr-dest-permissions-generate-statement" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<ol start="4">
+<li>按提示填完表单字段，最后 Save statement.</li>
+</ol>
+<p><img loading="lazy" src="imgs/ecr-dest-permissions-json.png" alt="ecr-dest-permissions-json" srcset="imgs/ecr-dest-permissions-json.png?size=small, imgs/ecr-dest-permissions-json.png?size=medium 1.5x, imgs/ecr-dest-permissions-json.png?size=large 2x" data-title="ecr-dest-permissions-json" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;Sid&#34;</span><span class="p">:</span> <span class="s2">&#34;finger-test-ecr-replication&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;Effect&#34;</span><span class="p">:</span> <span class="s2">&#34;Allow&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;Principal&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;AWS&#34;</span><span class="p">:</span> <span class="s2">&#34;arn:aws:iam::&lt;your-aws-account-id&gt;:root&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;Action&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;ecr:CreateRepository&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;ecr:ReplicateImage&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">],</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;Resource&#34;</span><span class="p">:</span> <span class="s2">&#34;arn:aws:ecr:us-east-1:&lt;your-aws-account-id&gt;:repository/*&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="测试" class="heading-element"><span>测试</span>
+  <a href="#%e6%b5%8b%e8%af%95" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>推送hello-app:v3 到 ap-southeast-1区域。我们可以查看 Image replication status，看是否有us-east-1区域同步信息。</p>
+<p><img loading="lazy" src="imgs/ecr-image-replication-status.png" alt="ecr-image-replication-status" srcset="imgs/ecr-image-replication-status.png?size=small, imgs/ecr-image-replication-status.png?size=medium 1.5x, imgs/ecr-image-replication-status.png?size=large 2x" data-title="ecr-image-replication-status" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p>登录到us-east-1区域查看镜像仓库是否有同步的镜像</p>
+<p><img loading="lazy" src="imgs/ecr-dest-repostories-images.png" alt="ecr-dest-repostories-images" srcset="imgs/ecr-dest-repostories-images.png?size=small, imgs/ecr-dest-repostories-images.png?size=medium 1.5x, imgs/ecr-dest-repostories-images.png?size=large 2x" data-title="ecr-dest-repostories-images" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+</div><hr class="awesome-hr" />
+    <h2 id="see-also">相关内容</h2>
+    <ul><li>
+          <a href="/2018/09/aws-serverless-with-nodejs/" title="AWS Serverless - NodeJs实践">AWS Serverless - NodeJs实践</a></li><li>
+          <a href="/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/" title="AWS实战--Lambda&#43;SNS&#43;S3实现自动生成统计图表工具">AWS实战--Lambda&#43;SNS&#43;S3实现自动生成统计图表工具</a></li><li>
+          <a href="/2022/10/container-principle/" title="容器实现原理">容器实现原理</a></li><li>
+          <a href="/2022/08/docker-cve-2019-5736/" title="CVE-2019-5736容器逃逸漏洞复现">CVE-2019-5736容器逃逸漏洞复现</a></li><li>
+          <a href="/2022/08/docker-root-danger/" title="Docker中Root权限的危害性">Docker中Root权限的危害性</a></li></ul><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="更新于 2022-01-17 10:51:00">更新于 2022-01-17&nbsp;</span>
+      </div><div class="post-info-license">
+            <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
+          </div></div><div class="post-info-line">
+        <div class="post-info-md"></div>
+        <div class="post-info-share">
+          <span><a href="javascript:void(0);" title="分享到 X" data-sharer="twitter" data-url="https://hellofinger.tech/2022/01/aws-setting-ecr-replication/" data-title="AWS实战--配置ECR Replication" data-hashtags="ECR,AWS"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://hellofinger.tech/2022/01/aws-setting-ecr-replication/" data-hashtag="ECR"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://hellofinger.tech/2022/01/aws-setting-ecr-replication/" data-title="AWS实战--配置ECR Replication"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 百度" data-sharer="baidu" data-url="https://hellofinger.tech/2022/01/aws-setting-ecr-replication/" data-title="AWS实战--配置ECR Replication"><i data-svg-src="/lib/simple-icons/icons/baidu.min.svg" aria-hidden="true"></i></a>
+  </span>
+        </div>
+      </div></div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href="/tags/ecr/" class="post-tag" title="标签 - ECR">ECR</a><a href="/tags/aws/" class="post-tag" title="标签 - AWS">AWS</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+    </section>
+  </div><div class="post-nav"><a href="/2021/02/go-basic-channel/" class="post-nav-item" rel="prev" title="Go基础--管道Channel"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>Go基础--管道Channel</a>
+      <a href="/2022/08/container-securty/" class="post-nav-item" rel="next" title="容器安全">容器安全<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+<div class="post-reward">
+    <div class="comment">Buy me a coffee</div>
+    <input type="checkbox" class="reward-input" name="reward" id="fi-reward" hidden />
+    <label class="reward-button" for="fi-reward"><i class="fa-solid fa-qrcode fa-fw" aria-hidden="true"></i>赞赏</label>
+    <div class="reward-ways" data-mode="static"><div><img loading="lazy" src="/images/alipay.jpg" alt="Finger 支付宝" data-title="Finger 支付宝" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/><span>支付宝</span>
+          </div><div><img loading="lazy" src="/images/wechatpay.jpg" alt="Finger 微信" data-title="Finger 微信" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/><span>微信</span>
+          </div></div>
+  </div><div id="comments"></div></article>
+
+  <aside class="toc" id="toc-auto" aria-label="目录"><h2 class="toc-title">目录&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2017 - 2024</span><span class="author" itemprop="copyrightHolder">
+              <a href="https://github.com/hellofinger"target="_blank" rel="external nofollow noopener noreferrer">Finger</a></span><span class="license footer-divider"><a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"></div><div class="footer-line visitor">
+          <span id="busuanzi_container_site_uv" title='总访客数'><i class="fa-regular fa-user fa-fw me-1" aria-hidden="true"></i><span id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span></span><span id="busuanzi_container_site_pv" class="footer-divider" title='总访问量'><i class="fa-regular fa-eye fa-fw me-1" aria-hidden="true"></i><span id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span></span>
+        </div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="回到顶部"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric">0%</span>
+        </div><div class="fixed-button view-comments d-none" role="button" aria-label="查看评论"><i class="fa-solid fa-comment fa-fw" aria-hidden="true"></i></div></div><a href="https://github.com/hellofinger" title="View source on GitHub"target="_blank" rel="external nofollow" class="github-corner right d-none-mobile"><svg viewBox="0 0 250 250" aria-hidden="true" width="56" height="56"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><div id="mask"></div><div class="reading-progress-bar" style="left: 0;top: 0;"></div><noscript>
+    <div class="noscript-warning">该网站在启用 JavaScript 的情况下效果最佳。</div>
+  </noscript>
+</div><link rel="preload" href="/lib/katex/katex.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/katex/katex.min.css"></noscript><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script src="/lib/autocomplete/autocomplete.min.js" defer></script><script src="/lib/fuse/fuse.min.js" defer></script><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/copy-tex.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="https://vercount.one/js" async defer></script><script src="/js/flyfish.js" defer></script><script>window.config={"code":{"copyTitle":"复制到剪贴板","editLockTitle":"锁定可编辑代码块","editUnLockTitle":"解锁可编辑代码块","editable":true,"maxShownLines":10},"comment":{"enable":true,"expired":false},"cookieconsent":{"content":{"dismiss":"同意","link":"了解更多","message":"本网站使用 Cookies 来改善您的浏览体验。"},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"distance":100,"findAllMatches":false,"highlightTag":"em","ignoreFieldNorm":false,"ignoreLocation":false,"isCaseSensitive":false,"location":0,"maxResultLength":10,"minMatchCharLength":2,"noResultsFound":"没有找到结果","snippetLength":30,"threshold":0.3,"useExtendedSearch":false},"version":"v0.3.10-c936e541"};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

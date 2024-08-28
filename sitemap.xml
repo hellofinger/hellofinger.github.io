@@ -18,6 +18,10 @@
       <loc>https://hellofinger.tech/2022/08/docker-remote-api-vulnerability-escape/</loc><lastmod>2022-08-12T18:14:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>https://hellofinger.tech/2022/08/docker-socket-mount-escape/</loc><lastmod>2022-08-12T18:14:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>https://hellofinger.tech/2022/08/container-securty/</loc><lastmod>2022-08-11T16:14:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+      <loc>https://hellofinger.tech/tags/aws/</loc><lastmod>2024-08-26T00:38:55&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+      <loc>https://hellofinger.tech/categories/aws/</loc><lastmod>2024-08-26T00:38:55&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
+      <loc>https://hellofinger.tech/2022/01/aws-setting-ecr-replication/</loc><lastmod>2022-01-17T10:51:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+      <loc>https://hellofinger.tech/tags/ecr/</loc><lastmod>2022-01-17T10:51:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>https://hellofinger.tech/tags/go/</loc><lastmod>2021-02-26T17:27:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>https://hellofinger.tech/categories/go/</loc><lastmod>2021-02-26T17:27:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>https://hellofinger.tech/2021/02/go-basic-channel/</loc><lastmod>2021-02-26T17:27:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
@@ -35,6 +39,8 @@
       <loc>https://hellofinger.tech/tags/iac/</loc><lastmod>2020-02-28T18:11:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>https://hellofinger.tech/categories/iac/</loc><lastmod>2020-02-28T18:11:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>https://hellofinger.tech/2020/02/gitlab-code-header-include-copyright/</loc><lastmod>2020-02-25T18:11:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+      <loc>https://hellofinger.tech/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/</loc><lastmod>2020-02-23T22:37:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+      <loc>https://hellofinger.tech/tags/lambda/</loc><lastmod>2020-02-23T22:37:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>https://hellofinger.tech/2020/02/gitlab-server-using-git-secrets/</loc><lastmod>2020-02-22T18:11:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>https://hellofinger.tech/categories/cicd/</loc><lastmod>2020-02-20T18:11:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>https://hellofinger.tech/2020/02/gitlab-cicd-pipeline-4/</loc><lastmod>2020-02-20T18:11:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
@@ -63,8 +69,6 @@
       <loc>https://hellofinger.tech/tags/flask-apscheduler/</loc><lastmod>2024-08-26T00:38:55&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
       <loc>https://hellofinger.tech/2019/03/flask-apscheduler-usage/</loc><lastmod>2024-08-26T00:38:55&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
       <loc>https://hellofinger.tech/2019/03/apscheduler-usage/</loc><lastmod>2024-08-26T00:38:55&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
-      <loc>https://hellofinger.tech/tags/aws/</loc><lastmod>2024-08-26T00:38:55&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
-      <loc>https://hellofinger.tech/categories/aws/</loc><lastmod>2024-08-26T00:38:55&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
       <loc>https://hellofinger.tech/2018/09/aws-serverless-with-nodejs/</loc><lastmod>2024-08-26T00:38:55&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
       <loc>https://hellofinger.tech/tags/nodejs/</loc><lastmod>2024-08-26T00:38:55&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
       <loc>https://hellofinger.tech/tags/serverless/</loc><lastmod>2024-08-26T00:38:55&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>1</priority></url><url>
