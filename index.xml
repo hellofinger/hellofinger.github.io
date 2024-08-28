@@ -102,6 +102,18 @@ Docker Runc: 1.0.0-rc5 ( runc version &lt; 1.0-rc6 )
 最后，容器和主机可能包含漏洞，当容器在宿主机操作系统内核上运行时，这些漏洞可通过网络、主机和端点被利用。特别是主机内核和容器运行时中的容器逃逸漏洞可能会为攻击媒介打开大门，利用本地权限升级来损害整个基础设施。e.g. CVE-2019-5736]]></description>
 </item>
 <item>
+  <title>AWS实战--配置ECR Replication</title>
+  <link>https://hellofinger.tech/2022/01/aws-setting-ecr-replication/</link>
+  <pubDate>Mon, 17 Jan 2022 10:51:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2022/01/aws-setting-ecr-replication/</guid>
+  <description><![CDATA[Amazon ECR 可以配置跨区域(region)或跨账号(account)复制。配置复制后，推送(Push)到源存储库的镜像会自动复制到目标存储库(ECR)。
+本例以跨区域复制为例：源ECR（ap-southeast-1）==&gt; 目标ECR （us-east-1）
+配置源 ECR登录到 AWS ap-southeast-1 region的ECR页面。选择 Private registry &ndash;&gt; Replication菜单。点击 Edit 按钮. 进入到Replication configuration页面后，点击 Add rule。 选择复制的目标类型，我们选择允许跨区域复制(Cross-region)，点击Next。 选择目标region(us-east-1)。添加镜像名字过滤条件(本例为hello前缀的镜像仓库)。默认为前缀匹配。最后Submit rule。
+配置完成后可以查看 JSON格式的内容
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 { &#34;rules&#34;: [ { &#34;destinations&#34;: [ { &#34;region&#34;: &#34;us-east-1&#34;, &#34;registryId&#34;: &#34;&lt;your-aws-account-id&gt;&#34; } ], &#34;repositoryFilters&#34;: [ { &#34;filter&#34;: &#34;hello&#34;, &#34;filterType&#34;: &#34;PREFIX_MATCH&#34; } ] } ] } 配置目标ECR创建一个和源名字一样的私有镜像仓库(本例为hello-app)]]></description>
+</item>
+<item>
   <title>Go基础--管道Channel</title>
   <link>https://hellofinger.tech/2021/02/go-basic-channel/</link>
   <pubDate>Fri, 26 Feb 2021 17:27:52 &#43;0000</pubDate>
@@ -123,19 +135,6 @@ Docker Runc: 1.0.0-rc5 ( runc version &lt; 1.0-rc6 )
   <description><![CDATA[什么是 ContextContext 是 Go 并发编程中的一种编程模式。 主要指的是 goroutine的上下文，包含 goroutine 的运行状态，环境，现场等信息。 Context 主要用来在goroutine 之间传递上下文信息，包含：取消信号，超时时间，截止时间，k-v等。
 为什么需要 Context在并发程序中，由于超时，取消操作或者一些异常情况，往往需要进行抢占操作或者中断后续的操作。例如：主协程中有多个任务1,2，&hellip;m，主协程对这些任务有超时控制；而其中任务1又有多个子任务1,2，&hellip;n。任务1对这些子任务也有自己的超时控制，那么这些子任务既要感知主协程的取消信号，也需要感知任务1的取消信号。 因此我们需要解决以下问题： 1、上层任务取消后，所有的下层任务都会被取消 2、中间某一层的任务取消后，只会将当前任务的下层任务取消，而不会影响上层的任务以及同级任务。
 Context 的定义1 2 3 4 5 6 7 8 9 10 11 12 13 type Context interface { // 当 context 被取消或者到了 deadline，返回一个被关闭的 channel Done() &lt;-chan struct{} // 在 channel Done 关闭后，返回 context 取消原因 Err() error // 返回 context 是否会被取消以及自动取消时间（即 deadline） Deadline() (deadline time.Time, ok bool) // 获取 key 对应的 value Value(key interface{}) interface{} } Context 是一个接口，定义了4个方法，它们都是幂等的。也就是说连续多次调用同一个方法，得到的结果都是相同的。]]></description>
-</item>
-<item>
-  <title>Go Package--gokit介绍</title>
-  <link>https://hellofinger.tech/2020/08/go-package-gokit/</link>
-  <pubDate>Thu, 20 Aug 2020 15:57:52 &#43;0000</pubDate>
-  <author>Finger</author>
-  <guid>https://hellofinger.tech/2020/08/go-package-gokit/</guid>
-  <description><![CDATA[Go-kit介绍Go kit 是用于在 Go 中构建微服务的编程工具包。用来解决了分布式系统和应用程序体系结构中的常见问题，让使用者可以专注于交付业务价值。
-本身不是一个框架，而是一套微服务工具集，是框架的底层，用它的话来说，如果你希望构建一个框架，而Go-kit 就希望成为你的框架的一部分 可以用Go-kit 做适应自己平台的框架 它自身称为toolkit，并不是framework 它主要是为了满足5大原则，单一职责原则，开放原则，封闭原则，依赖倒置原则，接口隔离原则 三层模型Go-kit最核心是提供了三层模型来解耦业务，这是我们用它的主要目的，模型由上到下分别是 transport -&gt; endpoint -&gt; service
-Transport 可以理解为是个拦截器，负责请求协议的实现和路由转发，请求和响应的序列化和反序列化
-Endpoint 负责功能逻辑转发，这一层会调用Service具体方法
-Service 服务功能具体实现，这样便于测试，只要 mock 传入的依赖参数即可
-参考https://zhuanlan.zhihu.com/p/100226931?utm_source=wechat_session http://gokit.io/examples/stringsvc.html https://github.com/go-kit/kit ]]></description>
 </item>
 </channel>
 </rss>

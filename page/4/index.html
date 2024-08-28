@@ -164,6 +164,28 @@
     </a><a href="mailto:finger.zhou@gmail.com" title="Email"target="_blank" rel="external nofollow noopener noreferrer me"><i class="fa-regular fa-envelope fa-fw" aria-hidden="true"></i>
     </a><a href="/index.xml" title="RSS"target="_blank" rel="external nofollow noopener noreferrer me"><i class="fa-solid fa-rss fa-fw" aria-hidden="true"></i>
     </a></div></div>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2020/02/gitlab-cicd-pipeline-4/">GitLab最佳实践--CI/CD之Pipeline(四)</a>
+  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span>&nbsp;<span class="post-publish" title='2020-02-20 18:11:52'>发布于 <time datetime="2020-02-20">2020-02-20</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/iac/" class="post-category" title="分类 - IAC"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> IAC</a>&ensp;<a href="/categories/cicd/" class="post-category" title="分类 - CICD"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> CICD</a></span></div><div class="content">Only / Exceptonly 和 except用于定义Pipeline Job应该什么时候执行或者不执行。
+only 定义需要执行的分支或标签 except 定义不执行的分支或标签 以下为用法规则：
+only和except如果都存在在一个Pipepline Job声明中，则所需引用(ref)将会被only和except所定义的分支过滤. only和except允许使用正则表达式 only和except允许使用指定仓库地址，但是不forks仓库 only和except 允许使用的特殊关键字：
+值 描述 branches 当目标分支执行push操作时 tags 当目标分支打tag标记时 api 当一个pipeline被另一个pipeline api所触发时 external 当使用了GitLab以外的外部CI服务，如Jenkins pipelines 针对多项目触发器而言，当使用CI_JOB_TOKEN并使用gitlab所提供的api创建多个pipelines的时候 pushes 当pipeline被用户的git push操作所触发的时候 schedules 针对预定好的pipline而言 triggers 用token创建pipline的时候 web 在GitLab页面上pipeline标签页下，点击Run Pileline按钮时 merge_requests 当用户发起合并请求时 chat 对于使用GitLab ChatOps命令时 接下来看一个简单的例子，定义一个仅在feature分支才触发job，而其他分支都不执行。
+1 2 3 4 5 job: script: - echo &#39;Hello, Only / Except&#39; only: - feature 添加test.txt文件后，可以看到job开始执行。
+再来看一个使用正则表达式的例子。
+1 2 3 4 5 job: script: - echo &#39;Test regular expression&#39; only: - /^issue-.</div><div class="post-footer">
+    <a href="/2020/02/gitlab-cicd-pipeline-4/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/gitlab/' class="post-tag">GitLab</a><a href='/tags/git/' class="post-tag">Git</a><a href='/tags/iac/' class="post-tag">IAC</a></div></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2020/02/gitlab-cicd-pipeline-3/">GitLab最佳实践--CI/CD之Pipeline(三)</a>
+  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span>&nbsp;<span class="post-publish" title='2020-02-18 18:11:52'>发布于 <time datetime="2020-02-18">2020-02-18</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/iac/" class="post-category" title="分类 - IAC"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> IAC</a>&ensp;<a href="/categories/cicd/" class="post-category" title="分类 - CICD"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> CICD</a></span></div><div class="content">RulesRules是用于定义Pipeline Job的触发规则。可用的属性有：
+if changes exists 1 2 3 4 5 6 7 job: script: - echo &#39;Hello, Rules&#39; rules: - if: &#39;$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == &#34;dev&#34;&#39; when: always - when: manual 在上述例子中，如果匹配 if 条件内容，则按照 when:always规则执行。即当分支为dev时，只要commit就会触发该任务。否则，按照when:manual规则执行，任务变成手动触发。
+a、满足第一个条件，在dev分支，执行commit。pipeline任务正常执行。
+b、不满足第一个条件，在master分支，执行commit。pipeline任务变成手动模式。
+rules:if语法类似于编程语言的if，else条件语句。 多个if语句为：
+1 2 3 4 5 6 7 rules: - if: Condition 1 when: always - if: Condition 2 when: manual ... - when: on_success 也可以使用逻辑运算符：逻辑与(&amp;&amp;) 和 逻辑或(||) 例如：
+1 2 3 4 5 6 7 8 job: script: &#34;echo Hello, Rules!</div><div class="post-footer">
+    <a href="/2020/02/gitlab-cicd-pipeline-3/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/gitlab/' class="post-tag">GitLab</a><a href='/tags/git/' class="post-tag">Git</a><a href='/tags/iac/' class="post-tag">IAC</a></div></div>
+</article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2020/02/gitlab-cicd-pipeline-2/">GitLab最佳实践--CI/CD之Pipeline(二)</a>
   </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
     Finger</a></span>&nbsp;<span class="post-publish" title='2020-02-17 18:11:52'>发布于 <time datetime="2020-02-17">2020-02-17</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/iac/" class="post-category" title="分类 - IAC"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> IAC</a>&ensp;<a href="/categories/cicd/" class="post-category" title="分类 - CICD"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> CICD</a></span></div><div class="content">1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 stages: - build - cleanup_build - test - deploy - cleanup build_job: stage: build script: - echo &#34;build job&#34; cleanup_build_job: stage: cleanup_build script: - echo &#34;cleanup build job&#34; when: on_failure test_job: stage: test script: - echo &#34;test job&#34; deploy_job: stage: deploy script: - echo &#34;deploy job&#34; when: manual cleanup_job: stage: cleanup script: - echo &#34;cleanup job&#34; when: always 以上为Pipeline Job属性when 的例子。</div><div class="post-footer">
@@ -202,29 +224,6 @@ Step2、新建 .gitlab-ci.yml，增加以下内容：
     Finger</a></span>&nbsp;<span class="post-publish" title='2020-02-09 18:11:52'>发布于 <time datetime="2020-02-09">2020-02-09</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/iac/" class="post-category" title="分类 - IAC"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> IAC</a></span></div><div class="content">一、为什么使用Gitlab杜绝因为程序员的疏忽，导致敏感信息泄露到公网。 开源免费。 满足企业的安全性与私密需求。 部署和维护简单。 可以流水线作业和项目进度协作 二、安装与运行1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 // 拉取镜像 // docker pull gitlab/gitlab-ce // 运行镜像（因为是在本地运行，用的是本机IP地址，正式部署应该使用域名） docker run --detach \ --hostname 192.168.37.129 \ --publish 443:443 --publish 80:80 --publish 2022:22 \ --name gitlab \ --restart always \ --volume /srv/gitlab/config:/etc/gitlab \ --volume /srv/gitlab/logs:/var/log/gitlab \ --volume /srv/gitlab/data:/var/opt/gitlab \ // 修改配置 docker exec -it gitlab /bin/bash // 编辑配置 vim /etc/gitlab/gitlab.</div><div class="post-footer">
     <a href="/2020/02/gitlab-install-and-maintance/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/gitlab/' class="post-tag">GitLab</a><a href='/tags/git/' class="post-tag">Git</a><a href='/tags/iac/' class="post-tag">IAC</a></div></div>
 </article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2020/02/terraform-modules/">Terraform基础--模块基础</a>
-  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span>&nbsp;<span class="post-publish" title='2020-02-03 09:22:52'>发布于 <time datetime="2020-02-03">2020-02-03</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/iac/" class="post-category" title="分类 - IAC"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> IAC</a></span></div><div class="content">什么是Terraform ModuleModule 是 Terraform 为了管理单元化资源而设计的，是子节点，子资源，子架构模板的整合和抽象。在实际复杂的技术架构中，涉及到的资源多种多样，资源与资源之间的关系错综复杂，资源模版的编写，扩展，维护等多个问题的成本都会不断增加。将多种可以复用的资源定义为一个module，通过对 module 的管理简化模板的架构，降低模板管理的复杂度，这就是module的作用。
-除此之外，对开发者和用户而言，只需关心 module 的 input 参数即可，无需关心module中资源的定义，参数，语法等细节问题，抽出更多的时间和精力投入到架构设计和资源关系整合上。
-Module的标准结构官方建议Module标准结构包含：main.tf，variables.tf，outputs.tf，README.md。这些是最小模块的建议文件名，即使它们为空。
-main.tf：资源的定义模板 variables.tf：模板所依赖的参数定义和参数值 outputs.tf：资源的输出值 README.md：模板的简单介绍和使用说明以及该模块可用的许可证 对于一个简单的模块，main.tf 是主要入口点。包含了创建资源的主要内容。对于复杂的模块，可以将资源创建分为多个文件，但是任何嵌套的模块调用都应位于主文件中。variables.tf 并且outputs.tf应分别包含变量和输出的声明。
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 # 简单的模块 $ basic-module/ . ├── README.md ├── main.tf ├── variables.tf ├── outputs.tf # 复杂的模块 $ complete-module/ . ├── README.</div><div class="post-footer">
-    <a href="/2020/02/terraform-modules/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/terraform/' class="post-tag">Terraform</a><a href='/tags/iac/' class="post-tag">IAC</a></div></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2020/02/terraform-variables/">Terraform基础--变量详解</a>
-  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span>&nbsp;<span class="post-publish" title='2020-02-02 04:23:52'>发布于 <time datetime="2020-02-02">2020-02-02</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/iac/" class="post-category" title="分类 - IAC"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> IAC</a></span></div><div class="content">定义变量创建 variables.tf文件，定义变量名为：aws_region。设置默认值：ap-southeast-1。默认值是可选的。如果未设置默认值，则该变量是必需的。
-1 2 3 4 5 # variables.tf variable &#34;aws_region&#34; { default = &#34;ap-southeast-1&#34; } 注意：该文件可以命名为任何名称，因为Terraform加载目录下以*.tf结尾的所有文件。
-使用变量通过使用占位符 ${}和var关键字引用定义的变量名。
-1 2 3 provider &#34;aws&#34; { region = &#34;${var.aws_region}&#34; } 分配变量分配变量有多种方法。以变量的优先级考虑，从高到底的顺序主要的方法如下：
-命令行可以直接在命令行中使用-var标志设置变量 。在该Terraform检查配置的任何命令接受该标志，如apply 和 plan。
-1 2 terraform apply \ -var &#39;aws_region=ap-southeast-1&#39; 注意：以这种方式设置变量不会保存它们，并且在执行命令时必须重复输入它们。
-*.tfvars 文件变量如果想保留变量或者变量是一个固定的值，可以考虑创建后缀为 *.tfvars的文件。文件内容如下：
-1 2 3 # terraform.tfvars aws_region = &#34;ap-southeast-1&#34; 对于当前目录中匹配 terraform.tfvars 或 *.auto.tfvars 存在的所有文件，Terraform会自动加载它们以填充变量。如果文件名为其他名称，则可以-var-file直接使用该标志指定文件。这些文件与Terraform配置文件的语法相同。与Terraform配置文件一样，这些文件也可以是JSON。
-1 terraform apply -var-file=&#34;xxx.tfvars&#34; 注意：不建议将用户名和密码保存到版本控制中，但是可以创建一个本地秘钥变量文件用-var-file加载。
--var-file 可以使用多次，指定不同的变量文件。例如：</div><div class="post-footer">
-    <a href="/2020/02/terraform-variables/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/terraform/' class="post-tag">Terraform</a><a href='/tags/iac/' class="post-tag">IAC</a></div></div>
-</article>
 <ul class="pagination"><li class="page-item">
           <span class="page-link">
             <a href="/">1</a>
@@ -253,7 +252,7 @@ main.tf：资源的定义模板 variables.tf：模板所依赖的参数定义和
           <span class="page-link" aria-hidden="true">&hellip;</span>
         </li><li class="page-item">
           <span class="page-link">
-            <a href="/page/11/">11</a>
+            <a href="/page/12/">12</a>
           </span>
         </li></ul></div></main><footer class="footer">
     <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>

@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>AWS实战--Lambda&#43;SNS&#43;S3实现自动生成统计图表工具 - Finger&#39;s Blog</title><meta name="author" content="Finger">
+<meta name="author-link" content="https://github.com/hellofinger">
+<meta name="description" content="需求概述通过一个种标准的数据结构。生成相应的数据统计图(线形图，柱状图，饼状图等)。
+实现方案基于AWS服务，将S3的存储桶作为事件触发源，用户只要上传数据到该存储桶，就广播通知，订阅该通知的消息队列则触发到具体的Lambda函数。Lambda函数完成绘图逻辑，并生成统计图上传到S3的存储桶。
+具体设计图如下： 具体流程Step1、创建一个S3存储桶，选择 Properties -&gt;Advanced settings -&gt; Events。
+然后，Add notification。我们选择 Events为PUT。指定前缀和后缀。选择发送通知到SNS Topic。
+Step2、在创建Events之前，我们需要先创建一个SNS Topic。并给S3存储桶授予访问权限。否则无法保存Events。
+Step3、新建一个SQS，并给上一步创建的SNS增加权限。这样我们就可以在SNS上进行订阅。 Step4、新建Lambda。将其添加到SQS的Triggers。 到这里，我们的整个流程已经基本完成。由S3监听用户上传的数据文件，然后由SNS通知到SQS，SQS触发到Lambda。最后就是具体编码实现了。
+编码实现定义数据结构：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 { &#34;title&#34;: { &#34;name&#34;: &#34;&#34;, // 图例名称 &#34;loc&#34;: &#34;top, bottom, left, right&#34; // 显示位置 }, &#34;name&#34;: &#34;图表保存到S3的名称。&#34;, &#34;size&#34;: [6, 7], // 图表的大小 &#34;chart_kind&#34;: &#34;pie, line, bar." /><meta name="keywords" content='Lambda, AWS' />
+  <meta itemprop="name" content="AWS实战--Lambda&#43;SNS&#43;S3实现自动生成统计图表工具">
+  <meta itemprop="description" content="需求概述通过一个种标准的数据结构。生成相应的数据统计图(线形图，柱状图，饼状图等)。
+实现方案基于AWS服务，将S3的存储桶作为事件触发源，用户只要上传数据到该存储桶，就广播通知，订阅该通知的消息队列则触发到具体的Lambda函数。Lambda函数完成绘图逻辑，并生成统计图上传到S3的存储桶。
+具体设计图如下： 具体流程Step1、创建一个S3存储桶，选择 Properties -&gt;Advanced settings -&gt; Events。
+然后，Add notification。我们选择 Events为PUT。指定前缀和后缀。选择发送通知到SNS Topic。
+Step2、在创建Events之前，我们需要先创建一个SNS Topic。并给S3存储桶授予访问权限。否则无法保存Events。
+Step3、新建一个SQS，并给上一步创建的SNS增加权限。这样我们就可以在SNS上进行订阅。 Step4、新建Lambda。将其添加到SQS的Triggers。 到这里，我们的整个流程已经基本完成。由S3监听用户上传的数据文件，然后由SNS通知到SQS，SQS触发到Lambda。最后就是具体编码实现了。
+编码实现定义数据结构：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 { &#34;title&#34;: { &#34;name&#34;: &#34;&#34;, // 图例名称 &#34;loc&#34;: &#34;top, bottom, left, right&#34; // 显示位置 }, &#34;name&#34;: &#34;图表保存到S3的名称。&#34;, &#34;size&#34;: [6, 7], // 图表的大小 &#34;chart_kind&#34;: &#34;pie, line, bar.">
+  <meta itemprop="datePublished" content="2020-02-23T22:37:00+00:00">
+  <meta itemprop="dateModified" content="2020-02-23T22:37:00+00:00">
+  <meta itemprop="wordCount" content="653">
+  <meta itemprop="keywords" content="Lambda,AWS"><meta property="og:url" content="https://hellofinger.tech/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/">
+  <meta property="og:site_name" content="Finger&#39;s Blog">
+  <meta property="og:title" content="AWS实战--Lambda&#43;SNS&#43;S3实现自动生成统计图表工具">
+  <meta property="og:description" content="需求概述通过一个种标准的数据结构。生成相应的数据统计图(线形图，柱状图，饼状图等)。
+实现方案基于AWS服务，将S3的存储桶作为事件触发源，用户只要上传数据到该存储桶，就广播通知，订阅该通知的消息队列则触发到具体的Lambda函数。Lambda函数完成绘图逻辑，并生成统计图上传到S3的存储桶。
+具体设计图如下： 具体流程Step1、创建一个S3存储桶，选择 Properties -&gt;Advanced settings -&gt; Events。
+然后，Add notification。我们选择 Events为PUT。指定前缀和后缀。选择发送通知到SNS Topic。
+Step2、在创建Events之前，我们需要先创建一个SNS Topic。并给S3存储桶授予访问权限。否则无法保存Events。
+Step3、新建一个SQS，并给上一步创建的SNS增加权限。这样我们就可以在SNS上进行订阅。 Step4、新建Lambda。将其添加到SQS的Triggers。 到这里，我们的整个流程已经基本完成。由S3监听用户上传的数据文件，然后由SNS通知到SQS，SQS触发到Lambda。最后就是具体编码实现了。
+编码实现定义数据结构：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 { &#34;title&#34;: { &#34;name&#34;: &#34;&#34;, // 图例名称 &#34;loc&#34;: &#34;top, bottom, left, right&#34; // 显示位置 }, &#34;name&#34;: &#34;图表保存到S3的名称。&#34;, &#34;size&#34;: [6, 7], // 图表的大小 &#34;chart_kind&#34;: &#34;pie, line, bar.">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2020-02-23T22:37:00+00:00">
+    <meta property="article:modified_time" content="2020-02-23T22:37:00+00:00">
+    <meta property="article:tag" content="Lambda">
+    <meta property="article:tag" content="AWS">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="AWS实战--Lambda&#43;SNS&#43;S3实现自动生成统计图表工具">
+  <meta name="twitter:description" content="需求概述通过一个种标准的数据结构。生成相应的数据统计图(线形图，柱状图，饼状图等)。
+实现方案基于AWS服务，将S3的存储桶作为事件触发源，用户只要上传数据到该存储桶，就广播通知，订阅该通知的消息队列则触发到具体的Lambda函数。Lambda函数完成绘图逻辑，并生成统计图上传到S3的存储桶。
+具体设计图如下： 具体流程Step1、创建一个S3存储桶，选择 Properties -&gt;Advanced settings -&gt; Events。
+然后，Add notification。我们选择 Events为PUT。指定前缀和后缀。选择发送通知到SNS Topic。
+Step2、在创建Events之前，我们需要先创建一个SNS Topic。并给S3存储桶授予访问权限。否则无法保存Events。
+Step3、新建一个SQS，并给上一步创建的SNS增加权限。这样我们就可以在SNS上进行订阅。 Step4、新建Lambda。将其添加到SQS的Triggers。 到这里，我们的整个流程已经基本完成。由S3监听用户上传的数据文件，然后由SNS通知到SQS，SQS触发到Lambda。最后就是具体编码实现了。
+编码实现定义数据结构：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 { &#34;title&#34;: { &#34;name&#34;: &#34;&#34;, // 图例名称 &#34;loc&#34;: &#34;top, bottom, left, right&#34; // 显示位置 }, &#34;name&#34;: &#34;图表保存到S3的名称。&#34;, &#34;size&#34;: [6, 7], // 图表的大小 &#34;chart_kind&#34;: &#34;pie, line, bar.">
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://hellofinger.tech/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/" /><link rel="prev" href="https://hellofinger.tech/2020/02/gitlab-server-using-git-secrets/" /><link rel="next" href="https://hellofinger.tech/2020/02/gitlab-code-header-include-copyright/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "AWS实战--Lambda+SNS+S3实现自动生成统计图表工具",
+    "inLanguage": "zh-CN",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/hellofinger.tech\/2020\/02\/aws-lambda-sns-s3-auto-gen-chart-tool\/"
+    },"genre": "posts","keywords": "Lambda, AWS","wordcount":  653 ,
+    "url": "https:\/\/hellofinger.tech\/2020\/02\/aws-lambda-sns-s3-auto-gen-chart-tool\/","datePublished": "2020-02-23T22:37:00+00:00","dateModified": "2020-02-23T22:37:00+00:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Finger"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper" data-github-corner="right">
+    <div class="header-title">
+      <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/about/"
+                
+                
+              ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item delimiter"></li><li class="menu-item search" id="search-desktop">
+            <input type="text" placeholder="搜索文章标题或内容……" id="search-input-desktop">
+            <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+              <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+            </a>
+            <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+              <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+            </a>
+            <span class="search-button search-loading" id="search-loading-desktop">
+              <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+            </span>
+          </li><li class="menu-item theme-switch" title="切换主题">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li class="search-wrapper">
+            <div class="search mobile" id="search-mobile">
+              <input type="text" placeholder="搜索文章标题或内容……" id="search-input-mobile">
+              <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+              </a>
+              <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+              </a>
+              <span class="search-button search-loading" id="search-loading-mobile">
+                <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+              </span>
+            </div>
+            <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+              取消
+            </a>
+          </li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/about/"
+                  
+                  
+                ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="切换主题"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+  </div>
+  <div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+  </div><nav aria-label="breadcrumb" class="breadcrumb-container">
+    <ol class="breadcrumb"><li class="breadcrumb-item"><a href="/posts/" title="Posts">文章</a></li><li class="breadcrumb-item active" aria-current="page">AWS实战--Lambda&#43;SNS&#43;S3实现自动生成统计图表工具</li>
+    </ol>
+  </nav><main class="container"><aside class="aside-collection animate__animated animate__fadeIn animate__faster" aria-label="合集"></aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>AWS实战--Lambda&#43;SNS&#43;S3实现自动生成统计图表工具</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/aws/" class="post-category" title="分类 - AWS"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> AWS</a></span></div><div class="post-meta-line"><span title="发布于 2020-02-23 22:37:00"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2020-02-23">2020-02-23</time></span>&nbsp;<span title="653 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 700 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 4 分钟</span>&nbsp;<span id="busuanzi_container_page_pv" class="busuanzi_visitors comment-visitors" data-flag-title="AWS实战--Lambda&#43;SNS&#43;S3实现自动生成统计图表工具"><i class="fa-regular fa-eye fa-fw me-1" aria-hidden="true"></i><span id="busuanzi_value_page_pv">-</span>&nbsp;次阅读
+          </span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>目录</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#需求概述">需求概述</a></li>
+    <li><a href="#实现方案">实现方案</a></li>
+    <li><a href="#具体流程">具体流程</a></li>
+    <li><a href="#编码实现">编码实现</a></li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><div class="details admonition warning open">
+      <div class="details-summary admonition-title">
+        <i class="icon fa-solid fa-exclamation-triangle fa-fw" aria-hidden="true"></i>警告<i class="details-icon fa-solid fa-angle-right fa-fw" aria-hidden="true"></i>
+      </div>
+      <div class="details-content">
+        <div class="admonition-content">本文最后更新于 2020-02-23，文中内容可能已过时。</div>
+      </div>
+    </div><h2 id="需求概述" class="heading-element"><span>需求概述</span>
+  <a href="#%e9%9c%80%e6%b1%82%e6%a6%82%e8%bf%b0" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>通过一个种标准的数据结构。生成相应的数据统计图(线形图，柱状图，饼状图等)。</p>
+<h2 id="实现方案" class="heading-element"><span>实现方案</span>
+  <a href="#%e5%ae%9e%e7%8e%b0%e6%96%b9%e6%a1%88" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>基于AWS服务，将S3的存储桶作为事件触发源，用户只要上传数据到该存储桶，就广播通知，订阅该通知的消息队列则触发到具体的Lambda函数。Lambda函数完成绘图逻辑，并生成统计图上传到S3的存储桶。</p>
+<p>具体设计图如下：
+<img loading="lazy" src="/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/aws-chart-tool-flow.png" alt="/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/aws-chart-tool-flow.png" srcset="/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/aws-chart-tool-flow.png?size=small, /2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/aws-chart-tool-flow.png?size=medium 1.5x, /2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/aws-chart-tool-flow.png?size=large 2x" data-title="/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/aws-chart-tool-flow.png" style="--width: 921px;--aspect-ratio: 921 / 482;background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<h2 id="具体流程" class="heading-element"><span>具体流程</span>
+  <a href="#%e5%85%b7%e4%bd%93%e6%b5%81%e7%a8%8b" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>Step1、创建一个S3存储桶，选择 Properties -&gt;Advanced settings -&gt; Events。</p>
+<p><img loading="lazy" src="/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/aws-s3-event.png" alt="aws-s3-event" srcset="/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/aws-s3-event.png?size=small, /2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/aws-s3-event.png?size=medium 1.5x, /2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/aws-s3-event.png?size=large 2x" data-title="aws-s3-event" style="--width: 1324px;--aspect-ratio: 1324 / 807;background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p>然后，Add notification。我们选择 Events为PUT。指定前缀和后缀。选择发送通知到SNS Topic。</p>
+<p>Step2、在创建Events之前，我们需要先创建一个SNS Topic。并给S3存储桶授予访问权限。否则无法保存Events。</p>
+<p><img loading="lazy" src="/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/aws-sns-access-policy.png" alt="aws-sns-access-policy" srcset="/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/aws-sns-access-policy.png?size=small, /2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/aws-sns-access-policy.png?size=medium 1.5x, /2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/aws-sns-access-policy.png?size=large 2x" data-title="aws-sns-access-policy" style="--width: 1020px;--aspect-ratio: 1020 / 618;background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>
+<img loading="lazy" src="/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/s3-event-permissions-error.png" alt="s3-event-permissions-error" srcset="/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/s3-event-permissions-error.png?size=small, /2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/s3-event-permissions-error.png?size=medium 1.5x, /2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/s3-event-permissions-error.png?size=large 2x" data-title="s3-event-permissions-error" style="--width: 704px;--aspect-ratio: 704 / 908;background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p>Step3、新建一个SQS，并给上一步创建的SNS增加权限。这样我们就可以在SNS上进行订阅。
+<img loading="lazy" src="/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/sqs-permissions.png" alt="sqs-permissions" srcset="/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/sqs-permissions.png?size=small, /2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/sqs-permissions.png?size=medium 1.5x, /2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/sqs-permissions.png?size=large 2x" data-title="sqs-permissions" style="--width: 1015px;--aspect-ratio: 1015 / 220;background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p><img loading="lazy" src="/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/sns-subscriptions.png" alt="/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/sns-subscriptions.png" srcset="/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/sns-subscriptions.png?size=small, /2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/sns-subscriptions.png?size=medium 1.5x, /2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/sns-subscriptions.png?size=large 2x" data-title="/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/sns-subscriptions.png" style="--width: 1528px;--aspect-ratio: 1528 / 795;background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p>Step4、新建Lambda。将其添加到SQS的Triggers。
+<img loading="lazy" src="/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/sqs-lambda-trigger.png" alt="sqs-lambda-trigger" srcset="/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/sqs-lambda-trigger.png?size=small, /2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/sqs-lambda-trigger.png?size=medium 1.5x, /2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/sqs-lambda-trigger.png?size=large 2x" data-title="sqs-lambda-trigger" style="--width: 958px;--aspect-ratio: 958 / 248;background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p>到这里，我们的整个流程已经基本完成。由S3监听用户上传的数据文件，然后由SNS通知到SQS，SQS触发到Lambda。最后就是具体编码实现了。</p>
+<h2 id="编码实现" class="heading-element"><span>编码实现</span>
+  <a href="#%e7%bc%96%e7%a0%81%e5%ae%9e%e7%8e%b0" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>定义数据结构：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;title&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;&#34;</span><span class="p">,</span> <span class="c1">// 图例名称
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nt">&#34;loc&#34;</span><span class="p">:</span> <span class="s2">&#34;top, bottom, left, right&#34;</span> <span class="c1">// 显示位置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;图表保存到S3的名称。&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;size&#34;</span><span class="p">:</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> <span class="c1">// 图表的大小
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nt">&#34;chart_kind&#34;</span><span class="p">:</span> <span class="s2">&#34;pie, line, bar...&#34;</span><span class="p">,</span> <span class="c1">// 图表的类型
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nt">&#34;data&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;colors&#34;</span><span class="p">:</span> <span class="p">[],</span> 
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;labels&#34;</span><span class="p">:</span> <span class="p">[],</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;values&#34;</span><span class="p">:</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">  <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;config&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	 <span class="c1">// 特殊的配置信息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;s3&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;bucket&#34;</span><span class="p">:</span> <span class="s2">&#34;需要存放的S3存储桶&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;key&#34;</span><span class="p">:</span> <span class="s2">&#34;存储的Key&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;acl&#34;</span><span class="p">:</span> <span class="s2">&#34;存储的访问权限&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>关于Lambda的实现，我们可以采用Lambda支持的任意编程语言。本例使用Python编程。
+由于Lambda自带运行时环境不包含matplotlib，numpy等功能包。我们可以将matplotlib等包做一个lambda layer。然后lambda引用该lambda layer就可以引用到matplotlib包。Lambda Layer的制作请查看我的同事Boyce的分享。</p>
+<p><img loading="lazy" src="/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/lambda-layer.png" alt="lambda-layer" srcset="/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/lambda-layer.png?size=small, /2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/lambda-layer.png?size=medium 1.5x, /2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/lambda-layer.png?size=large 2x" data-title="lambda-layer" style="--width: 1588px;--aspect-ratio: 1588 / 616;background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># lambda_function.py </span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">json</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">boto3</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">io</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">charts.bar</span> <span class="kn">import</span> <span class="n">Bar</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">charts.line</span> <span class="kn">import</span> <span class="n">Line</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">charts.pie</span> <span class="kn">import</span> <span class="n">Pie</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">lambda_handler</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">record</span> <span class="o">=</span> <span class="n">event</span><span class="p">[</span><span class="s1">&#39;Records&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">body</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">message</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">body</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&#34;Message&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">s3</span> <span class="o">=</span> <span class="n">message</span><span class="p">[</span><span class="s1">&#39;Records&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;s3&#39;</span><span class="p">]</span>   
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">    <span class="n">bucket_name</span> <span class="o">=</span> <span class="n">s3</span><span class="p">[</span><span class="s1">&#39;bucket&#39;</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">object_key</span> <span class="o">=</span> <span class="n">s3</span><span class="p">[</span><span class="s1">&#39;object&#39;</span><span class="p">][</span><span class="s1">&#39;key&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="n">bucket_name</span><span class="p">,</span> <span class="n">object_key</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">object_content</span> <span class="o">=</span> <span class="n">get_aws_s3_object</span><span class="p">(</span><span class="n">bucket_name</span><span class="p">,</span> <span class="n">object_key</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">object_content</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">chart_kind</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;chart_kind&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="n">chart</span> <span class="o">=</span> <span class="kc">None</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="n">chart_kind</span> <span class="o">==</span> <span class="s1">&#39;pie&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">chart</span> <span class="o">=</span> <span class="n">Pie</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">elif</span> <span class="n">chart_kind</span> <span class="o">==</span> <span class="s1">&#39;line&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">chart</span> <span class="o">=</span> <span class="n">Line</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">elif</span> <span class="n">chart_kind</span> <span class="o">==</span> <span class="s1">&#39;bar&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">chart</span> <span class="o">=</span> <span class="n">Bar</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">else</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Invalid chart kind.&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span>
+</span></span><span class="line"><span class="cl">    <span class="n">img_data</span> <span class="o">=</span> <span class="n">chart</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">upload_s3</span><span class="p">(</span><span class="n">bucket_name</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">img_data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">get_aws_s3_object</span><span class="p">(</span><span class="n">bucket_name</span><span class="p">,</span> <span class="n">object_key</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">s3</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">client</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">try</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">response</span> <span class="o">=</span> <span class="n">s3</span><span class="o">.</span><span class="n">get_object</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="n">bucket_name</span><span class="p">,</span> <span class="n">Key</span><span class="o">=</span><span class="n">object_key</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">except</span> <span class="n">ClientError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># AllAccessDisabled error == bucket or object not found</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Get AWS S3 object (</span><span class="si">{}</span><span class="s1">) error - </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">object_key</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="kc">None</span>
+</span></span><span class="line"><span class="cl">    <span class="n">stream</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;Body&#39;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="ow">not</span> <span class="n">stream</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;AWS S3 Stream is null - </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">object_key</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="kc">None</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">stream</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">upload_s3</span><span class="p">(</span><span class="n">bucket_name</span><span class="p">,</span> <span class="n">img_name</span><span class="p">,</span> <span class="n">img_data</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">year</span> <span class="o">=</span> <span class="n">now</span><span class="o">.</span><span class="n">year</span>
+</span></span><span class="line"><span class="cl">    <span class="n">month</span> <span class="o">=</span> <span class="n">now</span><span class="o">.</span><span class="n">month</span> <span class="k">if</span> <span class="n">now</span><span class="o">.</span><span class="n">month</span> <span class="o">&gt;</span> <span class="mi">9</span> <span class="k">else</span> <span class="s1">&#39;0</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">now</span><span class="o">.</span><span class="n">month</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">day</span> <span class="o">=</span> <span class="n">now</span><span class="o">.</span><span class="n">day</span> <span class="k">if</span> <span class="n">now</span><span class="o">.</span><span class="n">day</span> <span class="o">&gt;</span> <span class="mi">9</span> <span class="k">else</span> <span class="s1">&#39;0</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">now</span><span class="o">.</span><span class="n">day</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">date_string</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2">&#34;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">object_key</span> <span class="o">=</span> <span class="s1">&#39;files/charts/test/</span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">date_string</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">img_name</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="n">object_key</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">try</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">s3</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">resource</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">bucket</span> <span class="o">=</span> <span class="n">s3</span><span class="o">.</span><span class="n">Bucket</span><span class="p">(</span><span class="n">bucket_name</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">bucket</span><span class="o">.</span><span class="n">put_object</span><span class="p">(</span><span class="n">Body</span><span class="o">=</span><span class="n">img_data</span><span class="p">,</span> <span class="n">ContentType</span><span class="o">=</span><span class="s1">&#39;image/png&#39;</span><span class="p">,</span> <span class="n">Key</span><span class="o">=</span><span class="n">object_key</span><span class="p">,</span> <span class="n">ACL</span><span class="o">=</span><span class="s1">&#39;public-read&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">print</span><span class="p">(</span><span class="s2">&#34;The file was not found&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">print</span><span class="p">(</span><span class="s2">&#34;Upload s3 failed - </span><span class="si">{}</span><span class="s2">&#34;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="ch">#!usr/bin/env python3</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># -*- coding:utf-8 _*-</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">io</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Pie</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">_title</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;config&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">_size</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;size&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">_init_plots</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">_init_title</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">_init_title</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_title</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">_init_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">props</span> <span class="o">=</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">props</span><span class="p">[</span><span class="s1">&#39;figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="o">**</span><span class="n">props</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span> <span class="o">=</span> <span class="n">ax</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;labels&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;values&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">pie</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">autopct</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%1.1f%%</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">shadow</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">startangle</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">_ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="n">image_data</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">image_data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">image_data</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">image_data</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// pie-chart-simple-demo.json
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;pie-chart-simple-demo&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;title&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;A pie chart demo&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;loc&#34;</span><span class="p">:</span> <span class="s2">&#34;top&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;chart_kind&#34;</span><span class="p">:</span> <span class="s2">&#34;pie&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;data&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;labels&#34;</span><span class="p">:</span> <span class="p">[</span><span class="err">&#39;Frogs&#39;</span><span class="p">,</span> <span class="err">&#39;Hogs&#39;</span><span class="p">,</span> <span class="err">&#39;Dogs&#39;</span><span class="p">,</span> <span class="err">&#39;Logs&#39;</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;values&#34;</span><span class="p">:</span> <span class="p">[</span><span class="mi">15</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">10</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// bar-chart-simple-demo.json
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;bar-chart-simple-demo&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;title&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;A bar chart demo&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;loc&#34;</span><span class="p">:</span> <span class="s2">&#34;top&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">},</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;chart_kind&#34;</span><span class="p">:</span> <span class="s2">&#34;bar&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;data&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;labels&#34;</span><span class="p">:</span> <span class="p">[</span><span class="err">&#39;Frogs&#39;</span><span class="p">,</span> <span class="err">&#39;Hogs&#39;</span><span class="p">,</span> <span class="err">&#39;Dogs&#39;</span><span class="p">,</span> <span class="err">&#39;Logs&#39;</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;values&#34;</span><span class="p">:</span> <span class="p">[</span><span class="mi">15</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">10</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// line-chart-simple-demo.json
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;line-chart-simple-demo&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;title&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;A line chart demo&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;loc&#34;</span><span class="p">:</span> <span class="s2">&#34;top&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">},</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;chart_kind&#34;</span><span class="p">:</span> <span class="s2">&#34;line&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;data&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;labels&#34;</span><span class="p">:</span> <span class="p">[</span><span class="err">&#39;x&#39;</span><span class="p">,</span> <span class="err">&#39;y&#39;</span><span class="p">,</span> <span class="err">&#39;z&#39;</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;values&#34;</span><span class="p">:</span> <span class="p">[[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">17</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">18</span><span class="p">]]</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>最后，我们上传JSON文件进行测试。</p>
+<p><img loading="lazy" src="/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/pie-chart-simple-demo.png" alt="pie-chart-simple-demo" srcset="/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/pie-chart-simple-demo.png?size=small, /2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/pie-chart-simple-demo.png?size=medium 1.5x, /2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/pie-chart-simple-demo.png?size=large 2x" data-title="pie-chart-simple-demo" style="--width: 1336px;--aspect-ratio: 1336 / 1134;background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p><img loading="lazy" src="/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/bar-chart-simple-demo.png" alt="bar-chart-simple-demo" srcset="/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/bar-chart-simple-demo.png?size=small, /2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/bar-chart-simple-demo.png?size=medium 1.5x, /2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/bar-chart-simple-demo.png?size=large 2x" data-title="bar-chart-simple-demo" style="--width: 1351px;--aspect-ratio: 1351 / 1044;background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p><img loading="lazy" src="/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/line-chart-simple-demo.png" alt="line-chart-simple-demo" srcset="/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/line-chart-simple-demo.png?size=small, /2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/line-chart-simple-demo.png?size=medium 1.5x, /2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/imgs/line-chart-simple-demo.png?size=large 2x" data-title="line-chart-simple-demo" style="--width: 1481px;--aspect-ratio: 1481 / 1084;background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+</div><hr class="awesome-hr" />
+    <h2 id="see-also">相关内容</h2>
+    <ul><li>
+          <a href="/2020/02/gitlab-code-header-include-copyright/" title="GitLab最佳实践--强制代码包含版本信息">GitLab最佳实践--强制代码包含版本信息</a></li><li>
+          <a href="/2022/01/aws-setting-ecr-replication/" title="AWS实战--配置ECR Replication">AWS实战--配置ECR Replication</a></li><li>
+          <a href="/2018/09/aws-serverless-with-nodejs/" title="AWS Serverless - NodeJs实践">AWS Serverless - NodeJs实践</a></li><li>
+          <a href="/2020/08/go-package-gokit/" title="Go Package--Gokit介绍">Go Package--Gokit介绍</a></li><li>
+          <a href="/2020/07/go-basic-three-dot/" title="Go基础--三个点">Go基础--三个点</a></li></ul><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="更新于 2020-02-23 22:37:00">更新于 2020-02-23&nbsp;</span>
+      </div><div class="post-info-license">
+            <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
+          </div></div><div class="post-info-line">
+        <div class="post-info-md"></div>
+        <div class="post-info-share">
+          <span><a href="javascript:void(0);" title="分享到 X" data-sharer="twitter" data-url="https://hellofinger.tech/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/" data-title="AWS实战--Lambda&#43;SNS&#43;S3实现自动生成统计图表工具" data-hashtags="Lambda,AWS"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://hellofinger.tech/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/" data-hashtag="Lambda"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://hellofinger.tech/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/" data-title="AWS实战--Lambda&#43;SNS&#43;S3实现自动生成统计图表工具"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 百度" data-sharer="baidu" data-url="https://hellofinger.tech/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/" data-title="AWS实战--Lambda&#43;SNS&#43;S3实现自动生成统计图表工具"><i data-svg-src="/lib/simple-icons/icons/baidu.min.svg" aria-hidden="true"></i></a>
+  </span>
+        </div>
+      </div></div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href="/tags/lambda/" class="post-tag" title="标签 - Lambda">Lambda</a><a href="/tags/aws/" class="post-tag" title="标签 - AWS">AWS</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+    </section>
+  </div><div class="post-nav"><a href="/2020/02/gitlab-server-using-git-secrets/" class="post-nav-item" rel="prev" title="GitLab最佳实践--服务器端使用git-Secrets"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>GitLab最佳实践--服务器端使用git-Secrets</a>
+      <a href="/2020/02/gitlab-code-header-include-copyright/" class="post-nav-item" rel="next" title="GitLab最佳实践--强制代码包含版本信息">GitLab最佳实践--强制代码包含版本信息<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+<div class="post-reward">
+    <div class="comment">Buy me a coffee</div>
+    <input type="checkbox" class="reward-input" name="reward" id="fi-reward" hidden />
+    <label class="reward-button" for="fi-reward"><i class="fa-solid fa-qrcode fa-fw" aria-hidden="true"></i>赞赏</label>
+    <div class="reward-ways" data-mode="static"><div><img loading="lazy" src="/images/alipay.jpg" alt="Finger 支付宝" data-title="Finger 支付宝" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/><span>支付宝</span>
+          </div><div><img loading="lazy" src="/images/wechatpay.jpg" alt="Finger 微信" data-title="Finger 微信" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/><span>微信</span>
+          </div></div>
+  </div><div id="comments"></div></article>
+
+  <aside class="toc" id="toc-auto" aria-label="目录"><h2 class="toc-title">目录&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2017 - 2024</span><span class="author" itemprop="copyrightHolder">
+              <a href="https://github.com/hellofinger"target="_blank" rel="external nofollow noopener noreferrer">Finger</a></span><span class="license footer-divider"><a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"></div><div class="footer-line visitor">
+          <span id="busuanzi_container_site_uv" title='总访客数'><i class="fa-regular fa-user fa-fw me-1" aria-hidden="true"></i><span id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span></span><span id="busuanzi_container_site_pv" class="footer-divider" title='总访问量'><i class="fa-regular fa-eye fa-fw me-1" aria-hidden="true"></i><span id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span></span>
+        </div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="回到顶部"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric">0%</span>
+        </div><div class="fixed-button view-comments d-none" role="button" aria-label="查看评论"><i class="fa-solid fa-comment fa-fw" aria-hidden="true"></i></div></div><a href="https://github.com/hellofinger" title="View source on GitHub"target="_blank" rel="external nofollow" class="github-corner right d-none-mobile"><svg viewBox="0 0 250 250" aria-hidden="true" width="56" height="56"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><div id="mask"></div><div class="reading-progress-bar" style="left: 0;top: 0;"></div><noscript>
+    <div class="noscript-warning">该网站在启用 JavaScript 的情况下效果最佳。</div>
+  </noscript>
+</div><link rel="preload" href="/lib/katex/katex.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/katex/katex.min.css"></noscript><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script src="/lib/autocomplete/autocomplete.min.js" defer></script><script src="/lib/fuse/fuse.min.js" defer></script><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/copy-tex.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="https://vercount.one/js" async defer></script><script src="/js/flyfish.js" defer></script><script>window.config={"code":{"copyTitle":"复制到剪贴板","editLockTitle":"锁定可编辑代码块","editUnLockTitle":"解锁可编辑代码块","editable":true,"maxShownLines":10},"comment":{"enable":true,"expired":false},"cookieconsent":{"content":{"dismiss":"同意","link":"了解更多","message":"本网站使用 Cookies 来改善您的浏览体验。"},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"distance":100,"findAllMatches":false,"highlightTag":"em","ignoreFieldNorm":false,"ignoreLocation":false,"isCaseSensitive":false,"location":0,"maxResultLength":10,"minMatchCharLength":2,"noResultsFound":"没有找到结果","snippetLength":30,"threshold":0.3,"useExtendedSearch":false},"version":"v0.3.10-c936e541"};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

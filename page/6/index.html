@@ -164,6 +164,34 @@
     </a><a href="mailto:finger.zhou@gmail.com" title="Email"target="_blank" rel="external nofollow noopener noreferrer me"><i class="fa-regular fa-envelope fa-fw" aria-hidden="true"></i>
     </a><a href="/index.xml" title="RSS"target="_blank" rel="external nofollow noopener noreferrer me"><i class="fa-solid fa-rss fa-fw" aria-hidden="true"></i>
     </a></div></div>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2019/07/about-the-cache/">关于缓存</a>
+  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span>&nbsp;<span class="post-publish" title='2019-07-13 18:23:00'>发布于 <time datetime="2019-07-13">2019-07-13</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/storage/" class="post-category" title="分类 - Storage"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a></span></div><div class="content">缓存模式（Cache Aside Pattern）什么是&quot;Cache Aside Pattern&quot;?答： 旁路缓存方案的经验实践，这个实践又分读实践，写实践。
+对于读请求先读cache，再读db 如果，cache hit，则直接返回数据 如果，cache miss，则访问db，并将数据set回缓存 如上图：
+先从cache中尝试get数据，结果miss了 再从db中读取数据，从库，读写分离 最后把数据set回cache，方便下次读命中 对于写请求淘汰缓存，而不是更新缓存 先操作数据库，再淘汰缓存 如上图：
+第一步要操作数据库，第二步操作缓存 缓存，采用delete淘汰，而不是set更新 Cache Aside Pattern为什么建议淘汰缓存，而不是更新缓存？答： 如果更新缓存，在并发写时，可能出现数据不一致。
+如上图所示，如果采用set缓存。
+在1和2两个并发写发生时，由于无法保证时序，此时不管先操作缓存还是先操作数据库，都可能出现：
+请求1先操作数据库，请求2后操作数据库 请求2先set了缓存，请求1后set了缓存 导致，数据库与缓存之间的数据不一致。
+所以，Cache Aside Pattern建议，delete缓存，而不是set缓存。
+Cache Aside Pattern为什么建议先操作数据库，再操作缓存？答： 如果先操作缓存，在读写并发时，可能出现数据不一致。
+如上图所示，如果先操作缓存。
+在1和2并发读写发生时，由于无法保证时序，可能出现：
+写请求淘汰了缓存 写请求操作了数据库（主从同步没有完成） 读请求读了缓存（cache miss） 读请求读了从库（读了一个旧数据） 读请求set回缓存（set了一个旧数据） 数据库主从同步完成 导致，数据库与缓存的数据不一致。 所以，Cache Aside Pattern建议，先操作数据库，再操作缓存。
+Cache Aside Pattern方案存在什么问题？答： 如果先操作数据库，再淘汰缓存，在原子性被破坏时：
+修改数据库成功了 淘汰缓存失败了 导致，数据库与缓存的数据不一致。
+原文来自58沈剑: https://cloud.tencent.com/info/5e258c6f840423de68eda937db3e1c90.html
+缓存问题用一张脑图总结如下：</div><div class="post-footer">
+    <a href="/2019/07/about-the-cache/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/cache/' class="post-tag">Cache</a></div></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2019/07/python-notes-1/">Python 杂记(一)</a>
+  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span>&nbsp;<span class="post-publish" title='2019-07-11 07:31:00'>发布于 <time datetime="2019-07-11">2019-07-11</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/python/" class="post-category" title="分类 - Python"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Python</a></span></div><div class="content">使用 slots__slots__变量是用来限制class能添加的属性
+例如
+1 2 3 &gt;&gt;&gt; class Student(object): ... __slots__ = (&#39;name&#39;, &#39;age&#39;) # 用tuple定义允许绑定的属性名称 ... 1 2 3 4 5 6 7 &gt;&gt;&gt; s = Student() # 创建新的实例 &gt;&gt;&gt; s.name = &#39;Michael&#39; # 绑定属性&#39;name&#39; &gt;&gt;&gt; s.age = 25 # 绑定属性&#39;age&#39; &gt;&gt;&gt; s.score = 99 # 绑定属性&#39;score&#39; Traceback (most recent call last): File &#34;&lt;stdin&gt;&#34;, line 1, in &lt;module&gt; AttributeError: &#39;Student&#39; object has no attribute &#39;score&#39; 从上面代码示例我们可以看到由于score没有被放到__slots__中，所以不能绑定score属性，试图绑定score将得到AttributeError的错误。 使用__slots__要注意，__slots__定义的属性仅对当前类起作用，对继承的子类是不起作用的：
+1 2 3 4 5 &gt;&gt;&gt; class GraduateStudent(Student): .</div><div class="post-footer">
+    <a href="/2019/07/python-notes-1/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/python/' class="post-tag">Python</a></div></div>
+</article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2019/07/pycryptodome-usage/">使用PyCryptodome替代pyscrypto</a>
   </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
     Finger</a></span>&nbsp;<span class="post-publish" title='2019-07-04 07:11:00'>发布于 <time datetime="2019-07-04">2019-07-04</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/python/" class="post-category" title="分类 - Python"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Python</a></span></div><div class="content">pycrypto 在Windows系统上安装比较麻烦，会出现意想不到的各种问题。因为pycrypto-2.6.1 之后就不在维护。因此系统兼容性就不那么友好。推荐PyCryptodome作为替代工具包。官方地址为：https://www.pycryptodome.org/en/latest/
@@ -196,26 +224,6 @@ Amazon API Gateway 负责管理所有任务，涉及接受和处理成千上万�
 Run serverless applications and REST APIs using your existing Node.js application framework, on top of AWS Lambda and Amazon API Gateway. The sample provided allows you to easily build serverless web applications/services and RESTful APIs using the Express framework.</div><div class="post-footer">
     <a href="/2018/09/aws-serverless-with-nodejs/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/serverless/' class="post-tag">Serverless</a><a href='/tags/nodejs/' class="post-tag">NodeJs</a><a href='/tags/aws/' class="post-tag">AWS</a></div></div>
 </article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2018/08/pandas-basis/">Pandas基础</a>
-  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span>&nbsp;<span class="post-publish" title='2018-08-24 22:19:00'>发布于 <time datetime="2018-08-24">2018-08-24</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/python/" class="post-category" title="分类 - Python"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Python</a></span></div><div class="content">原文地址：https://www.jiqizhixin.com/articles/2018-07-18-3
-介绍Pandas是基于Numpy构建的库，在数据处理方面可以把它理解为numpy加强版。不同于numpy的是，pandas拥有种数据结构：Series和DataFrame：
-用代码生成一个简单的Series对象
-1 2 3 4 5 6 7 8 9 &gt;&gt;&gt; from pandas import Series, DataFrame &gt;&gt;&gt; import pandas as pd &gt;&gt;&gt; data = Series([1,2,3,4],index = [&#39;a&#39;,&#39;b&#39;,&#39;c&#39;,&#39;d&#39;]) &gt;&gt;&gt; data a 1 b 2 c 3 d 4 dtype: int64 Series是一种类似一维数组的数据结构，由一组数据和与之相关的index组成，这个结构一看似乎与dict字典差不多，我们知道字典是一种无序的数据结构，而pandas中的Series的数据结构不一样，它相当于定长有序的字典，并且它的index和value之间是独立的，两者的索引还是有区别的，Series的index是可变的，而dict字典的key值是不可变的。
-用代码生成一个简单的DataFrame对象
-1 2 3 4 5 6 7 &gt;&gt;&gt; data = {&#39;a&#39;:[1,2,3],&#39;b&#39;:[&#39;we&#39;,&#39;you&#39;,&#39;they&#39;],&#39;c&#39;:[&#39;btc&#39;,&#39;eos&#39;,&#39;ae&#39;]} &gt;&gt;&gt; df = DataFrame(data) &gt;&gt;&gt; df a b c 0 1 we btc 1 2 you eos 2 3 they ae DataFrame这种数据结构我们可以把它看作是一张二维表，DataFrame长得跟我们平时使用的Excel表格差不多，DataFrame的横行称为columns，竖列和Series一样称为index，DataFrame每一列可以是不同类型的值集合，所以DataFrame你也可以把它视为不同数据类型同一index的Series集合。</div><div class="post-footer">
-    <a href="/2018/08/pandas-basis/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/python/' class="post-tag">Python</a><a href='/tags/pandas/' class="post-tag">Pandas</a></div></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2018/08/numpy-basis/">Numpy基础</a>
-  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span>&nbsp;<span class="post-publish" title='2018-08-23 22:19:00'>发布于 <time datetime="2018-08-23">2018-08-23</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/python/" class="post-category" title="分类 - Python"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Python</a></span></div><div class="content">原文地址：https://www.jiqizhixin.com/articles/2018-07-18-2
-介绍numpy是专门为科学计算设计的一个python扩展包，为python提供高效率的多维数组，也被称为面向阵列计算（array oriented computing），同时numpy也是github上的一个开源项目：numpy，numpy是基于c语言开发，所以这使得numpy的运行速度很快，高效率运行就是numpy的一大优势。
-用numpy生成一维数组
-1 2 3 4 &gt;&gt;&gt; import numpy as np &gt;&gt;&gt; a = np.array([[1,2,3]], dtype=np.int32) &gt;&gt;&gt; a array([[1, 2, 3]]) numpy中定义的最重要的数据结构是称为ndarray的n维数组类型，这个结构引用了两个对象，一块用于保存数据的存储区域和一个用于描述元素类型的dtype对象：
-性能二维数组的生成在python中我们还可以用到list列表，如果用list来表示[1,2,3]，由于list中的元素可以是任何对象，所以list中保存的是对象的指针，如果要保存[1,2,3]就需要三个指针和三个整数对象，是比较浪费内存资源和cpu计算时间的，而ndarray是一种保存单一数据类型的多维数组结构，在数据处理上比list列表要快上很多。
-使用生成一个3x3的矩阵1 2 3 4 5 6 7 8 9 10 11 12 13 &gt;&gt;&gt; import numpy as np &gt;&gt;&gt; data = np.array([[1,2,3],[4,5,6],[7,8,9]]) &gt;&gt;&gt; data array([[1, 2, 3], [4, 5, 6], [7, 8, 9]]) # 等价于data=np.arange(1，10).reshape(3,3) &gt;&gt;&gt; data = np.arange(1,10).reshape(3,3) &gt;&gt;&gt; data array([[1, 2, 3], [4, 5, 6], [7, 8, 9]]) 查看矩阵信息1 2 3 4 5 6 7 8 9 10 11 # 返回元组，表示n行n列 &gt;&gt;&gt; data.</div><div class="post-footer">
-    <a href="/2018/08/numpy-basis/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/python/' class="post-tag">Python</a><a href='/tags/numpy/' class="post-tag">Numpy</a></div></div>
-</article>
 <ul class="pagination"><li class="page-item">
           <span class="page-link">
             <a href="/">1</a>
@@ -246,7 +254,7 @@ Run serverless applications and REST APIs using your existing Node.js applicatio
           <span class="page-link" aria-hidden="true">&hellip;</span>
         </li><li class="page-item">
           <span class="page-link">
-            <a href="/page/11/">11</a>
+            <a href="/page/12/">12</a>
           </span>
         </li></ul></div></main><footer class="footer">
     <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>

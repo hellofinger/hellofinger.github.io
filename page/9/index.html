@@ -164,6 +164,23 @@
     </a><a href="mailto:finger.zhou@gmail.com" title="Email"target="_blank" rel="external nofollow noopener noreferrer me"><i class="fa-regular fa-envelope fa-fw" aria-hidden="true"></i>
     </a><a href="/index.xml" title="RSS"target="_blank" rel="external nofollow noopener noreferrer me"><i class="fa-solid fa-rss fa-fw" aria-hidden="true"></i>
     </a></div></div>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2018/05/python-old-style-vs-new-style-classes/">Python Old-Style vs. New-Style Classes</a>
+  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span>&nbsp;<span class="post-publish" title='2018-05-18 21:40:00'>发布于 <time datetime="2018-05-18">2018-05-18</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/python/" class="post-category" title="分类 - Python"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Python</a></span></div><div class="content">Python Old-Style Vs. New-Style Classes在Python中，类有两种方式定义，一种是非正式的，我们称为旧式的或者叫经典的(Old-Style)，另一种是正式的(New-Style)。
+换一种说法，对于继承自object的类，则称为New-Style类。未继承object的类称为Old-Style类。
+在Python2.7中New-Style和Old-Style类存在一些区别。
+Old-Style Classes对于Old-Style类的实例，它的类和类型并不相同。Old-Style类的实例是一个内置类型，而类型是一个实例。例如：obj是一个Old-Style的实例。那么obj.__class__是一个内置类，而type(obj)是一个实例。
+1 2 3 4 5 6 7 &gt;&gt;&gt; class Foo: pass ... &gt;&gt;&gt; obj = Foo() &gt;&gt;&gt; obj.__class__ &lt;class __main__.Foo at 0x103faba10&gt; &gt;&gt;&gt; type(obj) &lt;type &#39;instance&#39;&gt; New-Style ClassesNew-Style类统一了类和类型的概念。例如：obj是一个New-Style的实例，obj.__class__和type(obj)相同:
+1 2 3 4 5 6 7 &gt;&gt;&gt; class Foo(object): pass ... &gt;&gt;&gt; obj = Foo() &gt;&gt;&gt; obj.__class__ &lt;class &#39;__main__.Foo&#39;&gt; &gt;&gt;&gt; type(obj) &lt;class &#39;__main__.Foo&#39;&gt; 1 2 3 4 5 6 7 8 9 &gt;&gt;&gt; n = 10 &gt;&gt;&gt; d = {&#39;x&#39;: 1, &#39;y&#39;: 2} &gt;&gt;&gt; x = Foo() &gt;&gt;&gt; for obj in (n, d, x): .</div><div class="post-footer">
+    <a href="/2018/05/python-old-style-vs-new-style-classes/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/python/' class="post-tag">Python</a></div></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2018/05/python-class-dict-cannot-update/">Python类的__dict__无法更新</a>
+  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span>&nbsp;<span class="post-publish" title='2018-05-17 20:40:00'>发布于 <time datetime="2018-05-17">2018-05-17</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/python/" class="post-category" title="分类 - Python"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Python</a></span></div><div class="content">Python类的__dict__无法更新？测试环境: Python2.7
+1 2 3 4 5 6 &gt;&gt;&gt; class O(object): pass ... &gt;&gt;&gt; O.__dict__[&#39;name&#39;] = &#39;Finger&#39; Traceback (most recent call last): File &#34;&lt;stdin&gt;&#34;, line 1, in &lt;module&gt; TypeError: &#39;dictproxy&#39; object does not support item assignment 答：是的, class的__dict__是只读的
+1 2 3 4 5 &gt;&gt;&gt; O.__dict__ dict_proxy({&#39;__dict__&#39;: &lt;attribute &#39;__dict__&#39; of &#39;O&#39; objects&gt;, &#39;__module__&#39;: &#39;__main__&#39;, &#39;__weakref__&#39;: &lt;attribute &#39;__weakref__&#39; of &#39;O&#39; objects&gt;, &#39;__doc__&#39;: None}) &gt;&gt;&gt; O.__dict__.items() [(&#39;__dict__&#39;, &lt;attribute &#39;__dict__&#39; of &#39;O&#39; objects&gt;), (&#39;__module__&#39;, &#39;__main__&#39;), (&#39;__weakref__&#39;, &lt;attribute &#39;__weakref__&#39; of &#39;O&#39; objects&gt;), (&#39;__doc__&#39;, None)] 可以看到O.</div><div class="post-footer">
+    <a href="/2018/05/python-class-dict-cannot-update/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/python/' class="post-tag">Python</a></div></div>
+</article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2017/08/using-elasticsearch-function-score-with-python-2/">用Python实现Elasticsearch Function_score查询(二)</a>
   </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
     Finger</a></span>&nbsp;<span class="post-publish" title='2017-08-26 10:23:00'>发布于 <time datetime="2017-08-26">2017-08-26</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/elasticsearch/" class="post-category" title="分类 - ElasticSearch"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> ElasticSearch</a>&ensp;<a href="/categories/storage/" class="post-category" title="分类 - Storage"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a></span></div><div class="content">random_scorerandom_score函数，它的输出是一个介于0到1之间的数字，当给它提供相同的seed值时，它能够产生一致性随机的结果。random_score 子句不包含任何的filter，因此它适用于所有文档。当然，如果你索引了能匹配查询的新文档，无论你是否使用了一致性随机，结果的顺序都会有所改变。
@@ -200,23 +217,6 @@ bulk方法定义：
 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 def bulk(client, actions, stats_only=False, **kwargs): success, failed = 0, 0 # list of errors to be collected is not stats_only errors = [] for ok, item in streaming_bulk(client, actions, **kwargs): # go through request-reponse pairs and detect failures if not ok: if not stats_only: errors.</div><div class="post-footer">
     <a href="/2017/08/using-elasticsearch-bulk-with-python/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/elasticsearch/' class="post-tag">ElasticSearch</a><a href='/tags/searchengine/' class="post-tag">SearchEngine</a></div></div>
 </article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2017/08/elasticsearch-document-api/">Elasticsearch Documents APIs</a>
-  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span>&nbsp;<span class="post-publish" title='2017-08-15 23:24:00'>发布于 <time datetime="2017-08-15">2017-08-15</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/elasticsearch/" class="post-category" title="分类 - ElasticSearch"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> ElasticSearch</a>&ensp;<a href="/categories/storage/" class="post-category" title="分类 - Storage"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a></span></div><div class="content">一、Elasticsearch 索引别名索引别名就像一个快捷方式或软链接，可以指向一个或多个索引，也可以给任何需要索引名的API使用。别名带给我们极大的灵活性，允许我们做到：
-在一个运行的集群上无缝的从一个索引切换到另一个 给多个索引分类 给索引的一个子集创建视图 1 2 3 4 5 6 7 8 9 10 11 # 创建别名 PUT /my_index_v1 # 将别名my_index指向my_index_v1 PUT /my_index_v1/_alias/my_index # 检查别名指向哪个索引 GET /*/_alias/my_index # 或者哪个别名指向这个索引 GET /my_index_v1/_alias/* 如果我们决定要修改索引中一个字段的映射。但是我们不能修改现存的映射，因此我们需要重新索引数据。这个时候别名就可以帮助我们完成。
-首先，我们需要创建新的索引 my_index_v2
-1 PUT /my_index_v2 然后我们将数据从 my_index_v1 迁移到 my_index_v2
-1 2 3 4 5 6 7 POST /_aliases { &#34;actions&#34;: [ { &#34;remove&#34;: { &#34;index&#34;: &#34;my_index_v1&#34;, &#34;alias&#34;: &#34;my_index&#34; }}, { &#34;add&#34;: { &#34;index&#34;: &#34;my_index_v2&#34;, &#34;alias&#34;: &#34;my_index&#34; }} ] } 最后，我们的应用就从旧的索引迁移到了新的，而没有停机时间。</div><div class="post-footer">
-    <a href="/2017/08/elasticsearch-document-api/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/elasticsearch/' class="post-tag">ElasticSearch</a><a href='/tags/searchengine/' class="post-tag">SearchEngine</a></div></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2017/08/elasticsearch-dsl-with-python-usage-2/">Python Elasticsearch DSL 使用笔记(二)</a>
-  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span>&nbsp;<span class="post-publish" title='2017-08-13 07:56:00'>发布于 <time datetime="2017-08-13">2017-08-13</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/elasticsearch/" class="post-category" title="分类 - ElasticSearch"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> ElasticSearch</a>&ensp;<a href="/categories/storage/" class="post-category" title="分类 - Storage"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a></span></div><div class="content">使用ElasticSearch DSL进行搜索Search主要包括：
-查询(queries) 过滤器(filters) 聚合(aggreations) 排序(sort) 分页(pagination) 额外的参数(additional parameters) 相关性(associated) 创建一个查询对象
-1 2 3 4 5 6 from elasticsearch import Elasticsearch from elasticsearch_dsl import Search client = Elasticsearch() s = Search(using=client) 初始化测试数据
-1 2 3 4 5 6 7 8 9 10 11 12 13 def add_article(id_, title, body, tags): article = Article(meta={&#39;id&#39;: id_}, title=title, tags=tags) article.body = body article.published_from = datetime.now() article.save() def init_test_data(): add_article(2, &#39;Python is good!&#39;, &#39;Python is good!</div><div class="post-footer">
-    <a href="/2017/08/elasticsearch-dsl-with-python-usage-2/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/python/' class="post-tag">Python</a><a href='/tags/elasticsearch/' class="post-tag">ElasticSearch</a><a href='/tags/searchengine/' class="post-tag">SearchEngine</a></div></div>
-</article>
 <ul class="pagination"><li class="page-item">
           <span class="page-link">
             <a href="/">1</a>
@@ -242,6 +242,10 @@ bulk方法定义：
         </li><li class="page-item">
           <span class="page-link">
             <a href="/page/11/">11</a>
+          </span>
+        </li><li class="page-item">
+          <span class="page-link">
+            <a href="/page/12/">12</a>
           </span>
         </li></ul></div></main><footer class="footer">
     <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
