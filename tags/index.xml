@@ -4,7 +4,39 @@
     <link>https://hellofinger.tech/tags/</link>
     <description>Tags - 标签 | Finger&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
-      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Wed, 12 Oct 2022 20:14:52 &#43;0000</lastBuildDate><atom:link href="https://hellofinger.tech/tags/" rel="self" type="application/rss+xml" /><item>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Fri, 03 Feb 2023 10:24:00 &#43;0000</lastBuildDate><atom:link href="https://hellofinger.tech/tags/" rel="self" type="application/rss+xml" /><item>
+  <title>Go</title>
+  <link>https://hellofinger.tech/tags/go/</link>
+  <pubDate>Fri, 03 Feb 2023 10:24:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/tags/go/</guid>
+  <description><![CDATA[]]></description>
+</item>
+<item>
+  <title>Redis</title>
+  <link>https://hellofinger.tech/tags/redis/</link>
+  <pubDate>Fri, 03 Feb 2023 10:24:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/tags/redis/</guid>
+  <description><![CDATA[]]></description>
+</item>
+<item>
+  <title>AWS</title>
+  <link>https://hellofinger.tech/tags/aws/</link>
+  <pubDate>Fri, 04 Nov 2022 11:12:52 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/tags/aws/</guid>
+  <description><![CDATA[]]></description>
+</item>
+<item>
+  <title>CodeArtifact</title>
+  <link>https://hellofinger.tech/tags/codeartifact/</link>
+  <pubDate>Fri, 04 Nov 2022 11:12:52 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/tags/codeartifact/</guid>
+  <description><![CDATA[]]></description>
+</item>
+<item>
   <title>Container</title>
   <link>https://hellofinger.tech/tags/container/</link>
   <pubDate>Wed, 12 Oct 2022 20:14:52 &#43;0000</pubDate>
@@ -21,35 +53,19 @@
   <description><![CDATA[]]></description>
 </item>
 <item>
-  <title>Security</title>
-  <link>https://hellofinger.tech/tags/security/</link>
-  <pubDate>Mon, 15 Aug 2022 20:14:52 &#43;0000</pubDate>
-  <author>Finger</author>
-  <guid>https://hellofinger.tech/tags/security/</guid>
-  <description><![CDATA[]]></description>
-</item>
-<item>
-  <title>AWS</title>
-  <link>https://hellofinger.tech/tags/aws/</link>
-  <pubDate>Mon, 17 Jan 2022 10:51:00 &#43;0000</pubDate>
-  <author>Finger</author>
-  <guid>https://hellofinger.tech/tags/aws/</guid>
-  <description><![CDATA[]]></description>
-</item>
-<item>
   <title>ECR</title>
   <link>https://hellofinger.tech/tags/ecr/</link>
-  <pubDate>Mon, 17 Jan 2022 10:51:00 &#43;0000</pubDate>
+  <pubDate>Fri, 02 Sep 2022 11:12:52 &#43;0000</pubDate>
   <author>Finger</author>
   <guid>https://hellofinger.tech/tags/ecr/</guid>
   <description><![CDATA[]]></description>
 </item>
 <item>
-  <title>Go</title>
-  <link>https://hellofinger.tech/tags/go/</link>
-  <pubDate>Fri, 26 Feb 2021 17:27:52 &#43;0000</pubDate>
+  <title>Security</title>
+  <link>https://hellofinger.tech/tags/security/</link>
+  <pubDate>Mon, 15 Aug 2022 20:14:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/tags/go/</guid>
+  <guid>https://hellofinger.tech/tags/security/</guid>
   <description><![CDATA[]]></description>
 </item>
 <item>
@@ -66,22 +82,6 @@
   <pubDate>Fri, 28 Feb 2020 18:11:52 &#43;0000</pubDate>
   <author>Finger</author>
   <guid>https://hellofinger.tech/tags/git/</guid>
-  <description><![CDATA[]]></description>
-</item>
-<item>
-  <title>GitLab</title>
-  <link>https://hellofinger.tech/tags/gitlab/</link>
-  <pubDate>Fri, 28 Feb 2020 18:11:52 &#43;0000</pubDate>
-  <author>Finger</author>
-  <guid>https://hellofinger.tech/tags/gitlab/</guid>
-  <description><![CDATA[]]></description>
-</item>
-<item>
-  <title>IAC</title>
-  <link>https://hellofinger.tech/tags/iac/</link>
-  <pubDate>Fri, 28 Feb 2020 18:11:52 &#43;0000</pubDate>
-  <author>Finger</author>
-  <guid>https://hellofinger.tech/tags/iac/</guid>
   <description><![CDATA[]]></description>
 </item>
 </channel>
