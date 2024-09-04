@@ -4,9 +4,32 @@
     <link>https://hellofinger.tech/</link>
     <description>Finger&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
-      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Fri, 03 Feb 2023 10:24:00 &#43;0000</lastBuildDate>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Fri, 12 Jan 2024 18:42:04 &#43;0000</lastBuildDate>
       <atom:link href="https://hellofinger.tech/index.xml" rel="self" type="application/rss+xml" />
     <item>
+  <title>Testkube--创建自定义执行器</title>
+  <link>https://hellofinger.tech/2024/01/testkube-custom-executor/</link>
+  <pubDate>Fri, 12 Jan 2024 18:42:04 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2024/01/testkube-custom-executor/</guid>
+  <description><![CDATA[创建自定义执行器Testkube自定义执行器可以自己创建或者使用模板创建.
+1 git clone https://github.com/exu/testkube-executor-example Testkube提供了帮助实现执行器的组件。 Runner接口是实现执行器的主要入口。
+1 2 3 4 type Runner interface { // Run takes Execution data and returns execution result Run(execution testkube.Execution) (result testkube.ExecutionResult, err error) } 完整的runner.go文件
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 package runner import ( &#34;fmt&#34; &#34;io&#34; &#34;net/http&#34; &#34;github.]]></description>
+</item>
+<item>
+  <title>Testkube--介绍</title>
+  <link>https://hellofinger.tech/2024/01/testkube-intro/</link>
+  <pubDate>Thu, 11 Jan 2024 07:30:04 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2024/01/testkube-intro/</guid>
+  <description><![CDATA[Testkube是什么？Testkube 是一个Kubernetes原生测试框架。它内置了当前主流的大多数测试工具，包括功能、性能、安全和合规性等。它可以直接在您的Kubernetes集群中运行这些测试工具。并且它很容易集成到你的CI/CD Pipeline中。另外它还提供了kubectl插件、UI和API的多种交互方式。
+Testkube支持的测试工具和框架：
+cURL Cypress K6 Maven Postman Gradle Pytest Prebuild Executor Container Executor &hellip; 另外，Testkube支持创建自定义测试类型，称为Testkube容器执行器。它使您能够运行自己的容器映像来执行测试。
+安装Testkube使用Helm Chart安装
+1 2 3 4 5 6 7 8 # Add the Kubeshop Helm repository. helm repo add kubeshop https://kubeshop.github.io/helm-charts # Install the testkube chart. helm install --create-namespace my-testkube kubeshop/testkube -n testkube 创建测试 (Tests)创建一个Curl测试1 2 Type: curl/test Source: String 1 2 3 4 5 6 7 8 9 { &#34;command&#34;: [ &#34;curl&#34;, &#34;https://&lt;your-domain&gt;&#34;, &#34;-H&#34;, &#34;&#39;Accept: application/json&#39;&#34; ], &#34;expected_status&#34;: &#34;200&#34; } 创建一个K6测试1 2 Type: k6/script Source: String 1 2 3 4 5 6 7 8 9 10 import http from &#39;k6/http&#39;; import { sleep } from &#39;k6&#39;; export const options = { vus: 10, duration: &#39;30s&#39;, }; export default function () { http.]]></description>
+</item>
+<item>
   <title>Go Package--goredis 在Go中使用 Redis Pub/Sub</title>
   <link>https://hellofinger.tech/2023/02/go-using-redis-pub-sub/</link>
   <pubDate>Fri, 03 Feb 2023 10:24:00 &#43;0000</pubDate>
@@ -95,41 +118,6 @@ Docker Runc: 1.0.0-rc5 ( runc version &lt; 1.0-rc6 )
   <description><![CDATA[一、漏洞说明Docker守护进程监听IP为0.0.0.0，导致可以直接通过Docker Remote API操作Docker
 二、影响版本Docker version: 19.03.12 之前版本
 三、漏洞复现3.1、安装docker1 sudo apt-get update 3.2、备份docker服务文件1 cp /lib/systemd/system/docker.service /lib/systemd/system/docker.service.bak 3.3、修改服务文件，将docker监听IP改成0.0.0.01 vim /lib/systemd/system/docker.service	1 2 3 4 # 在文件末尾加上如下代码 [Service] ExecStart= ExecStart=/usr/bin/dockerd -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock 3.4、重启守护进程和docker服务1 2 3 sudo systemctl daemon-reload # 重载守护进程 sudo service docker restart # 重启docker服务 systemctl status docker.service # 查看docker运行情况 3.5、漏洞检测1 2 3 curl http://x.x.x.x:2375 docker -H tcp://x.x.x.x:2375 images 1 2 3 4 5 6 7 8 9 10 ┌──(kali㉿kali)-[~] └─$ docker -H tcp://10.]]></description>
-</item>
-<item>
-  <title>Docker Socket 挂载逃逸</title>
-  <link>https://hellofinger.tech/2022/08/docker-socket-mount-escape/</link>
-  <pubDate>Fri, 12 Aug 2022 18:14:52 &#43;0000</pubDate>
-  <author>Finger</author>
-  <guid>https://hellofinger.tech/2022/08/docker-socket-mount-escape/</guid>
-  <description><![CDATA[一、漏洞描述在启动docker容器时，将宿主机/var/run/docker.sock文件挂载到docker容器中，在docker容器中，也可以操作宿主机的docker
-二、环境搭建1 docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock ubuntu:16.04 /bin/bash 三、漏洞验证1 find / -name docker.sock 四、漏洞利用在docker容器中安装docker，利用docker.sock 访问宿主机资源
-1 docker -H unix://var/run/docker.sock images 1 2 3 4 5 6 7 8 9 root@99db92ade596:/# docker -H unix://var/run/docker.sock images REPOSITORY TAG IMAGE ID CREATED SIZE flaskapp-no-root latest 191c96d54d26 25 hours ago 126MB flaskapp-root latest 50d72e86aa68 25 hours ago 126MB alpine latest 7e01a0d0a1dc 3 days ago 7.34MB busybox latest a416a98b71e2 3 weeks ago 4.]]></description>
-</item>
-<item>
-  <title>容器安全</title>
-  <link>https://hellofinger.tech/2022/08/container-securty/</link>
-  <pubDate>Thu, 11 Aug 2022 16:14:52 &#43;0000</pubDate>
-  <author>Finger</author>
-  <guid>https://hellofinger.tech/2022/08/container-securty/</guid>
-  <description><![CDATA[一、 容器概述容器（Container）是一种虚拟化技术，用于在计算机上运行应用程序和服务。与传统的虚拟机不同，容器不需要为每个应用创建独立的操作系统实例。相反，容器共享主机操作系统的内核，但它们有自己的文件系统、进程空间和网络接口。这使得容器能够在一个主机上运行多个隔离的应用程序，并且每个容器之间互不干扰。
-1.1、容器架构容器的架构涉及多个组件和概念，它们共同协作来提供一个高效、隔离和可移植的应用程序运行环境。以下是容器架构的主要组成部分：
-主机操作系统 (Host Operating System) 容器引擎 (Container Engine) 容器镜像 (Container Image) 容器 (Container) 容器编排 (Container Orchestration) 网络 (Networking) 存储 (Storage) 1.2、容器的本质容器的本质是一个特殊的进程，它是由Namespaces，Cgroups和 rootfs 构成。我们可以将它一分为二来看待，Namespace和Cgroups为动态资源，rootfs 为静态资源。
-二、什么是容器安全?容器安全是指使用安全工具和策略来保护容器化应用程序的各个方面免受潜在风险的过程。容器化环境不仅包含容器和在其中运行的应用程序，还包括容器运行时、内核和主机操作系统等底层基础设施。
-三、容器安全架构组件编译流水线 (Build Pipeline)
-容器镜像 (Container images and registries)
-容器宿主机 (Container host machines)
-容器运行时 (Container runtime)，如 docker, containerd
-容器编排工具 Container platforms and orchestrations) 如 kubernetes
-应用程序(Applications)
-四、容器安全挑战4.1、容器配置错误暴露应用程序不需要或不安全端口
-泄露秘钥和凭据，例如密码和身份验证令牌
-过于宽容的容器运行时权限，例如以Root身份运行容器
-开启特权模式 (privileged)
-挂载宿主机目录
-4.2、容器基础设施中的漏洞容器通常由应用程序代码、配置、库和包组成，最后编译成镜像，通过容器运行时运行在宿主机操作系统内核中。容器生命周期的每个阶段都可能将安全漏洞引入到容器基础设施中，从而增加运行时可能被利用的攻击面。漏洞还可以从容器镜像内置的外部依赖项继承、甚至存在于堆栈内的主机和容器运行时中。
-作为应用程序的一部分，容器镜像还可以从开源库和包继承安全漏洞，从而使其容易受到攻击。开发人员可能会使用来自第三方容器注册表(Registry)的基础镜像来构建容器镜像，这些镜像可能无意中包含安全漏洞，或者可能已被黑客故意替换为受损的镜像。
-最后，容器和主机可能包含漏洞，当容器在宿主机操作系统内核上运行时，这些漏洞可通过网络、主机和端点被利用。特别是主机内核和容器运行时中的容器逃逸漏洞可能会为攻击媒介打开大门，利用本地权限升级来损害整个基础设施。e.g. CVE-2019-5736]]></description>
 </item>
 </channel>
 </rss>
