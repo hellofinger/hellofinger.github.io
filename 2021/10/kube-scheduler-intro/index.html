@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>Kube-Scheduler介绍 - Finger&#39;s Blog</title><meta name="author" content="Finger">
+<meta name="author-link" content="https://github.com/hellofinger">
+<meta name="description" content="kube-scheduler 工作原理scheduler工作流程基本上如下：
+scheduler维护待调度的podQueue并监听APIServer。
+创建Pod时，我们首先通过APIServer将Pod元数据写入etcd。
+scheduler通过Informer监听Pod状态。添加新的Pod时，会将Pod添加到podQueue。
+主程序不断从podQueue中提取Pods并按照一定的算法将节点分配给Pods。
+节点上的kubelet也侦听ApiServer。如果发现有新的Pod已调度到该节点，则将通过CRI调用高级容器运行时来运行容器。
+如果scheduler无法调度Pod，则如果启用了优先级和抢占功能，则首先进行抢占尝试，删除节点上具有低优先级的Pod，然后将要调度的Pod调度到该节点。如果未启用抢占或抢占尝试失败，则相关信息将记录在日志中，并且Pod将添加到podQueue的末尾。
+kube-scheduler 调度流程kube-scheduler 给一个 pod 做调度选择包含两个步骤：
+过滤：将所有满足 Pod 调度需求的 Node 选出来。如果没有合适的Node，则 Pod 不可调度。 打分：调度器会为 Pod 从所有可调度节点中选取一个最合适的Node。根据打分规则，调度器会给每一个可调度节点进行打分。 最后，kube-scheduler 会将 Pod 调度到得分最高的 Node 上。如果存在多个得分最高的 Node，kube-scheduler 会从中随机选取一个。
+默认的kube-scheduler默认的kube-scheduler有两个特点：
+以单个Pod为粒度 调度的最优性只存在于调度完成的那一刻，后续随着新的节点增加，新的Pod增加或减少，当初的调度决策可能已经不是最优。 对于第一点，这决定了默认的调度器无法满足大数据，AI等领域的要求。因而社区涌现了诸多专门用于任务类的调度器。比如 kube-batch
+参考[1] https://zhuanlan.zhihu.com/p/339762721
+[2] http://www.4k8k.xyz/article/u012798391/112414129" /><meta name="keywords" content='k8s, kubernetes' />
+  <meta itemprop="name" content="kube-scheduler介绍">
+  <meta itemprop="description" content="kube-scheduler 工作原理scheduler工作流程基本上如下：
+scheduler维护待调度的podQueue并监听APIServer。
+创建Pod时，我们首先通过APIServer将Pod元数据写入etcd。
+scheduler通过Informer监听Pod状态。添加新的Pod时，会将Pod添加到podQueue。
+主程序不断从podQueue中提取Pods并按照一定的算法将节点分配给Pods。
+节点上的kubelet也侦听ApiServer。如果发现有新的Pod已调度到该节点，则将通过CRI调用高级容器运行时来运行容器。
+如果scheduler无法调度Pod，则如果启用了优先级和抢占功能，则首先进行抢占尝试，删除节点上具有低优先级的Pod，然后将要调度的Pod调度到该节点。如果未启用抢占或抢占尝试失败，则相关信息将记录在日志中，并且Pod将添加到podQueue的末尾。
+kube-scheduler 调度流程kube-scheduler 给一个 pod 做调度选择包含两个步骤：
+过滤：将所有满足 Pod 调度需求的 Node 选出来。如果没有合适的Node，则 Pod 不可调度。 打分：调度器会为 Pod 从所有可调度节点中选取一个最合适的Node。根据打分规则，调度器会给每一个可调度节点进行打分。 最后，kube-scheduler 会将 Pod 调度到得分最高的 Node 上。如果存在多个得分最高的 Node，kube-scheduler 会从中随机选取一个。
+默认的kube-scheduler默认的kube-scheduler有两个特点：
+以单个Pod为粒度 调度的最优性只存在于调度完成的那一刻，后续随着新的节点增加，新的Pod增加或减少，当初的调度决策可能已经不是最优。 对于第一点，这决定了默认的调度器无法满足大数据，AI等领域的要求。因而社区涌现了诸多专门用于任务类的调度器。比如 kube-batch
+参考[1] https://zhuanlan.zhihu.com/p/339762721
+[2] http://www.4k8k.xyz/article/u012798391/112414129">
+  <meta itemprop="datePublished" content="2021-10-29T17:13:00+00:00">
+  <meta itemprop="dateModified" content="2021-10-29T17:13:00+00:00">
+  <meta itemprop="wordCount" content="44">
+  <meta itemprop="keywords" content="K8s,Kubernetes"><meta property="og:url" content="https://hellofinger.tech/2021/10/kube-scheduler-intro/">
+  <meta property="og:site_name" content="Finger&#39;s Blog">
+  <meta property="og:title" content="kube-scheduler介绍">
+  <meta property="og:description" content="kube-scheduler 工作原理scheduler工作流程基本上如下：
+scheduler维护待调度的podQueue并监听APIServer。
+创建Pod时，我们首先通过APIServer将Pod元数据写入etcd。
+scheduler通过Informer监听Pod状态。添加新的Pod时，会将Pod添加到podQueue。
+主程序不断从podQueue中提取Pods并按照一定的算法将节点分配给Pods。
+节点上的kubelet也侦听ApiServer。如果发现有新的Pod已调度到该节点，则将通过CRI调用高级容器运行时来运行容器。
+如果scheduler无法调度Pod，则如果启用了优先级和抢占功能，则首先进行抢占尝试，删除节点上具有低优先级的Pod，然后将要调度的Pod调度到该节点。如果未启用抢占或抢占尝试失败，则相关信息将记录在日志中，并且Pod将添加到podQueue的末尾。
+kube-scheduler 调度流程kube-scheduler 给一个 pod 做调度选择包含两个步骤：
+过滤：将所有满足 Pod 调度需求的 Node 选出来。如果没有合适的Node，则 Pod 不可调度。 打分：调度器会为 Pod 从所有可调度节点中选取一个最合适的Node。根据打分规则，调度器会给每一个可调度节点进行打分。 最后，kube-scheduler 会将 Pod 调度到得分最高的 Node 上。如果存在多个得分最高的 Node，kube-scheduler 会从中随机选取一个。
+默认的kube-scheduler默认的kube-scheduler有两个特点：
+以单个Pod为粒度 调度的最优性只存在于调度完成的那一刻，后续随着新的节点增加，新的Pod增加或减少，当初的调度决策可能已经不是最优。 对于第一点，这决定了默认的调度器无法满足大数据，AI等领域的要求。因而社区涌现了诸多专门用于任务类的调度器。比如 kube-batch
+参考[1] https://zhuanlan.zhihu.com/p/339762721
+[2] http://www.4k8k.xyz/article/u012798391/112414129">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2021-10-29T17:13:00+00:00">
+    <meta property="article:modified_time" content="2021-10-29T17:13:00+00:00">
+    <meta property="article:tag" content="K8s">
+    <meta property="article:tag" content="Kubernetes">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="kube-scheduler介绍">
+  <meta name="twitter:description" content="kube-scheduler 工作原理scheduler工作流程基本上如下：
+scheduler维护待调度的podQueue并监听APIServer。
+创建Pod时，我们首先通过APIServer将Pod元数据写入etcd。
+scheduler通过Informer监听Pod状态。添加新的Pod时，会将Pod添加到podQueue。
+主程序不断从podQueue中提取Pods并按照一定的算法将节点分配给Pods。
+节点上的kubelet也侦听ApiServer。如果发现有新的Pod已调度到该节点，则将通过CRI调用高级容器运行时来运行容器。
+如果scheduler无法调度Pod，则如果启用了优先级和抢占功能，则首先进行抢占尝试，删除节点上具有低优先级的Pod，然后将要调度的Pod调度到该节点。如果未启用抢占或抢占尝试失败，则相关信息将记录在日志中，并且Pod将添加到podQueue的末尾。
+kube-scheduler 调度流程kube-scheduler 给一个 pod 做调度选择包含两个步骤：
+过滤：将所有满足 Pod 调度需求的 Node 选出来。如果没有合适的Node，则 Pod 不可调度。 打分：调度器会为 Pod 从所有可调度节点中选取一个最合适的Node。根据打分规则，调度器会给每一个可调度节点进行打分。 最后，kube-scheduler 会将 Pod 调度到得分最高的 Node 上。如果存在多个得分最高的 Node，kube-scheduler 会从中随机选取一个。
+默认的kube-scheduler默认的kube-scheduler有两个特点：
+以单个Pod为粒度 调度的最优性只存在于调度完成的那一刻，后续随着新的节点增加，新的Pod增加或减少，当初的调度决策可能已经不是最优。 对于第一点，这决定了默认的调度器无法满足大数据，AI等领域的要求。因而社区涌现了诸多专门用于任务类的调度器。比如 kube-batch
+参考[1] https://zhuanlan.zhihu.com/p/339762721
+[2] http://www.4k8k.xyz/article/u012798391/112414129">
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="https://hellofinger.tech/2021/10/kube-scheduler-intro/" /><link rel="prev" href="https://hellofinger.tech/2021/02/go-basic-channel/" /><link rel="next" href="https://hellofinger.tech/2022/01/aws-setting-ecr-replication/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "kube-scheduler介绍",
+    "inLanguage": "zh-CN",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/hellofinger.tech\/2021\/10\/kube-scheduler-intro\/"
+    },"genre": "posts","keywords": "k8s, kubernetes","wordcount":  44 ,
+    "url": "https:\/\/hellofinger.tech\/2021\/10\/kube-scheduler-intro\/","datePublished": "2021-10-29T17:13:00+00:00","dateModified": "2021-10-29T17:13:00+00:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Finger"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper" data-github-corner="right">
+    <div class="header-title">
+      <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/about/"
+                
+                
+              ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item delimiter"></li><li class="menu-item search" id="search-desktop">
+            <input type="text" placeholder="搜索文章标题或内容……" id="search-input-desktop">
+            <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+              <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+            </a>
+            <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+              <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+            </a>
+            <span class="search-button search-loading" id="search-loading-desktop">
+              <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+            </span>
+          </li><li class="menu-item theme-switch" title="切换主题">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li class="search-wrapper">
+            <div class="search mobile" id="search-mobile">
+              <input type="text" placeholder="搜索文章标题或内容……" id="search-input-mobile">
+              <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+              </a>
+              <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+              </a>
+              <span class="search-button search-loading" id="search-loading-mobile">
+                <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+              </span>
+            </div>
+            <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+              取消
+            </a>
+          </li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/about/"
+                  
+                  
+                ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="切换主题"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+  </div>
+  <div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+  </div><nav aria-label="breadcrumb" class="breadcrumb-container">
+    <ol class="breadcrumb"><li class="breadcrumb-item"><a href="/posts/" title="Posts">文章</a></li><li class="breadcrumb-item active" aria-current="page">Kube-Scheduler介绍</li>
+    </ol>
+  </nav><main class="container"><aside class="aside-collection animate__animated animate__fadeIn animate__faster" aria-label="合集"></aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>Kube-Scheduler介绍</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/kubernetes/" class="post-category" title="分类 - Kubernetes"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Kubernetes</a></span></div><div class="post-meta-line"><span title="发布于 2021-10-29 17:13:00"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2021-10-29">2021-10-29</time></span>&nbsp;<span title="44 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 100 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 1 分钟</span>&nbsp;<span id="busuanzi_container_page_pv" class="busuanzi_visitors comment-visitors" data-flag-title="Kube-Scheduler介绍"><i class="fa-regular fa-eye fa-fw me-1" aria-hidden="true"></i><span id="busuanzi_value_page_pv">-</span>&nbsp;次阅读
+          </span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>目录</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#kube-scheduler-工作原理">kube-scheduler 工作原理</a></li>
+    <li><a href="#kube-scheduler-调度流程">kube-scheduler 调度流程</a></li>
+    <li><a href="#默认的kube-scheduler">默认的kube-scheduler</a></li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><div class="details admonition warning open">
+      <div class="details-summary admonition-title">
+        <i class="icon fa-solid fa-exclamation-triangle fa-fw" aria-hidden="true"></i>警告<i class="details-icon fa-solid fa-angle-right fa-fw" aria-hidden="true"></i>
+      </div>
+      <div class="details-content">
+        <div class="admonition-content">本文最后更新于 2021-10-29，文中内容可能已过时。</div>
+      </div>
+    </div><h2 id="kube-scheduler-工作原理" class="heading-element"><span>kube-scheduler 工作原理</span>
+  <a href="#kube-scheduler-%e5%b7%a5%e4%bd%9c%e5%8e%9f%e7%90%86" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>scheduler工作流程基本上如下：</p>
+<ul>
+<li>
+<p>scheduler维护待调度的<code>podQueue</code>并监听APIServer。</p>
+</li>
+<li>
+<p>创建Pod时，我们首先通过APIServer将Pod元数据写入etcd。</p>
+</li>
+<li>
+<p>scheduler通过Informer监听Pod状态。添加新的Pod时，会将Pod添加到<code>podQueue</code>。</p>
+</li>
+<li>
+<p>主程序不断从<code>podQueue</code>中提取Pods并按照一定的算法将节点分配给Pods。</p>
+</li>
+<li>
+<p>节点上的kubelet也侦听ApiServer。如果发现有新的Pod已调度到该节点，则将通过CRI调用高级容器运行时来运行容器。</p>
+</li>
+<li>
+<p>如果scheduler无法调度Pod，则如果启用了优先级和抢占功能，则首先进行抢占尝试，删除节点上具有低优先级的Pod，然后将要调度的Pod调度到该节点。如果未启用抢占或抢占尝试失败，则相关信息将记录在日志中，并且Pod将添加到<code>podQueue</code>的末尾。</p>
+</li>
+</ul>
+<h2 id="kube-scheduler-调度流程" class="heading-element"><span>kube-scheduler 调度流程</span>
+  <a href="#kube-scheduler-%e8%b0%83%e5%ba%a6%e6%b5%81%e7%a8%8b" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>kube-scheduler 给一个 pod 做调度选择包含两个步骤：</p>
+<ol>
+<li>过滤：将所有满足 Pod 调度需求的 Node 选出来。如果没有合适的Node，则 Pod  不可调度。</li>
+<li>打分：调度器会为 Pod 从所有可调度节点中选取一个最合适的Node。根据打分规则，调度器会给每一个可调度节点进行打分。</li>
+</ol>
+<p>最后，kube-scheduler 会将 Pod 调度到得分最高的 Node 上。如果存在多个得分最高的 Node，kube-scheduler 会从中随机选取一个。</p>
+<p><img loading="lazy" src="imgs/scheduling-algorithm.png" alt="imgs/scheduling-algorithm.png" srcset="imgs/scheduling-algorithm.png?size=small, imgs/scheduling-algorithm.png?size=medium 1.5x, imgs/scheduling-algorithm.png?size=large 2x" data-title="imgs/scheduling-algorithm.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p><img loading="lazy" src="imgs/kube-scheduler-flow.png" alt="imgs/kube-scheduler-flow.png" srcset="imgs/kube-scheduler-flow.png?size=small, imgs/kube-scheduler-flow.png?size=medium 1.5x, imgs/kube-scheduler-flow.png?size=large 2x" data-title="imgs/kube-scheduler-flow.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<h2 id="默认的kube-scheduler" class="heading-element"><span>默认的kube-scheduler</span>
+  <a href="#%e9%bb%98%e8%ae%a4%e7%9a%84kube-scheduler" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>默认的kube-scheduler有两个特点：</p>
+<ol>
+<li>以单个Pod为粒度</li>
+<li>调度的最优性只存在于调度完成的那一刻，后续随着新的节点增加，新的Pod增加或减少，当初的调度决策可能已经不是最优。</li>
+</ol>
+<p>对于第一点，这决定了默认的调度器无法满足大数据，AI等领域的要求。因而社区涌现了诸多专门用于任务类的调度器。比如 <a href="https://github.com/kubernetes-sigs/kube-batch"target="_blank" rel="external nofollow noopener noreferrer">kube-batch</a></p>
+<h2 id="参考" class="heading-element"><span>参考</span>
+  <a href="#%e5%8f%82%e8%80%83" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><ul>
+<li>
+<p>[1] <a href="https://zhuanlan.zhihu.com/p/339762721"target="_blank" rel="external nofollow noopener noreferrer">https://zhuanlan.zhihu.com/p/339762721</a></p>
+</li>
+<li>
+<p>[2] <a href="http://www.4k8k.xyz/article/u012798391/112414129"target="_blank" rel="external nofollow noopener noreferrer">http://www.4k8k.xyz/article/u012798391/112414129</a></p>
+</li>
+</ul>
+</div><hr class="awesome-hr" />
+    <h2 id="see-also">相关内容</h2>
+    <ul><li>
+          <a href="/2021/02/go-basic-channel/" title="Go基础--管道Channel">Go基础--管道Channel</a></li><li>
+          <a href="/2021/02/go-basic-context/" title="Go基础--Context">Go基础--Context</a></li><li>
+          <a href="/2024/01/testkube-custom-executor/" title="Testkube--创建自定义执行器">Testkube--创建自定义执行器</a></li><li>
+          <a href="/2024/01/testkube-intro/" title="Testkube--介绍">Testkube--介绍</a></li><li>
+          <a href="/2023/02/go-using-redis-pub-sub/" title="Go Package--Goredis 在Go中使用 Redis Pub/Sub">Go Package--Goredis 在Go中使用 Redis Pub/Sub</a></li></ul><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="更新于 2021-10-29 17:13:00">更新于 2021-10-29&nbsp;</span>
+      </div><div class="post-info-license">
+            <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
+          </div></div><div class="post-info-line">
+        <div class="post-info-md"></div>
+        <div class="post-info-share">
+          <span><a href="javascript:void(0);" title="分享到 X" data-sharer="twitter" data-url="https://hellofinger.tech/2021/10/kube-scheduler-intro/" data-title="Kube-Scheduler介绍" data-hashtags="k8s,kubernetes"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://hellofinger.tech/2021/10/kube-scheduler-intro/" data-hashtag="k8s"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://hellofinger.tech/2021/10/kube-scheduler-intro/" data-title="Kube-Scheduler介绍"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 百度" data-sharer="baidu" data-url="https://hellofinger.tech/2021/10/kube-scheduler-intro/" data-title="Kube-Scheduler介绍"><i data-svg-src="/lib/simple-icons/icons/baidu.min.svg" aria-hidden="true"></i></a>
+  </span>
+        </div>
+      </div></div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href="/tags/k8s/" class="post-tag" title="标签 - K8s">K8s</a><a href="/tags/kubernetes/" class="post-tag" title="标签 - Kubernetes">Kubernetes</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+    </section>
+  </div><div class="post-nav"><a href="/2021/02/go-basic-channel/" class="post-nav-item" rel="prev" title="Go基础--管道Channel"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>Go基础--管道Channel</a>
+      <a href="/2022/01/aws-setting-ecr-replication/" class="post-nav-item" rel="next" title="AWS实战--配置ECR Replication">AWS实战--配置ECR Replication<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+<div class="post-reward">
+    <div class="comment">Buy me a coffee</div>
+    <input type="checkbox" class="reward-input" name="reward" id="fi-reward" hidden />
+    <label class="reward-button" for="fi-reward"><i class="fa-solid fa-qrcode fa-fw" aria-hidden="true"></i>赞赏</label>
+    <div class="reward-ways" data-mode="static"><div><img loading="lazy" src="/images/alipay.jpg" alt="Finger 支付宝" data-title="Finger 支付宝" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/><span>支付宝</span>
+          </div><div><img loading="lazy" src="/images/wechatpay.jpg" alt="Finger 微信" data-title="Finger 微信" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/><span>微信</span>
+          </div></div>
+  </div><div id="comments"></div></article>
+
+  <aside class="toc" id="toc-auto" aria-label="目录"><h2 class="toc-title">目录&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2017 - 2024</span><span class="author" itemprop="copyrightHolder">
+              <a href="https://github.com/hellofinger"target="_blank" rel="external nofollow noopener noreferrer">Finger</a></span><span class="license footer-divider"><a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"></div><div class="footer-line visitor">
+          <span id="busuanzi_container_site_uv" title='总访客数'><i class="fa-regular fa-user fa-fw me-1" aria-hidden="true"></i><span id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span></span><span id="busuanzi_container_site_pv" class="footer-divider" title='总访问量'><i class="fa-regular fa-eye fa-fw me-1" aria-hidden="true"></i><span id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span></span>
+        </div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="回到顶部"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric">0%</span>
+        </div><div class="fixed-button view-comments d-none" role="button" aria-label="查看评论"><i class="fa-solid fa-comment fa-fw" aria-hidden="true"></i></div></div><a href="https://github.com/hellofinger" title="View source on GitHub"target="_blank" rel="external nofollow" class="github-corner right d-none-mobile"><svg viewBox="0 0 250 250" aria-hidden="true" width="56" height="56"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><div id="mask"></div><div class="reading-progress-bar" style="left: 0;top: 0;"></div><noscript>
+    <div class="noscript-warning">该网站在启用 JavaScript 的情况下效果最佳。</div>
+  </noscript>
+</div><link rel="preload" href="/lib/katex/katex.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/katex/katex.min.css"></noscript><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script src="/lib/autocomplete/autocomplete.min.js" defer></script><script src="/lib/fuse/fuse.min.js" defer></script><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/copy-tex.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="https://vercount.one/js" async defer></script><script src="/js/flyfish.js" defer></script><script>window.config={"code":{"copyTitle":"复制到剪贴板","editLockTitle":"锁定可编辑代码块","editUnLockTitle":"解锁可编辑代码块","editable":true,"maxShownLines":10},"comment":{"enable":true,"expired":false},"cookieconsent":{"content":{"dismiss":"同意","link":"了解更多","message":"本网站使用 Cookies 来改善您的浏览体验。"},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"distance":100,"findAllMatches":false,"highlightTag":"em","ignoreFieldNorm":false,"ignoreLocation":false,"isCaseSensitive":false,"location":0,"maxResultLength":10,"minMatchCharLength":2,"noResultsFound":"没有找到结果","snippetLength":30,"threshold":0.3,"useExtendedSearch":false},"version":"v0.3.10-c936e541"};</script><script src="/js/theme.min.js" defer></script></body>
+</html>

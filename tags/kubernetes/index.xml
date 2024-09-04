@@ -1,0 +1,51 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>Kubernetes - 标签 - Finger&#39;s Blog</title>
+    <link>https://hellofinger.tech/tags/kubernetes/</link>
+    <description>Kubernetes - 标签 | Finger&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Fri, 12 Jan 2024 18:42:04 &#43;0000</lastBuildDate><atom:link href="https://hellofinger.tech/tags/kubernetes/" rel="self" type="application/rss+xml" /><item>
+  <title>Testkube--创建自定义执行器</title>
+  <link>https://hellofinger.tech/2024/01/testkube-custom-executor/</link>
+  <pubDate>Fri, 12 Jan 2024 18:42:04 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2024/01/testkube-custom-executor/</guid>
+  <description><![CDATA[创建自定义执行器Testkube自定义执行器可以自己创建或者使用模板创建.
+1 git clone https://github.com/exu/testkube-executor-example Testkube提供了帮助实现执行器的组件。 Runner接口是实现执行器的主要入口。
+1 2 3 4 type Runner interface { // Run takes Execution data and returns execution result Run(execution testkube.Execution) (result testkube.ExecutionResult, err error) } 完整的runner.go文件
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 package runner import ( &#34;fmt&#34; &#34;io&#34; &#34;net/http&#34; &#34;github.]]></description>
+</item>
+<item>
+  <title>Testkube--介绍</title>
+  <link>https://hellofinger.tech/2024/01/testkube-intro/</link>
+  <pubDate>Thu, 11 Jan 2024 07:30:04 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2024/01/testkube-intro/</guid>
+  <description><![CDATA[Testkube是什么？Testkube 是一个Kubernetes原生测试框架。它内置了当前主流的大多数测试工具，包括功能、性能、安全和合规性等。它可以直接在您的Kubernetes集群中运行这些测试工具。并且它很容易集成到你的CI/CD Pipeline中。另外它还提供了kubectl插件、UI和API的多种交互方式。
+Testkube支持的测试工具和框架：
+cURL Cypress K6 Maven Postman Gradle Pytest Prebuild Executor Container Executor &hellip; 另外，Testkube支持创建自定义测试类型，称为Testkube容器执行器。它使您能够运行自己的容器映像来执行测试。
+安装Testkube使用Helm Chart安装
+1 2 3 4 5 6 7 8 # Add the Kubeshop Helm repository. helm repo add kubeshop https://kubeshop.github.io/helm-charts # Install the testkube chart. helm install --create-namespace my-testkube kubeshop/testkube -n testkube 创建测试 (Tests)创建一个Curl测试1 2 Type: curl/test Source: String 1 2 3 4 5 6 7 8 9 { &#34;command&#34;: [ &#34;curl&#34;, &#34;https://&lt;your-domain&gt;&#34;, &#34;-H&#34;, &#34;&#39;Accept: application/json&#39;&#34; ], &#34;expected_status&#34;: &#34;200&#34; } 创建一个K6测试1 2 Type: k6/script Source: String 1 2 3 4 5 6 7 8 9 10 import http from &#39;k6/http&#39;; import { sleep } from &#39;k6&#39;; export const options = { vus: 10, duration: &#39;30s&#39;, }; export default function () { http.]]></description>
+</item>
+<item>
+  <title>kube-scheduler介绍</title>
+  <link>https://hellofinger.tech/2021/10/kube-scheduler-intro/</link>
+  <pubDate>Fri, 29 Oct 2021 17:13:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>https://hellofinger.tech/2021/10/kube-scheduler-intro/</guid>
+  <description><![CDATA[kube-scheduler 工作原理scheduler工作流程基本上如下：
+scheduler维护待调度的podQueue并监听APIServer。
+创建Pod时，我们首先通过APIServer将Pod元数据写入etcd。
+scheduler通过Informer监听Pod状态。添加新的Pod时，会将Pod添加到podQueue。
+主程序不断从podQueue中提取Pods并按照一定的算法将节点分配给Pods。
+节点上的kubelet也侦听ApiServer。如果发现有新的Pod已调度到该节点，则将通过CRI调用高级容器运行时来运行容器。
+如果scheduler无法调度Pod，则如果启用了优先级和抢占功能，则首先进行抢占尝试，删除节点上具有低优先级的Pod，然后将要调度的Pod调度到该节点。如果未启用抢占或抢占尝试失败，则相关信息将记录在日志中，并且Pod将添加到podQueue的末尾。
+kube-scheduler 调度流程kube-scheduler 给一个 pod 做调度选择包含两个步骤：
+过滤：将所有满足 Pod 调度需求的 Node 选出来。如果没有合适的Node，则 Pod 不可调度。 打分：调度器会为 Pod 从所有可调度节点中选取一个最合适的Node。根据打分规则，调度器会给每一个可调度节点进行打分。 最后，kube-scheduler 会将 Pod 调度到得分最高的 Node 上。如果存在多个得分最高的 Node，kube-scheduler 会从中随机选取一个。
+默认的kube-scheduler默认的kube-scheduler有两个特点：
+以单个Pod为粒度 调度的最优性只存在于调度完成的那一刻，后续随着新的节点增加，新的Pod增加或减少，当初的调度决策可能已经不是最优。 对于第一点，这决定了默认的调度器无法满足大数据，AI等领域的要求。因而社区涌现了诸多专门用于任务类的调度器。比如 kube-batch
+参考[1] https://zhuanlan.zhihu.com/p/339762721
+[2] http://www.4k8k.xyz/article/u012798391/112414129]]></description>
+</item>
+</channel>
+</rss>
