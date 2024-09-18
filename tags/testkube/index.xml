@@ -1,15 +1,15 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
   <channel>
     <title>Testkube - 标签 - Finger&#39;s Blog</title>
-    <link>https://hellofinger.tech/tags/testkube/</link>
+    <link>http://localhost:1313/tags/testkube/</link>
     <description>Testkube - 标签 | Finger&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
-      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Fri, 12 Jan 2024 18:42:04 &#43;0000</lastBuildDate><atom:link href="https://hellofinger.tech/tags/testkube/" rel="self" type="application/rss+xml" /><item>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Fri, 12 Jan 2024 18:42:04 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/testkube/" rel="self" type="application/rss+xml" /><item>
   <title>Testkube--创建自定义执行器</title>
-  <link>https://hellofinger.tech/2024/01/testkube-custom-executor/</link>
+  <link>http://localhost:1313/2024/01/testkube-custom-executor/</link>
   <pubDate>Fri, 12 Jan 2024 18:42:04 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2024/01/testkube-custom-executor/</guid>
+  <guid>http://localhost:1313/2024/01/testkube-custom-executor/</guid>
   <description><![CDATA[创建自定义执行器Testkube自定义执行器可以自己创建或者使用模板创建.
 1 git clone https://github.com/exu/testkube-executor-example Testkube提供了帮助实现执行器的组件。 Runner接口是实现执行器的主要入口。
 1 2 3 4 type Runner interface { // Run takes Execution data and returns execution result Run(execution testkube.Execution) (result testkube.ExecutionResult, err error) } 完整的runner.go文件
@@ -17,10 +17,10 @@
 </item>
 <item>
   <title>Testkube--介绍</title>
-  <link>https://hellofinger.tech/2024/01/testkube-intro/</link>
+  <link>http://localhost:1313/2024/01/testkube-intro/</link>
   <pubDate>Thu, 11 Jan 2024 07:30:04 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2024/01/testkube-intro/</guid>
+  <guid>http://localhost:1313/2024/01/testkube-intro/</guid>
   <description><![CDATA[Testkube是什么？Testkube 是一个Kubernetes原生测试框架。它内置了当前主流的大多数测试工具，包括功能、性能、安全和合规性等。它可以直接在您的Kubernetes集群中运行这些测试工具。并且它很容易集成到你的CI/CD Pipeline中。另外它还提供了kubectl插件、UI和API的多种交互方式。
 Testkube支持的测试工具和框架：
 cURL Cypress K6 Maven Postman Gradle Pytest Prebuild Executor Container Executor &hellip; 另外，Testkube支持创建自定义测试类型，称为Testkube容器执行器。它使您能够运行自己的容器映像来执行测试。

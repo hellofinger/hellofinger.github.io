@@ -1,15 +1,15 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
   <channel>
     <title>CodeArtifact - 标签 - Finger&#39;s Blog</title>
-    <link>https://hellofinger.tech/tags/codeartifact/</link>
+    <link>http://localhost:1313/tags/codeartifact/</link>
     <description>CodeArtifact - 标签 | Finger&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
-      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Fri, 04 Nov 2022 11:12:52 &#43;0000</lastBuildDate><atom:link href="https://hellofinger.tech/tags/codeartifact/" rel="self" type="application/rss+xml" /><item>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Fri, 04 Nov 2022 11:12:52 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/codeartifact/" rel="self" type="application/rss+xml" /><item>
   <title>AWS实践--使用CodeArtifact创建私有的NPM package</title>
-  <link>https://hellofinger.tech/2022/11/aws-code-artifact-best-practice/</link>
+  <link>http://localhost:1313/2022/11/aws-code-artifact-best-practice/</link>
   <pubDate>Fri, 04 Nov 2022 11:12:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2022/11/aws-code-artifact-best-practice/</guid>
+  <guid>http://localhost:1313/2022/11/aws-code-artifact-best-practice/</guid>
   <description><![CDATA[前提条件IAM具有CodeArtifact权限 安装了Node和NPM 1. 创建CodeArtifact的domain和repository2. 创建私有的npm package1 2 # 初始化一个npm package npm init --scode=@finger -y 1 2 3 4 5 6 7 8 9 10 11 12 13 # package.json { &#34;name&#34;: &#34;finger-package&#34;, &#34;version&#34;: &#34;1.0.0&#34;, &#34;description&#34;: &#34;&#34;, &#34;main&#34;: &#34;index.js&#34;, &#34;scripts&#34;: { &#34;test&#34;: &#34;echo \&#34;Error: no test specified\&#34; &amp;&amp; exit 1&#34; }, &#34;keywords&#34;: [], &#34;author&#34;: &#34;&#34;, &#34;license&#34;: &#34;ISC&#34; } 新建index.js文件。添加helloworld函数
 1 2 3 4 # index.js module.exports.helloWorld = function() { console.]]></description>
 </item>

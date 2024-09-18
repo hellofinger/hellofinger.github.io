@@ -1,15 +1,15 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
   <channel>
     <title>Lambda - 标签 - Finger&#39;s Blog</title>
-    <link>https://hellofinger.tech/tags/lambda/</link>
+    <link>http://localhost:1313/tags/lambda/</link>
     <description>Lambda - 标签 | Finger&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
-      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Sun, 23 Feb 2020 22:37:00 &#43;0000</lastBuildDate><atom:link href="https://hellofinger.tech/tags/lambda/" rel="self" type="application/rss+xml" /><item>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Sun, 23 Feb 2020 22:37:00 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/lambda/" rel="self" type="application/rss+xml" /><item>
   <title>AWS实战--Lambda&#43;SNS&#43;S3实现自动生成统计图表工具</title>
-  <link>https://hellofinger.tech/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/</link>
+  <link>http://localhost:1313/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/</link>
   <pubDate>Sun, 23 Feb 2020 22:37:00 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/</guid>
+  <guid>http://localhost:1313/2020/02/aws-lambda-sns-s3-auto-gen-chart-tool/</guid>
   <description><![CDATA[需求概述通过一个种标准的数据结构。生成相应的数据统计图(线形图，柱状图，饼状图等)。
 实现方案基于AWS服务，将S3的存储桶作为事件触发源，用户只要上传数据到该存储桶，就广播通知，订阅该通知的消息队列则触发到具体的Lambda函数。Lambda函数完成绘图逻辑，并生成统计图上传到S3的存储桶。
 具体设计图如下： 具体流程Step1、创建一个S3存储桶，选择 Properties -&gt;Advanced settings -&gt; Events。

@@ -1,26 +1,47 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
   <channel>
     <title>Go - 标签 - Finger&#39;s Blog</title>
-    <link>https://hellofinger.tech/tags/go/</link>
+    <link>http://localhost:1313/tags/go/</link>
     <description>Go - 标签 | Finger&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
-      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Fri, 03 Feb 2023 10:24:00 &#43;0000</lastBuildDate><atom:link href="https://hellofinger.tech/tags/go/" rel="self" type="application/rss+xml" /><item>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Fri, 03 Feb 2023 10:24:00 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/go/" rel="self" type="application/rss+xml" /><item>
   <title>Go Package--goredis 在Go中使用 Redis Pub/Sub</title>
-  <link>https://hellofinger.tech/2023/02/go-using-redis-pub-sub/</link>
+  <link>http://localhost:1313/2023/02/go-using-redis-pub-sub/</link>
   <pubDate>Fri, 03 Feb 2023 10:24:00 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2023/02/go-using-redis-pub-sub/</guid>
+  <guid>http://localhost:1313/2023/02/go-using-redis-pub-sub/</guid>
   <description><![CDATA[前言发布/订阅是一种消息模式，其中发布者无需将消息发送给特定的接收者。这些消息由发布者发送到特定的频道(Channel)，接收者可以订阅一个或多个频道来使用这些消息。
 今天我们用Go和Redis来实现Pub/Sub这样的消息模式。我们将创建两个服务。第一个服务是Pub，它是一个API，接受用户信息，并将用户信息发布到Redis。 第二个服务是Sub。它将订阅Redis的消息。并打印到控制台。
 编码主要使用到两个package
 fiber 是一个基于Fasthttp（Go中最快的 HTTP 引擎）构建的 Go Web 框架。它旨在简化快速开发，无需分配内存，并且注重性能。用法和Nodejs Express类似。 go-redis Go 语言实现的Redis客户端 SDK。 1 2 go get github.com/gofiber/fiber/v3 go get github.com/redis/go-redis/v9 Pub1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 package main import ( &#34;context&#34; &#34;encoding/json&#34; &#34;github.]]></description>
 </item>
 <item>
+  <title>Go基础--异常处理Panic和Recover</title>
+  <link>http://localhost:1313/2021/03/go-panic-and-recover/</link>
+  <pubDate>Wed, 03 Mar 2021 10:24:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>http://localhost:1313/2021/03/go-panic-and-recover/</guid>
+  <description><![CDATA[概述在Go语言中，panic和recover是用于处理异常情况的机制，类似于其他编程语言中的异常和异常处理机制。
+Panicpanic用于表示程序发生了严重错误，类似于其他语言中的抛出异常。当程序遇到无法继续执行的致命错误时，可以调用panic函数来引发panic。 当程序发生panic时，当前goroutine的执行会被中止，但是deferred函数会继续执行，直到goroutine返回。然后程序会崩溃并打印panic信息，包括panic值和调用栈信息。 Recoverrecover用于在deferred函数中捕获和处理panic，防止panic继续向上传播导致程序崩溃。 当在deferred函数中调用recover时，如果当前goroutine发生了panic，recover会返回传递给panic函数的值，并且停止panic继续传播。这样可以恢复程序的控制流，使程序能够继续执行而不崩溃。 需要注意的是recover只有在defer才能生效，并且只能处理自己goroutine中的panic。在其他作用域中调用不会发挥作用。 总结一般来说，panic和recover应该被谨慎使用，因为过度使用它们会导致代码难以理解和维护。通常情况下，应该尽量避免使用panic，而是采取适当的错误处理策略。recover通常用于在必要时恢复程序的稳定性，确保程序在遇到意外情况时能够优雅地处理并继续执行。
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 package main import &#34;fmt&#34; func recoverTest() { defer func() { if r := recover(); r != nil { fmt.Println(&#34;Recovered from panic:&#34;, r) } }() // 引发panic panic(&#34;Oops! Panic occurs!&#34;) } func main() { fmt.Println(&#34;Start&#34;) recoverTest() fmt.Println(&#34;End&#34;) } ]]></description>
+</item>
+<item>
+  <title>Go基础--Defer关键字</title>
+  <link>http://localhost:1313/2021/03/go-defer/</link>
+  <pubDate>Mon, 01 Mar 2021 20:24:00 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>http://localhost:1313/2021/03/go-defer/</guid>
+  <description><![CDATA[概述在Go语言中，defer关键字用于延迟（defer）函数的执行，即在函数执行结束时再执行被延迟的函数。defer通常用于确保一些清理工作在函数执行完毕后被执行，无论函数是正常返回还是发生了panic。
+defer具有以下特点：
+在函数返回之前执行 可以放在函数中任意位置 可以同时执行多个defer函数，多个defer按栈(FILO)先进后出顺序执行 defer函数的传入参数在定义时就已经明确 可以修改函数返回值 用于文件IO、数据库连接等释放和关闭 在函数返回之前执行defer语句函数会在函数返回之前执行，下面程序将会依次输出B A：
+1 2 3 4 5 6 7 8 package main import &#34;fmt&#34; func main() { defer fmt.Println(&#34;A&#34;) fmt.Println(&#34;B&#34;) } 1 2 3 &gt;go run main.go B A defer可以放在函数中任意位置1 2 3 4 5 6 7 8 9 package main import &#34;fmt&#34; func main() { fmt.Println(&#34;A&#34;) defer fmt.Println(&#34;B&#34;) fmt.Println(&#34;C&#34;) } 1 2 3 4 &gt;go run main.go A C B 注意：]]></description>
+</item>
+<item>
   <title>Go基础--管道Channel</title>
-  <link>https://hellofinger.tech/2021/02/go-basic-channel/</link>
+  <link>http://localhost:1313/2021/02/go-basic-channel/</link>
   <pubDate>Fri, 26 Feb 2021 17:27:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2021/02/go-basic-channel/</guid>
+  <guid>http://localhost:1313/2021/02/go-basic-channel/</guid>
   <description><![CDATA[ChannelChannel 是Goroutine之间的一种通信机制。这种通信机制有个专业名词叫CSP （ Communicating Sequential Process）即通信顺序进程，是一种并发编程模型。Goroutine 和 Channel 分别对应 CSP 中的实体和传递信息的媒介，Goroutine 之间会通过 Channel 传递数据。
 设计原理在很多主流的编程语言中，多个线程传递数据的方式一般都是共享内存，为了解决线程之间的资源竞争，我们需要限制同一时间能够获取资源的线程数量。
 在Go语言中则设计成：不通过共享内存的方式进行通信，而是通过通信的方式共享内存。
@@ -30,20 +51,20 @@ fiber 是一个基于Fasthttp（Go中最快的 HTTP 引擎）构建的 Go Web �
 </item>
 <item>
   <title>Go基础--Context</title>
-  <link>https://hellofinger.tech/2021/02/go-basic-context/</link>
+  <link>http://localhost:1313/2021/02/go-basic-context/</link>
   <pubDate>Fri, 26 Feb 2021 14:07:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2021/02/go-basic-context/</guid>
+  <guid>http://localhost:1313/2021/02/go-basic-context/</guid>
   <description><![CDATA[什么是 ContextContext 是 Go 并发编程中的一种编程模式。 主要指的是 goroutine的上下文，包含 goroutine 的运行状态，环境，现场等信息。 Context 主要用来在goroutine 之间传递上下文信息，包含：取消信号，超时时间，截止时间，k-v等。
 为什么需要 Context在并发程序中，由于超时，取消操作或者一些异常情况，往往需要进行抢占操作或者中断后续的操作。例如：主协程中有多个任务1,2，&hellip;m，主协程对这些任务有超时控制；而其中任务1又有多个子任务1,2，&hellip;n。任务1对这些子任务也有自己的超时控制，那么这些子任务既要感知主协程的取消信号，也需要感知任务1的取消信号。 因此我们需要解决以下问题： 1、上层任务取消后，所有的下层任务都会被取消 2、中间某一层的任务取消后，只会将当前任务的下层任务取消，而不会影响上层的任务以及同级任务。
 Context 的定义1 2 3 4 5 6 7 8 9 10 11 12 13 type Context interface { // 当 context 被取消或者到了 deadline，返回一个被关闭的 channel Done() &lt;-chan struct{} // 在 channel Done 关闭后，返回 context 取消原因 Err() error // 返回 context 是否会被取消以及自动取消时间（即 deadline） Deadline() (deadline time.Time, ok bool) // 获取 key 对应的 value Value(key interface{}) interface{} } Context 是一个接口，定义了4个方法，它们都是幂等的。也就是说连续多次调用同一个方法，得到的结果都是相同的。]]></description>
 </item>
 <item>
   <title>Go Package--gokit介绍</title>
-  <link>https://hellofinger.tech/2020/08/go-package-gokit/</link>
+  <link>http://localhost:1313/2020/08/go-package-gokit/</link>
   <pubDate>Thu, 20 Aug 2020 15:57:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2020/08/go-package-gokit/</guid>
+  <guid>http://localhost:1313/2020/08/go-package-gokit/</guid>
   <description><![CDATA[Go-kit介绍Go kit 是用于在 Go 中构建微服务的编程工具包。用来解决了分布式系统和应用程序体系结构中的常见问题，让使用者可以专注于交付业务价值。
 本身不是一个框架，而是一套微服务工具集，是框架的底层，用它的话来说，如果你希望构建一个框架，而Go-kit 就希望成为你的框架的一部分 可以用Go-kit 做适应自己平台的框架 它自身称为toolkit，并不是framework 它主要是为了满足5大原则，单一职责原则，开放原则，封闭原则，依赖倒置原则，接口隔离原则 三层模型Go-kit最核心是提供了三层模型来解耦业务，这是我们用它的主要目的，模型由上到下分别是 transport -&gt; endpoint -&gt; service
 Transport 可以理解为是个拦截器，负责请求协议的实现和路由转发，请求和响应的序列化和反序列化
@@ -53,18 +74,18 @@ Service 服务功能具体实现，这样便于测试，只要 mock 传入的依
 </item>
 <item>
   <title>Go基础--三个点</title>
-  <link>https://hellofinger.tech/2020/07/go-basic-three-dot/</link>
+  <link>http://localhost:1313/2020/07/go-basic-three-dot/</link>
   <pubDate>Wed, 22 Jul 2020 10:14:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2020/07/go-basic-three-dot/</guid>
+  <guid>http://localhost:1313/2020/07/go-basic-three-dot/</guid>
   <description><![CDATA[三个点可变长的函数参数1 2 3 4 5 6 7 func Sum(nums ...int) int { cnt := 0 for _, n := range nums { cnt += n } return cnt } 调用可变长参数列表的函数1 2 3 primes := []int{2, 3, 5, 7} Sum(primes...) 两个切片合并1 2 3 4 5 6 7 8 9 10 11 12 13 14 var str_1 = []string{ &#34;a&#34;, &#34;b&#34;, &#34;c&#34;, } var str_2 = []string{ &#34;1&#34;, &#34;2&#34;, &#34;3&#34;, } str_1 = append(str_1, str_2.]]></description>
 </item>
 <item>
   <title>Go基础--Make和New</title>
-  <link>https://hellofinger.tech/2020/07/go-basic-make-and-new/</link>
+  <link>http://localhost:1313/2020/07/go-basic-make-and-new/</link>
   <pubDate>Mon, 20 Jul 2020 09:44:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2020/07/go-basic-make-and-new/</guid>
+  <guid>http://localhost:1313/2020/07/go-basic-make-and-new/</guid>
   <description><![CDATA[make 和 newmake和new都是用于初始化，但是二者有很大差异：
 -make 的作用是初始化内置的数据结构，例如切片，哈希和Channel -new 的作用是根据传入的类型分配内存，并返回指向该内存的指针
 重点：make只用于map, slice, channel的内存分配，返回有初始值的类型本身，new用于所有类型的分配，new返回指针

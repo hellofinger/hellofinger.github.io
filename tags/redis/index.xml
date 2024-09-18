@@ -1,15 +1,15 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
   <channel>
     <title>Redis - 标签 - Finger&#39;s Blog</title>
-    <link>https://hellofinger.tech/tags/redis/</link>
+    <link>http://localhost:1313/tags/redis/</link>
     <description>Redis - 标签 | Finger&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
-      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Fri, 03 Feb 2023 10:24:00 &#43;0000</lastBuildDate><atom:link href="https://hellofinger.tech/tags/redis/" rel="self" type="application/rss+xml" /><item>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Fri, 03 Feb 2023 10:24:00 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/redis/" rel="self" type="application/rss+xml" /><item>
   <title>Go Package--goredis 在Go中使用 Redis Pub/Sub</title>
-  <link>https://hellofinger.tech/2023/02/go-using-redis-pub-sub/</link>
+  <link>http://localhost:1313/2023/02/go-using-redis-pub-sub/</link>
   <pubDate>Fri, 03 Feb 2023 10:24:00 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2023/02/go-using-redis-pub-sub/</guid>
+  <guid>http://localhost:1313/2023/02/go-using-redis-pub-sub/</guid>
   <description><![CDATA[前言发布/订阅是一种消息模式，其中发布者无需将消息发送给特定的接收者。这些消息由发布者发送到特定的频道(Channel)，接收者可以订阅一个或多个频道来使用这些消息。
 今天我们用Go和Redis来实现Pub/Sub这样的消息模式。我们将创建两个服务。第一个服务是Pub，它是一个API，接受用户信息，并将用户信息发布到Redis。 第二个服务是Sub。它将订阅Redis的消息。并打印到控制台。
 编码主要使用到两个package
