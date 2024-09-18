@@ -1,15 +1,15 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
   <channel>
     <title>所有文章 - Finger&#39;s Blog</title>
-    <link>https://hellofinger.tech/posts/</link>
+    <link>http://localhost:1313/posts/</link>
     <description>所有文章 | Finger&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
-      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Fri, 12 Jan 2024 18:42:04 &#43;0000</lastBuildDate><atom:link href="https://hellofinger.tech/posts/" rel="self" type="application/rss+xml" /><item>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Fri, 12 Jan 2024 18:42:04 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/posts/" rel="self" type="application/rss+xml" /><item>
   <title>Testkube--创建自定义执行器</title>
-  <link>https://hellofinger.tech/2024/01/testkube-custom-executor/</link>
+  <link>http://localhost:1313/2024/01/testkube-custom-executor/</link>
   <pubDate>Fri, 12 Jan 2024 18:42:04 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2024/01/testkube-custom-executor/</guid>
+  <guid>http://localhost:1313/2024/01/testkube-custom-executor/</guid>
   <description><![CDATA[创建自定义执行器Testkube自定义执行器可以自己创建或者使用模板创建.
 1 git clone https://github.com/exu/testkube-executor-example Testkube提供了帮助实现执行器的组件。 Runner接口是实现执行器的主要入口。
 1 2 3 4 type Runner interface { // Run takes Execution data and returns execution result Run(execution testkube.Execution) (result testkube.ExecutionResult, err error) } 完整的runner.go文件
@@ -17,10 +17,10 @@
 </item>
 <item>
   <title>Testkube--介绍</title>
-  <link>https://hellofinger.tech/2024/01/testkube-intro/</link>
+  <link>http://localhost:1313/2024/01/testkube-intro/</link>
   <pubDate>Thu, 11 Jan 2024 07:30:04 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2024/01/testkube-intro/</guid>
+  <guid>http://localhost:1313/2024/01/testkube-intro/</guid>
   <description><![CDATA[Testkube是什么？Testkube 是一个Kubernetes原生测试框架。它内置了当前主流的大多数测试工具，包括功能、性能、安全和合规性等。它可以直接在您的Kubernetes集群中运行这些测试工具。并且它很容易集成到你的CI/CD Pipeline中。另外它还提供了kubectl插件、UI和API的多种交互方式。
 Testkube支持的测试工具和框架：
 cURL Cypress K6 Maven Postman Gradle Pytest Prebuild Executor Container Executor &hellip; 另外，Testkube支持创建自定义测试类型，称为Testkube容器执行器。它使您能够运行自己的容器映像来执行测试。
@@ -29,10 +29,10 @@ cURL Cypress K6 Maven Postman Gradle Pytest Prebuild Executor Container Executor
 </item>
 <item>
   <title>Go Package--goredis 在Go中使用 Redis Pub/Sub</title>
-  <link>https://hellofinger.tech/2023/02/go-using-redis-pub-sub/</link>
+  <link>http://localhost:1313/2023/02/go-using-redis-pub-sub/</link>
   <pubDate>Fri, 03 Feb 2023 10:24:00 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2023/02/go-using-redis-pub-sub/</guid>
+  <guid>http://localhost:1313/2023/02/go-using-redis-pub-sub/</guid>
   <description><![CDATA[前言发布/订阅是一种消息模式，其中发布者无需将消息发送给特定的接收者。这些消息由发布者发送到特定的频道(Channel)，接收者可以订阅一个或多个频道来使用这些消息。
 今天我们用Go和Redis来实现Pub/Sub这样的消息模式。我们将创建两个服务。第一个服务是Pub，它是一个API，接受用户信息，并将用户信息发布到Redis。 第二个服务是Sub。它将订阅Redis的消息。并打印到控制台。
 编码主要使用到两个package
@@ -40,19 +40,19 @@ fiber 是一个基于Fasthttp（Go中最快的 HTTP 引擎）构建的 Go Web �
 </item>
 <item>
   <title>AWS实践--使用CodeArtifact创建私有的NPM package</title>
-  <link>https://hellofinger.tech/2022/11/aws-code-artifact-best-practice/</link>
+  <link>http://localhost:1313/2022/11/aws-code-artifact-best-practice/</link>
   <pubDate>Fri, 04 Nov 2022 11:12:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2022/11/aws-code-artifact-best-practice/</guid>
+  <guid>http://localhost:1313/2022/11/aws-code-artifact-best-practice/</guid>
   <description><![CDATA[前提条件IAM具有CodeArtifact权限 安装了Node和NPM 1. 创建CodeArtifact的domain和repository2. 创建私有的npm package1 2 # 初始化一个npm package npm init --scode=@finger -y 1 2 3 4 5 6 7 8 9 10 11 12 13 # package.json { &#34;name&#34;: &#34;finger-package&#34;, &#34;version&#34;: &#34;1.0.0&#34;, &#34;description&#34;: &#34;&#34;, &#34;main&#34;: &#34;index.js&#34;, &#34;scripts&#34;: { &#34;test&#34;: &#34;echo \&#34;Error: no test specified\&#34; &amp;&amp; exit 1&#34; }, &#34;keywords&#34;: [], &#34;author&#34;: &#34;&#34;, &#34;license&#34;: &#34;ISC&#34; } 新建index.js文件。添加helloworld函数
 1 2 3 4 # index.js module.exports.helloWorld = function() { console.]]></description>
 </item>
 <item>
   <title>容器实现原理</title>
-  <link>https://hellofinger.tech/2022/10/container-principle/</link>
+  <link>http://localhost:1313/2022/10/container-principle/</link>
   <pubDate>Wed, 12 Oct 2022 20:14:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2022/10/container-principle/</guid>
+  <guid>http://localhost:1313/2022/10/container-principle/</guid>
   <description><![CDATA[容器实现原理容器到底是什么一回事？它有什么样的特性？又是如何运行起来的呢？下面我们简单介绍一下以Docker容器为主的Linux容器的实现原理。
 容器其实是一种沙盒技术。沙盒就是能够像集装箱一样把你的应用“装”起来。这样，应用与应用之间就有了边界而不至于互相干扰；同时也可以很方便地搬来搬去。
 而容器技术的核心功能，就是通过约束和修改进程的动态表现，从而为其创造一个“边界”。
@@ -67,20 +67,20 @@ fiber 是一个基于Fasthttp（Go中最快的 HTTP 引擎）构建的 Go Web �
 </item>
 <item>
   <title>AWS实践--跨账号访问ECR</title>
-  <link>https://hellofinger.tech/2022/09/aws-cross-account-access-ecr-repo/</link>
+  <link>http://localhost:1313/2022/09/aws-cross-account-access-ecr-repo/</link>
   <pubDate>Fri, 02 Sep 2022 11:12:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2022/09/aws-cross-account-access-ecr-repo/</guid>
+  <guid>http://localhost:1313/2022/09/aws-cross-account-access-ecr-repo/</guid>
   <description><![CDATA[需求现有一个基础账号(111111111111)ECR存放所有的基础镜像和应用镜像，其他子账号(222222222222、333333333333、444444444444)的EKS集群需要拉取基础账号的ECR镜像。
 配置以下示例为AWS存储库跨账号访问策略.
 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 { &#34;Version&#34;: &#34;2012-10-17&#34;, &#34;Statement&#34;: [ { &#34;Sid&#34;: &#34;&lt;statement-name&gt;&#34;, &#34;Effect&#34;: &#34;Allow&#34;, &#34;Principal&#34;: { &#34;AWS&#34;: [ &#34;arn:aws:iam::222222222222:root&#34;, &#34;arn:aws:iam::333333333333:root&#34;, &#34;arn:aws:iam::444444444444:root&#34; ] }, &#34;Action&#34;: [ &#34;ecr:BatchGetImage&#34;, &#34;ecr:GetDownloadUrlForLayer&#34; ] } ] } 测试1 2 3 4 5 6 7 8 # 登录 222222222222、333333333333、444444444444 子账号的服务器 # 执行ECR登录命令 aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 111111111111.]]></description>
 </item>
 <item>
   <title>CVE-2019-5736容器逃逸漏洞复现</title>
-  <link>https://hellofinger.tech/2022/08/docker-cve-2019-5736/</link>
+  <link>http://localhost:1313/2022/08/docker-cve-2019-5736/</link>
   <pubDate>Mon, 15 Aug 2022 20:14:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2022/08/docker-cve-2019-5736/</guid>
+  <guid>http://localhost:1313/2022/08/docker-cve-2019-5736/</guid>
   <description><![CDATA[一、漏洞概述CVE-2019-5736漏洞是指通过从容器内覆盖并执行主机系统 runc 二进制文件，从而获取主机上的root执行权限。
 二、影响版本OS: Ubuntu 16.04
 Docker: 18.06.0-ce ( docker version &lt; 18.09.02 )
@@ -89,19 +89,19 @@ Docker Runc: 1.0.0-rc5 ( runc version &lt; 1.0-rc6 )
 </item>
 <item>
   <title>Docker特权模式逃逸</title>
-  <link>https://hellofinger.tech/2022/08/docker-privileged-escape/</link>
+  <link>http://localhost:1313/2022/08/docker-privileged-escape/</link>
   <pubDate>Fri, 12 Aug 2022 20:14:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2022/08/docker-privileged-escape/</guid>
+  <guid>http://localhost:1313/2022/08/docker-privileged-escape/</guid>
   <description><![CDATA[一、漏洞说明特权模式逃逸是一种最简单有效的逃逸方法，使用特权模式启动的容器时，docker管理员可通过mount命令将外部宿主机磁盘设备挂载进容器内部，获取对整个宿主机的文件读写权限，可直接通过chroot切换根目录、写ssh公钥和crontab计划任何等逃逸到宿主机。
 二、环境搭建1 2 // 使用特权模式运行容器 docker run -it --privileged ubuntu:18.04 三、漏洞验证1 2 3 // 如果是以特权模式启动，**CapEff** 对应的掩码值应该为: 0000003fffffffff root@43552e476ea7:/# cat /proc/self/status | grep CapEff CapEff: 0000003fffffffff 四、漏洞利用4.1、查看宿主机目录1 2 3 4 5 6 fdisk -l Device Boot Start End Sectors Size Id Type /dev/sda1 * 2048 48234495 48232448 23G 83 Linux /dev/sda2 48236542 52426751 4190210 2G 5 Extended /dev/sda5 48236544 52426751 4190208 2G 82 Linux swap / Solaris 4.]]></description>
 </item>
 <item>
   <title>Docker中Root权限的危害性</title>
-  <link>https://hellofinger.tech/2022/08/docker-root-danger/</link>
+  <link>http://localhost:1313/2022/08/docker-root-danger/</link>
   <pubDate>Fri, 12 Aug 2022 20:14:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2022/08/docker-root-danger/</guid>
+  <guid>http://localhost:1313/2022/08/docker-root-danger/</guid>
   <description><![CDATA[一、在docker使用root用户越权案例如果一个普通用户，并且这个用户在docker组，则这个用户已经是root了。
 方法一假如我们有一个用户demo，它本身不具有sudo的权限，所以就有很多文件无法进行读写操作，例如它无法查看 /root 目录
 1 2 sudo adduser demo sudo groupadd docker 1 2 3 demo@ubuntu-VirtualBox:/home$ sudo ls /root [sudo] password for demo: demo is not in the sudoers file. This incident will be reported. 但是这个用户在docker的group里，具有执行docker的权限
@@ -109,10 +109,10 @@ Docker Runc: 1.0.0-rc5 ( runc version &lt; 1.0-rc6 )
 </item>
 <item>
   <title>Dcoker Remote API未授权访问漏洞</title>
-  <link>https://hellofinger.tech/2022/08/docker-remote-api-vulnerability-escape/</link>
+  <link>http://localhost:1313/2022/08/docker-remote-api-vulnerability-escape/</link>
   <pubDate>Fri, 12 Aug 2022 18:14:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2022/08/docker-remote-api-vulnerability-escape/</guid>
+  <guid>http://localhost:1313/2022/08/docker-remote-api-vulnerability-escape/</guid>
   <description><![CDATA[一、漏洞说明Docker守护进程监听IP为0.0.0.0，导致可以直接通过Docker Remote API操作Docker
 二、影响版本Docker version: 19.03.12 之前版本
 三、漏洞复现3.1、安装docker1 sudo apt-get update 3.2、备份docker服务文件1 cp /lib/systemd/system/docker.service /lib/systemd/system/docker.service.bak 3.3、修改服务文件，将docker监听IP改成0.0.0.01 vim /lib/systemd/system/docker.service	1 2 3 4 # 在文件末尾加上如下代码 [Service] ExecStart= ExecStart=/usr/bin/dockerd -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock 3.4、重启守护进程和docker服务1 2 3 sudo systemctl daemon-reload # 重载守护进程 sudo service docker restart # 重启docker服务 systemctl status docker.service # 查看docker运行情况 3.5、漏洞检测1 2 3 curl http://x.x.x.x:2375 docker -H tcp://x.x.x.x:2375 images 1 2 3 4 5 6 7 8 9 10 ┌──(kali㉿kali)-[~] └─$ docker -H tcp://10.]]></description>

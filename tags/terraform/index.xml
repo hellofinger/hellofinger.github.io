@@ -1,15 +1,15 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
   <channel>
     <title>Terraform - 标签 - Finger&#39;s Blog</title>
-    <link>https://hellofinger.tech/tags/terraform/</link>
+    <link>http://localhost:1313/tags/terraform/</link>
     <description>Terraform - 标签 | Finger&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
-      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Mon, 03 Feb 2020 09:22:52 &#43;0800</lastBuildDate><atom:link href="https://hellofinger.tech/tags/terraform/" rel="self" type="application/rss+xml" /><item>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Mon, 03 Feb 2020 09:22:52 &#43;0800</lastBuildDate><atom:link href="http://localhost:1313/tags/terraform/" rel="self" type="application/rss+xml" /><item>
   <title>Terraform基础--模块基础</title>
-  <link>https://hellofinger.tech/2020/02/terraform-modules/</link>
+  <link>http://localhost:1313/2020/02/terraform-modules/</link>
   <pubDate>Mon, 03 Feb 2020 09:22:52 &#43;0800</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2020/02/terraform-modules/</guid>
+  <guid>http://localhost:1313/2020/02/terraform-modules/</guid>
   <description><![CDATA[什么是Terraform ModuleModule 是 Terraform 为了管理单元化资源而设计的，是子节点，子资源，子架构模板的整合和抽象。在实际复杂的技术架构中，涉及到的资源多种多样，资源与资源之间的关系错综复杂，资源模版的编写，扩展，维护等多个问题的成本都会不断增加。将多种可以复用的资源定义为一个module，通过对 module 的管理简化模板的架构，降低模板管理的复杂度，这就是module的作用。
 除此之外，对开发者和用户而言，只需关心 module 的 input 参数即可，无需关心module中资源的定义，参数，语法等细节问题，抽出更多的时间和精力投入到架构设计和资源关系整合上。
 Module的标准结构官方建议Module标准结构包含：main.tf，variables.tf，outputs.tf，README.md。这些是最小模块的建议文件名，即使它们为空。
@@ -18,10 +18,10 @@ main.tf：资源的定义模板 variables.tf：模板所依赖的参数定义和
 </item>
 <item>
   <title>Terraform基础--变量详解</title>
-  <link>https://hellofinger.tech/2020/02/terraform-variables/</link>
+  <link>http://localhost:1313/2020/02/terraform-variables/</link>
   <pubDate>Sun, 02 Feb 2020 04:23:52 &#43;0800</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2020/02/terraform-variables/</guid>
+  <guid>http://localhost:1313/2020/02/terraform-variables/</guid>
   <description><![CDATA[定义变量创建 variables.tf文件，定义变量名为：aws_region。设置默认值：ap-southeast-1。默认值是可选的。如果未设置默认值，则该变量是必需的。
 1 2 3 4 5 # variables.tf variable &#34;aws_region&#34; { default = &#34;ap-southeast-1&#34; } 注意：该文件可以命名为任何名称，因为Terraform加载目录下以*.tf结尾的所有文件。
 使用变量通过使用占位符 ${}和var关键字引用定义的变量名。
@@ -35,10 +35,10 @@ main.tf：资源的定义模板 variables.tf：模板所依赖的参数定义和
 </item>
 <item>
   <title>Terraform基础--基本语法</title>
-  <link>https://hellofinger.tech/2020/02/terraform-basic/</link>
+  <link>http://localhost:1313/2020/02/terraform-basic/</link>
   <pubDate>Sat, 01 Feb 2020 11:17:52 &#43;0800</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2020/02/terraform-basic/</guid>
+  <guid>http://localhost:1313/2020/02/terraform-basic/</guid>
   <description><![CDATA[语法Terraform语言也就是HCL(HashiCorp Configuration Language)，是一种丰富的语言。他的语法结构类似于JSON语法。主要由参数和块构成。
 参数1 2 ami = &#34;ami-061eb2b23f9f8839c&#34; instance_type = &#34;t2.micro&#34; 等号前的标识符是参数名称，等号后的表达式是参数的值。
 代码块1 2 3 4 5 6 7 8 resource &#34;aws_instance&#34; &#34;example-instance&#34; { ami = &#34;ami-061eb2b23f9f8839c&#34; instance_type = &#34;t2.micro&#34; tags = { Name = &#34;Example by ChangSha Union&#34; } } 块具有类型(resource)，每一个块类型定义后需要定义多个标签，上述例子定义了 aws_instance和 example-instance 两个标签。特定的块类型可以具有任意数量的标签或者不需要标签名。aws_instance为第三方云资源的关键字，example-instance为自定义资源变量名。
@@ -50,10 +50,10 @@ main.tf：资源的定义模板 variables.tf：模板所依赖的参数定义和
 </item>
 <item>
   <title>Terraform基础--Terraform是什么？</title>
-  <link>https://hellofinger.tech/2020/01/what-is-terraform/</link>
+  <link>http://localhost:1313/2020/01/what-is-terraform/</link>
   <pubDate>Mon, 06 Jan 2020 08:44:52 &#43;0800</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2020/01/what-is-terraform/</guid>
+  <guid>http://localhost:1313/2020/01/what-is-terraform/</guid>
   <description><![CDATA[一、Terraform是什么？Terraform是一个开源基础架构，是HashiCorp创建的代码软件工具。它使用户能够使用称为HCL(HashiCorp Configuration Language)配置语言或可选的JSON来定义和配置数据中心基础架构。 HCL是声明式的，也就是说，程序员用HCL来描述整个基础架构应该是什么样的，然后把具体的实施工作交给Terraform就可以了，程序员不需要了解实施的具体步骤和细节，不需要了解terraform如何与云服务商的API进行对接。Terraform会根据代码，自动下载相应的Provider和Provisioner来负责具体步骤和细节。于声明式对应的是命令式。命令式语言是按照步骤执行的，先后顺序很重要，对固定输入执行命令式语言会得到固定的输出。声明式和命令式并无高下之分，只是在云资源编排这一领域，声明式会比较方便实现。
 Terraform 支持许多云基础架构提供商，国外云如 Amazon Web Services，IBM Cloud（以前的 Bluemix），Google Cloud Platform，Linode， Microsoft Azure， Oracle 云基础架构或 VMware vSphere 以及 OpenStack。 国内云包括阿里，腾讯，华为，京东等云服务商。
 Terraform 是一种安全有效地构建、更改和版本控制基础设施的工具(基础架构自动化的编排工具)。 以用来管理多层次的资源。从上层的软件配置到底层的网络、系统配置都可以使用 Terraform 统一进行管理。 它的目标是 &ldquo;Write, Plan, and create Infrastructure as Code&rdquo;, 基础架构即代码。
@@ -68,10 +68,10 @@ Terraform 有一个 plan 步骤，它生成一个执行计划。执行计划显�
 </item>
 <item>
   <title>Terraform基础--从一个简单的例子开始</title>
-  <link>https://hellofinger.tech/2020/01/terraform-first-example/</link>
+  <link>http://localhost:1313/2020/01/terraform-first-example/</link>
   <pubDate>Sat, 04 Jan 2020 11:44:52 &#43;0800</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2020/01/terraform-first-example/</guid>
+  <guid>http://localhost:1313/2020/01/terraform-first-example/</guid>
   <description><![CDATA[安装Terraform1 2 3 4 5 # Step1, 下载适合您系统的Terraform安装包 wget https://releases.hashicorp.com/terraform/0.12.18/terraform_0.12.18_linux_amd64.zip # Step2, 解压该包，是一个名为terraform的二进制文件，可以在当前目录直接运行命令: terraform 1 2 # Step3, 将terraform加到环境变量。 export PATH=$PATH:/home/ubuntu/terraform:$PATH 1 2 $ terraform version Terraform v0.12.18 编写第一个Terraform例子我们在aws的新加坡(ap-southeast-1)区域创建一台实例类型为t2.micro的EC2，并标记一下Tag。
 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 # main.tf provider &#34;aws&#34; { region = &#34;ap-southeast-1&#34; } resource &#34;aws_instance&#34; &#34;example-instance&#34; { ami = &#34;ami-061eb2b23f9f8839c&#34; instance_type = &#34;t2.micro&#34; tags = { Name = &#34;Example by ChangSha DevOps Union &#34; Terraform = true } } 1 2 3 4 5 6 ~/terraform-guide/example1$ tree .]]></description>
 </item>

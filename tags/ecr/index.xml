@@ -1,25 +1,25 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
   <channel>
     <title>ECR - 标签 - Finger&#39;s Blog</title>
-    <link>https://hellofinger.tech/tags/ecr/</link>
+    <link>http://localhost:1313/tags/ecr/</link>
     <description>ECR - 标签 | Finger&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
-      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Fri, 02 Sep 2022 11:12:52 &#43;0000</lastBuildDate><atom:link href="https://hellofinger.tech/tags/ecr/" rel="self" type="application/rss+xml" /><item>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Fri, 02 Sep 2022 11:12:52 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/ecr/" rel="self" type="application/rss+xml" /><item>
   <title>AWS实践--跨账号访问ECR</title>
-  <link>https://hellofinger.tech/2022/09/aws-cross-account-access-ecr-repo/</link>
+  <link>http://localhost:1313/2022/09/aws-cross-account-access-ecr-repo/</link>
   <pubDate>Fri, 02 Sep 2022 11:12:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2022/09/aws-cross-account-access-ecr-repo/</guid>
+  <guid>http://localhost:1313/2022/09/aws-cross-account-access-ecr-repo/</guid>
   <description><![CDATA[需求现有一个基础账号(111111111111)ECR存放所有的基础镜像和应用镜像，其他子账号(222222222222、333333333333、444444444444)的EKS集群需要拉取基础账号的ECR镜像。
 配置以下示例为AWS存储库跨账号访问策略.
 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 { &#34;Version&#34;: &#34;2012-10-17&#34;, &#34;Statement&#34;: [ { &#34;Sid&#34;: &#34;&lt;statement-name&gt;&#34;, &#34;Effect&#34;: &#34;Allow&#34;, &#34;Principal&#34;: { &#34;AWS&#34;: [ &#34;arn:aws:iam::222222222222:root&#34;, &#34;arn:aws:iam::333333333333:root&#34;, &#34;arn:aws:iam::444444444444:root&#34; ] }, &#34;Action&#34;: [ &#34;ecr:BatchGetImage&#34;, &#34;ecr:GetDownloadUrlForLayer&#34; ] } ] } 测试1 2 3 4 5 6 7 8 # 登录 222222222222、333333333333、444444444444 子账号的服务器 # 执行ECR登录命令 aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 111111111111.]]></description>
 </item>
 <item>
   <title>AWS实战--配置ECR Replication</title>
-  <link>https://hellofinger.tech/2022/01/aws-setting-ecr-replication/</link>
+  <link>http://localhost:1313/2022/01/aws-setting-ecr-replication/</link>
   <pubDate>Mon, 17 Jan 2022 10:51:00 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2022/01/aws-setting-ecr-replication/</guid>
+  <guid>http://localhost:1313/2022/01/aws-setting-ecr-replication/</guid>
   <description><![CDATA[Amazon ECR 可以配置跨区域(region)或跨账号(account)复制。配置复制后，推送(Push)到源存储库的镜像会自动复制到目标存储库(ECR)。
 本例以跨区域复制为例：源ECR（ap-southeast-1）==&gt; 目标ECR （us-east-1）
 配置源 ECR登录到 AWS ap-southeast-1 region的ECR页面。选择 Private registry &ndash;&gt; Replication菜单。点击 Edit 按钮. 进入到Replication configuration页面后，点击 Add rule。 选择复制的目标类型，我们选择允许跨区域复制(Cross-region)，点击Next。 选择目标region(us-east-1)。添加镜像名字过滤条件(本例为hello前缀的镜像仓库)。默认为前缀匹配。最后Submit rule。

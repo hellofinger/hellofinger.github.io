@@ -1,87 +1,87 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
   <channel>
     <title>Tags - 标签 - Finger&#39;s Blog</title>
-    <link>https://hellofinger.tech/tags/</link>
+    <link>http://localhost:1313/tags/</link>
     <description>Tags - 标签 | Finger&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
-      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Fri, 12 Jan 2024 18:42:04 &#43;0000</lastBuildDate><atom:link href="https://hellofinger.tech/tags/" rel="self" type="application/rss+xml" /><item>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Fri, 12 Jan 2024 18:42:04 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/" rel="self" type="application/rss+xml" /><item>
   <title>K8s</title>
-  <link>https://hellofinger.tech/tags/k8s/</link>
+  <link>http://localhost:1313/tags/k8s/</link>
   <pubDate>Fri, 12 Jan 2024 18:42:04 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/tags/k8s/</guid>
+  <guid>http://localhost:1313/tags/k8s/</guid>
   <description><![CDATA[]]></description>
 </item>
 <item>
   <title>Kubernetes</title>
-  <link>https://hellofinger.tech/tags/kubernetes/</link>
+  <link>http://localhost:1313/tags/kubernetes/</link>
   <pubDate>Fri, 12 Jan 2024 18:42:04 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/tags/kubernetes/</guid>
+  <guid>http://localhost:1313/tags/kubernetes/</guid>
   <description><![CDATA[]]></description>
 </item>
 <item>
   <title>Testing</title>
-  <link>https://hellofinger.tech/tags/testing/</link>
+  <link>http://localhost:1313/tags/testing/</link>
   <pubDate>Fri, 12 Jan 2024 18:42:04 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/tags/testing/</guid>
+  <guid>http://localhost:1313/tags/testing/</guid>
   <description><![CDATA[]]></description>
 </item>
 <item>
   <title>Testkube</title>
-  <link>https://hellofinger.tech/tags/testkube/</link>
+  <link>http://localhost:1313/tags/testkube/</link>
   <pubDate>Fri, 12 Jan 2024 18:42:04 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/tags/testkube/</guid>
+  <guid>http://localhost:1313/tags/testkube/</guid>
   <description><![CDATA[]]></description>
 </item>
 <item>
   <title>Go</title>
-  <link>https://hellofinger.tech/tags/go/</link>
+  <link>http://localhost:1313/tags/go/</link>
   <pubDate>Fri, 03 Feb 2023 10:24:00 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/tags/go/</guid>
+  <guid>http://localhost:1313/tags/go/</guid>
   <description><![CDATA[]]></description>
 </item>
 <item>
   <title>Redis</title>
-  <link>https://hellofinger.tech/tags/redis/</link>
+  <link>http://localhost:1313/tags/redis/</link>
   <pubDate>Fri, 03 Feb 2023 10:24:00 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/tags/redis/</guid>
+  <guid>http://localhost:1313/tags/redis/</guid>
   <description><![CDATA[]]></description>
 </item>
 <item>
   <title>AWS</title>
-  <link>https://hellofinger.tech/tags/aws/</link>
+  <link>http://localhost:1313/tags/aws/</link>
   <pubDate>Fri, 04 Nov 2022 11:12:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/tags/aws/</guid>
+  <guid>http://localhost:1313/tags/aws/</guid>
   <description><![CDATA[]]></description>
 </item>
 <item>
   <title>CodeArtifact</title>
-  <link>https://hellofinger.tech/tags/codeartifact/</link>
+  <link>http://localhost:1313/tags/codeartifact/</link>
   <pubDate>Fri, 04 Nov 2022 11:12:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/tags/codeartifact/</guid>
+  <guid>http://localhost:1313/tags/codeartifact/</guid>
   <description><![CDATA[]]></description>
 </item>
 <item>
   <title>Container</title>
-  <link>https://hellofinger.tech/tags/container/</link>
+  <link>http://localhost:1313/tags/container/</link>
   <pubDate>Wed, 12 Oct 2022 20:14:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/tags/container/</guid>
+  <guid>http://localhost:1313/tags/container/</guid>
   <description><![CDATA[]]></description>
 </item>
 <item>
   <title>Docker</title>
-  <link>https://hellofinger.tech/tags/docker/</link>
+  <link>http://localhost:1313/tags/docker/</link>
   <pubDate>Wed, 12 Oct 2022 20:14:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/tags/docker/</guid>
+  <guid>http://localhost:1313/tags/docker/</guid>
   <description><![CDATA[]]></description>
 </item>
 </channel>

@@ -1,15 +1,15 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
   <channel>
     <title>ElasticSearch - 分类 - Finger&#39;s Blog</title>
-    <link>https://hellofinger.tech/categories/elasticsearch/</link>
+    <link>http://localhost:1313/categories/elasticsearch/</link>
     <description>ElasticSearch - 分类 | Finger&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
-      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Sat, 26 Aug 2017 10:23:00 &#43;0000</lastBuildDate><atom:link href="https://hellofinger.tech/categories/elasticsearch/" rel="self" type="application/rss+xml" /><item>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Sat, 26 Aug 2017 10:23:00 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/categories/elasticsearch/" rel="self" type="application/rss+xml" /><item>
   <title>用Python实现Elasticsearch function_score查询(二)</title>
-  <link>https://hellofinger.tech/2017/08/using-elasticsearch-function-score-with-python-2/</link>
+  <link>http://localhost:1313/2017/08/using-elasticsearch-function-score-with-python-2/</link>
   <pubDate>Sat, 26 Aug 2017 10:23:00 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2017/08/using-elasticsearch-function-score-with-python-2/</guid>
+  <guid>http://localhost:1313/2017/08/using-elasticsearch-function-score-with-python-2/</guid>
   <description><![CDATA[random_scorerandom_score函数，它的输出是一个介于0到1之间的数字，当给它提供相同的seed值时，它能够产生一致性随机的结果。random_score 子句不包含任何的filter，因此它适用于所有文档。当然，如果你索引了能匹配查询的新文档，无论你是否使用了一致性随机，结果的顺序都会有所改变。
 1 2 3 4 5 6 q = query.Q( &#39;function_score&#39;, functions=[ query.SF(&#39;random_score&#39;, seed=10) ] ) 1 2 3 4 5 6 7 8 9 10 GET /_search { &#34;query&#34;: { &#34;function_score&#34;: { &#34;random_score&#34;: { &#34;seed&#34;: 10 } } } } decay functions之前提过的weight，field_value_factor，random_score等函数都是一种线性的影响关系，给出的分数随着距离变大而变低。有时候我们会有范围性质，分数变化缓慢的需求场景。此时上述函数就显得不那么适用。 Elasticsearch提供了三种decay functions，让我们可以基于一个单值的数值型字段（比如日期、地点或者价格类似标准的数值型字段）来计算分数。
 这三个衰减函数分别为：
@@ -18,10 +18,10 @@ origin: 中心点或字段可能的最佳值，落在原点origin上的文档评
 </item>
 <item>
   <title>用Python实现Elasticsearch function_score查询(一)</title>
-  <link>https://hellofinger.tech/2017/08/using-elasticsearch-function-score-with-python-1/</link>
+  <link>http://localhost:1313/2017/08/using-elasticsearch-function-score-with-python-1/</link>
   <pubDate>Sat, 19 Aug 2017 12:38:00 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2017/08/using-elasticsearch-function-score-with-python-1/</guid>
+  <guid>http://localhost:1313/2017/08/using-elasticsearch-function-score-with-python-1/</guid>
   <description><![CDATA[什么是function_scorefunction_score查询是处理分值计算过程的终极工具。它让你能够对所有匹配了主查询的每份文档调用一个函数来调整甚至是完全替换原来的_score。
 实际上，你可以通过设置过滤器来将查询得到的结果分成若干个子集，然后对每个子集使用不同的函数。这样你就能够同时得益于：高效的分值计算以及可以缓存的过滤器。
 它拥有几种预先定义好了的函数：
@@ -31,10 +31,10 @@ weight 对每份文档适用一个简单的提升，且该提升不会被归约�
 </item>
 <item>
   <title>用Python实现Elasticsearch提供的搜索建议</title>
-  <link>https://hellofinger.tech/2017/08/elasticsearch-search-suggest-with-python/</link>
+  <link>http://localhost:1313/2017/08/elasticsearch-search-suggest-with-python/</link>
   <pubDate>Wed, 16 Aug 2017 23:01:00 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2017/08/elasticsearch-search-suggest-with-python/</guid>
+  <guid>http://localhost:1313/2017/08/elasticsearch-search-suggest-with-python/</guid>
   <description><![CDATA[Suggest搜索Elasticsearch支持多种suggest类型，也支持模糊搜索。
 Elasticsearch支持如下4种搜索类型：
 Term。基于编辑距离的搜索，也就是对比两个字串之间，由一个转成另一个所需的最少编辑操作次数，编辑距离越少说明越相近。搜索时需要指定字段，是很基础的一种搜索。 Phrase。Term的优化，能够基于共现和频率来做出关于选择哪些token的更好的决定。 Completion。提供自动完成/按需搜索的功能，这是一种导航功能，可在用户输入时引导用户查看相关结果，从而提高搜索精度。和前2种用法不同，需要在mapping时指定suggester字段，使用允许快速查找的数据结构，所以在搜索速度上得到了很大的优化。 Context。Completion搜索的是索引中的全部文档，但是有时候希望对这个结果进行一些and/or的过滤，就需要使用Context类型了。 下面使用elasticsearch_dsl自带的Suggestions功能
@@ -42,10 +42,10 @@ Term。基于编辑距离的搜索，也就是对比两个字串之间，由一�
 </item>
 <item>
   <title>Using Elasticsearch Bulk With Python</title>
-  <link>https://hellofinger.tech/2017/08/using-elasticsearch-bulk-with-python/</link>
+  <link>http://localhost:1313/2017/08/using-elasticsearch-bulk-with-python/</link>
   <pubDate>Wed, 16 Aug 2017 22:02:00 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2017/08/using-elasticsearch-bulk-with-python/</guid>
+  <guid>http://localhost:1313/2017/08/using-elasticsearch-bulk-with-python/</guid>
   <description><![CDATA[Python Elasticsearch客户端提供了批量索引的功能，详情请查看项目主页
 主要封装了两种方式进行bulk操作：
 streaming_bulk 流式 parallel_buck 多线程 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 def streaming_bulk( client, actions, chunk_size=500, max_chunk_bytes=104857600, raise_on_error=True, expand_action_callback=&lt;function expand_action&gt;, raise_on_exception=True, max_retries=0, initial_backoff=2, max_backoff=600, yield_ok=True, **kwargs): pass def parallel_bulk( client, actions, thread_count=4, chunk_size=500, max_chunk_bytes=104857600, queue_size=4, expand_action_callback=&lt;function expand_action&gt;, **kwargs): pass streaming比parallel多了重试的机制。两个方法默认都是每次处理500索引，两个方法都返回迭代器对象，bulk方法默认使用的是streaming_bulk方式。如果要使用parallel_buck需要修改源代码或者自己扩展。
@@ -54,10 +54,10 @@ bulk方法定义：
 </item>
 <item>
   <title>Elasticsearch Documents APIs</title>
-  <link>https://hellofinger.tech/2017/08/elasticsearch-document-api/</link>
+  <link>http://localhost:1313/2017/08/elasticsearch-document-api/</link>
   <pubDate>Tue, 15 Aug 2017 23:24:00 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2017/08/elasticsearch-document-api/</guid>
+  <guid>http://localhost:1313/2017/08/elasticsearch-document-api/</guid>
   <description><![CDATA[一、Elasticsearch 索引别名索引别名就像一个快捷方式或软链接，可以指向一个或多个索引，也可以给任何需要索引名的API使用。别名带给我们极大的灵活性，允许我们做到：
 在一个运行的集群上无缝的从一个索引切换到另一个 给多个索引分类 给索引的一个子集创建视图 1 2 3 4 5 6 7 8 9 10 11 # 创建别名 PUT /my_index_v1 # 将别名my_index指向my_index_v1 PUT /my_index_v1/_alias/my_index # 检查别名指向哪个索引 GET /*/_alias/my_index # 或者哪个别名指向这个索引 GET /my_index_v1/_alias/* 如果我们决定要修改索引中一个字段的映射。但是我们不能修改现存的映射，因此我们需要重新索引数据。这个时候别名就可以帮助我们完成。
 首先，我们需要创建新的索引 my_index_v2
@@ -66,10 +66,10 @@ bulk方法定义：
 </item>
 <item>
   <title>Python Elasticsearch DSL 使用笔记(二)</title>
-  <link>https://hellofinger.tech/2017/08/elasticsearch-dsl-with-python-usage-2/</link>
+  <link>http://localhost:1313/2017/08/elasticsearch-dsl-with-python-usage-2/</link>
   <pubDate>Sun, 13 Aug 2017 07:56:00 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2017/08/elasticsearch-dsl-with-python-usage-2/</guid>
+  <guid>http://localhost:1313/2017/08/elasticsearch-dsl-with-python-usage-2/</guid>
   <description><![CDATA[使用ElasticSearch DSL进行搜索Search主要包括：
 查询(queries) 过滤器(filters) 聚合(aggreations) 排序(sort) 分页(pagination) 额外的参数(additional parameters) 相关性(associated) 创建一个查询对象
 1 2 3 4 5 6 from elasticsearch import Elasticsearch from elasticsearch_dsl import Search client = Elasticsearch() s = Search(using=client) 初始化测试数据
@@ -77,10 +77,10 @@ bulk方法定义：
 </item>
 <item>
   <title>Python Elasticsearch DSL 使用笔记(一)</title>
-  <link>https://hellofinger.tech/2017/08/elasticsearch-dsl-with-python-usage-1/</link>
+  <link>http://localhost:1313/2017/08/elasticsearch-dsl-with-python-usage-1/</link>
   <pubDate>Sat, 12 Aug 2017 20:39:00 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>https://hellofinger.tech/2017/08/elasticsearch-dsl-with-python-usage-1/</guid>
+  <guid>http://localhost:1313/2017/08/elasticsearch-dsl-with-python-usage-1/</guid>
   <description><![CDATA[下载地址: https://www.elastic.co/downloads/elasticsearch
 使用版本: elasticsearch-5.5.1
 Python Elasticsearch DSL: https://github.com/elastic/elasticsearch-dsl-py
