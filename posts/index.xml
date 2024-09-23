@@ -66,6 +66,21 @@ fiber 是一个基于Fasthttp（Go中最快的 HTTP 引擎）构建的 Go Web �
 1 2 3 4 5 6 ~$ docker run -it ubuntu /bin/sh # ps -ef PID PPID C STIME TTY TIME CMD 1 0 0 10:19 pts/0 00:00:00 /bin/sh 6 1 0 10:19 pts/0 00:00:00 ps -ef 我们在宿主机上运行ps指令：]]></description>
 </item>
 <item>
+  <title>AWS实践--VPC对等连接(Peerning connections)</title>
+  <link>http://localhost:1313/2022/09/aws-vpc-peering/</link>
+  <pubDate>Fri, 02 Sep 2022 21:12:52 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>http://localhost:1313/2022/09/aws-vpc-peering/</guid>
+  <description><![CDATA[什么是VPC对等连接VPC对等连接是一项联网功能，支持AWS中两个VPC之间进行安全、直接的通信。这种私有连接使资源能够在对等VPC网络中相互交互，如同资源属于同一个网络一样，而无需遍历公网访问。
+VPC对等连接，可以连接相同或不同AWS区域中的两个VPC。在连接的VPC之间发送的流量不会通过互联网、VPC连接或AWS Direct Connect传输。
+对等连接主要限制两个 VPC 之间不能同时创建多个 VPC 对等连接 对等连接中 两个VPC 的 IPv4 CIDR 块不能重叠 VPC 对等连接是两个 VPC 之间的一对一关系, 多个 VPC 对等连接中不支持传递的对等关系 创建对等连接创建名称（可选）：VPC对等连接的名字。可以随时修改。 VPC ID(请求者)：需要用于创建VPC对等连接的源VPC Account(接受方)：目标AWS账号ID Region(接受方)：目标AWS区域 VPC ID(接受方)：用于创建VPC对等连接的目标VPC 接受创建完VPC对等连接后，状态会处于 pending-acceptance。必须等待接受者VPC的拥有者接受后才能激活。
+更新路由表要在对等 VPC 中的实例之间启用私有 IPv4 流量，必须向与两个实例的子网关联的路由表添加路由。路由目的地为对等 VPC 的 CIDR 块，目标为 VPC 对等连接的 ID。
+更新安全组允许流量流入和流出与对等的 VPC。需要在安全组的入站和出站规则中添加CIDR块。
+将 172.29.0.0/16 网段加入到目标VPC的安全组中
+测试对等网络ping 一下 172.29.x.x内外EC2的IP地址
+1 ping 172.29.154.173 参考[1] https://docs.aws.amazon.com/vpc/latest/peering/working-with-vpc-peering.html ]]></description>
+</item>
+<item>
   <title>AWS实践--跨账号访问ECR</title>
   <link>http://localhost:1313/2022/09/aws-cross-account-access-ecr-repo/</link>
   <pubDate>Fri, 02 Sep 2022 11:12:52 &#43;0000</pubDate>
@@ -106,16 +121,6 @@ Docker Runc: 1.0.0-rc5 ( runc version &lt; 1.0-rc6 )
 方法一假如我们有一个用户demo，它本身不具有sudo的权限，所以就有很多文件无法进行读写操作，例如它无法查看 /root 目录
 1 2 sudo adduser demo sudo groupadd docker 1 2 3 demo@ubuntu-VirtualBox:/home$ sudo ls /root [sudo] password for demo: demo is not in the sudoers file. This incident will be reported. 但是这个用户在docker的group里，具有执行docker的权限
 1 2 3 4 5 6 demo@ubuntu-VirtualBox:/home$ groups demo docker demo@ubuntu-VirtualBox:/home$ docker images REPOSITORY TAG IMAGE ID CREATED SIZE busybox latest a416a98b71e2 3 weeks ago 4.26MB ubuntu 18.04 f9a80a55f492 2 months ago 63.]]></description>
-</item>
-<item>
-  <title>Dcoker Remote API未授权访问漏洞</title>
-  <link>http://localhost:1313/2022/08/docker-remote-api-vulnerability-escape/</link>
-  <pubDate>Fri, 12 Aug 2022 18:14:52 &#43;0000</pubDate>
-  <author>Finger</author>
-  <guid>http://localhost:1313/2022/08/docker-remote-api-vulnerability-escape/</guid>
-  <description><![CDATA[一、漏洞说明Docker守护进程监听IP为0.0.0.0，导致可以直接通过Docker Remote API操作Docker
-二、影响版本Docker version: 19.03.12 之前版本
-三、漏洞复现3.1、安装docker1 sudo apt-get update 3.2、备份docker服务文件1 cp /lib/systemd/system/docker.service /lib/systemd/system/docker.service.bak 3.3、修改服务文件，将docker监听IP改成0.0.0.01 vim /lib/systemd/system/docker.service	1 2 3 4 # 在文件末尾加上如下代码 [Service] ExecStart= ExecStart=/usr/bin/dockerd -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock 3.4、重启守护进程和docker服务1 2 3 sudo systemctl daemon-reload # 重载守护进程 sudo service docker restart # 重启docker服务 systemctl status docker.service # 查看docker运行情况 3.5、漏洞检测1 2 3 curl http://x.x.x.x:2375 docker -H tcp://x.x.x.x:2375 images 1 2 3 4 5 6 7 8 9 10 ┌──(kali㉿kali)-[~] └─$ docker -H tcp://10.]]></description>
 </item>
 </channel>
 </rss>
