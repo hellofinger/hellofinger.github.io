@@ -12,7 +12,7 @@
 <meta name="author-link" content="https://github.com/hellofinger">
 <meta name="description" content="" /><meta name="keywords" content='Finger, DevOps, Python, Go, Kubernetes, k8s' />
   <meta itemprop="name" content="Finger&#39;s Blog">
-  <meta itemprop="datePublished" content="2024-01-12T18:42:04+00:00">
+  <meta itemprop="datePublished" content="2024-07-11T20:30:04+00:00">
   <meta itemprop="dateModified" content="2024-08-26T00:38:55+08:00"><meta property="og:url" content="http://localhost:1313/">
   <meta property="og:site_name" content="Finger&#39;s Blog">
   <meta property="og:title" content="Finger&#39;s Blog">
@@ -164,6 +164,12 @@
     </a><a href="mailto:finger.zhou@gmail.com" title="Email"target="_blank" rel="external nofollow noopener noreferrer me"><i class="fa-regular fa-envelope fa-fw" aria-hidden="true"></i>
     </a><a href="/index.xml" title="RSS"target="_blank" rel="external nofollow noopener noreferrer me"><i class="fa-solid fa-rss fa-fw" aria-hidden="true"></i>
     </a></div></div>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2024/07/nfs-best-practices/">NFS最佳实践</a>
+  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span>&nbsp;<span class="post-publish" title='2024-07-11 20:30:04'>发布于 <time datetime="2024-07-11">2024-07-11</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/kubernetes/" class="post-category" title="分类 - Kubernetes"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Kubernetes</a>&ensp;<a href="/categories/cloudnative/" class="post-category" title="分类 - CloudNative"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> CloudNative</a></span></div><div class="content">本实践主要是在Ubuntu 24.04和kubernetes v1.29.6环境。内容主要包含两部分：在Ubuntu系统安装和配置NFS服务器和在Kubernetes集群配置NFS。
+在Ubuntu上安装和配置NFS服务器端安装NFS服务器内核1 2 sudo apt-get update sudo apt-get install nfs-kernel-server -y 创建NFS导出(共享)目录1 2 3 4 5 6 # 创建共享目录 sudo mkdir -p /mnt/nfs_share # 允许所有客户端能访问共享目录 sudo chown -R nobody:nogroup /mnt/nfs_share/ # 给共享目录赋予权限 sudo chmod 777 /mnt/nfs_share/ 授予客户端共享目录访问权限1 2 3 4 sudo vim /etc/exports # 允许某个子网网段IP可以访问 /mnt/nfs_share 192.168.1.0/24(rw,sync,no_subtree_check) rw：代表读/写。 sync：要求在应用更改之前将其写入磁盘。 no_subtree_check：消除子树检查。 导出NFS共享目录1 2 3 4 sudo exports -a # 重启NFS服务 sudo systemctl restart nfs-kernel-server 允许某个子网网段IP通过防火墙访问NFS1 2 3 sudo ufw allow from 192.</div><div class="post-footer">
+    <a href="/2024/07/nfs-best-practices/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/k8s/' class="post-tag">K8s</a><a href='/tags/kubernetes/' class="post-tag">Kubernetes</a><a href='/tags/nfs/' class="post-tag">NFS</a></div></div>
+</article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2024/01/testkube-custom-executor/">Testkube--创建自定义执行器</a>
   </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
     Finger</a></span>&nbsp;<span class="post-publish" title='2024-01-12 18:42:04'>发布于 <time datetime="2024-01-12">2024-01-12</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/kubernetes/" class="post-category" title="分类 - Kubernetes"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Kubernetes</a>&ensp;<a href="/categories/cloudnative/" class="post-category" title="分类 - CloudNative"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> CloudNative</a></span></div><div class="content">创建自定义执行器Testkube自定义执行器可以自己创建或者使用模板创建.
@@ -210,18 +216,6 @@ fiber 是一个基于Fasthttp（Go中最快的 HTTP 引擎）构建的 Go Web �
 1 2 3 4 5 6 ~$ docker run -it ubuntu /bin/sh # ps -ef PID PPID C STIME TTY TIME CMD 1 0 0 10:19 pts/0 00:00:00 /bin/sh 6 1 0 10:19 pts/0 00:00:00 ps -ef 我们在宿主机上运行ps指令：</div><div class="post-footer">
     <a href="/2022/10/container-principle/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/docker/' class="post-tag">Docker</a><a href='/tags/container/' class="post-tag">Container</a></div></div>
 </article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2022/09/aws-vpc-peering/">AWS实践--VPC对等连接(Peerning Connections)</a>
-  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span>&nbsp;<span class="post-publish" title='2022-09-02 21:12:52'>发布于 <time datetime="2022-09-02">2022-09-02</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/aws/" class="post-category" title="分类 - AWS"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> AWS</a></span></div><div class="content">什么是VPC对等连接VPC对等连接是一项联网功能，支持AWS中两个VPC之间进行安全、直接的通信。这种私有连接使资源能够在对等VPC网络中相互交互，如同资源属于同一个网络一样，而无需遍历公网访问。
-VPC对等连接，可以连接相同或不同AWS区域中的两个VPC。在连接的VPC之间发送的流量不会通过互联网、VPC连接或AWS Direct Connect传输。
-对等连接主要限制两个 VPC 之间不能同时创建多个 VPC 对等连接 对等连接中 两个VPC 的 IPv4 CIDR 块不能重叠 VPC 对等连接是两个 VPC 之间的一对一关系, 多个 VPC 对等连接中不支持传递的对等关系 创建对等连接创建名称（可选）：VPC对等连接的名字。可以随时修改。 VPC ID(请求者)：需要用于创建VPC对等连接的源VPC Account(接受方)：目标AWS账号ID Region(接受方)：目标AWS区域 VPC ID(接受方)：用于创建VPC对等连接的目标VPC 接受创建完VPC对等连接后，状态会处于 pending-acceptance。必须等待接受者VPC的拥有者接受后才能激活。
-更新路由表要在对等 VPC 中的实例之间启用私有 IPv4 流量，必须向与两个实例的子网关联的路由表添加路由。路由目的地为对等 VPC 的 CIDR 块，目标为 VPC 对等连接的 ID。
-更新安全组允许流量流入和流出与对等的 VPC。需要在安全组的入站和出站规则中添加CIDR块。
-将 172.29.0.0/16 网段加入到目标VPC的安全组中
-测试对等网络ping 一下 172.29.x.x内外EC2的IP地址
-1 ping 172.29.154.173 参考[1] https://docs.aws.amazon.com/vpc/latest/peering/working-with-vpc-peering.html </div><div class="post-footer">
-    <a href="/2022/09/aws-vpc-peering/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/vpc/' class="post-tag">VPC</a><a href='/tags/aws/' class="post-tag">AWS</a></div></div>
-</article>
 <ul class="pagination"><li class="page-item active">
           <span class="page-link">
             <a href="/">1</a>
@@ -243,7 +237,7 @@ VPC对等连接，可以连接相同或不同AWS区域中的两个VPC。在连�
         </li></ul></div></main><footer class="footer">
     <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
         </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
-            <span itemprop="copyrightYear">2017 - 2024</span><span class="author" itemprop="copyrightHolder">
+            <span itemprop="copyrightYear">2017 - 2025</span><span class="author" itemprop="copyrightHolder">
               <a href="https://github.com/hellofinger"target="_blank" rel="external nofollow noopener noreferrer">Finger</a></span><span class="license footer-divider"><a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"></div><div class="footer-line visitor">
           <span id="busuanzi_container_site_uv" title='总访客数'><i class="fa-regular fa-user fa-fw me-1" aria-hidden="true"></i><span id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span></span><span id="busuanzi_container_site_pv" class="footer-divider" title='总访问量'><i class="fa-regular fa-eye fa-fw me-1" aria-hidden="true"></i><span id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span></span>
         </div></div>
