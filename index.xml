@@ -4,9 +4,18 @@
     <link>http://localhost:1313/</link>
     <description>Finger&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
-      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Fri, 12 Jan 2024 18:42:04 &#43;0000</lastBuildDate>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Thu, 11 Jul 2024 20:30:04 &#43;0000</lastBuildDate>
       <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
     <item>
+  <title>NFS最佳实践</title>
+  <link>http://localhost:1313/2024/07/nfs-best-practices/</link>
+  <pubDate>Thu, 11 Jul 2024 20:30:04 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>http://localhost:1313/2024/07/nfs-best-practices/</guid>
+  <description><![CDATA[本实践主要是在Ubuntu 24.04和kubernetes v1.29.6环境。内容主要包含两部分：在Ubuntu系统安装和配置NFS服务器和在Kubernetes集群配置NFS。
+在Ubuntu上安装和配置NFS服务器端安装NFS服务器内核1 2 sudo apt-get update sudo apt-get install nfs-kernel-server -y 创建NFS导出(共享)目录1 2 3 4 5 6 # 创建共享目录 sudo mkdir -p /mnt/nfs_share # 允许所有客户端能访问共享目录 sudo chown -R nobody:nogroup /mnt/nfs_share/ # 给共享目录赋予权限 sudo chmod 777 /mnt/nfs_share/ 授予客户端共享目录访问权限1 2 3 4 sudo vim /etc/exports # 允许某个子网网段IP可以访问 /mnt/nfs_share 192.168.1.0/24(rw,sync,no_subtree_check) rw：代表读/写。 sync：要求在应用更改之前将其写入磁盘。 no_subtree_check：消除子树检查。 导出NFS共享目录1 2 3 4 sudo exports -a # 重启NFS服务 sudo systemctl restart nfs-kernel-server 允许某个子网网段IP通过防火墙访问NFS1 2 3 sudo ufw allow from 192.]]></description>
+</item>
+<item>
   <title>Testkube--创建自定义执行器</title>
   <link>http://localhost:1313/2024/01/testkube-custom-executor/</link>
   <pubDate>Fri, 12 Jan 2024 18:42:04 &#43;0000</pubDate>
@@ -112,17 +121,6 @@ Docker Runc: 1.0.0-rc5 ( runc version &lt; 1.0-rc6 )
   <guid>http://localhost:1313/2022/08/docker-privileged-escape/</guid>
   <description><![CDATA[一、漏洞说明特权模式逃逸是一种最简单有效的逃逸方法，使用特权模式启动的容器时，docker管理员可通过mount命令将外部宿主机磁盘设备挂载进容器内部，获取对整个宿主机的文件读写权限，可直接通过chroot切换根目录、写ssh公钥和crontab计划任何等逃逸到宿主机。
 二、环境搭建1 2 // 使用特权模式运行容器 docker run -it --privileged ubuntu:18.04 三、漏洞验证1 2 3 // 如果是以特权模式启动，**CapEff** 对应的掩码值应该为: 0000003fffffffff root@43552e476ea7:/# cat /proc/self/status | grep CapEff CapEff: 0000003fffffffff 四、漏洞利用4.1、查看宿主机目录1 2 3 4 5 6 fdisk -l Device Boot Start End Sectors Size Id Type /dev/sda1 * 2048 48234495 48232448 23G 83 Linux /dev/sda2 48236542 52426751 4190210 2G 5 Extended /dev/sda5 48236544 52426751 4190208 2G 82 Linux swap / Solaris 4.]]></description>
-</item>
-<item>
-  <title>Docker中Root权限的危害性</title>
-  <link>http://localhost:1313/2022/08/docker-root-danger/</link>
-  <pubDate>Fri, 12 Aug 2022 20:14:52 &#43;0000</pubDate>
-  <author>Finger</author>
-  <guid>http://localhost:1313/2022/08/docker-root-danger/</guid>
-  <description><![CDATA[一、在docker使用root用户越权案例如果一个普通用户，并且这个用户在docker组，则这个用户已经是root了。
-方法一假如我们有一个用户demo，它本身不具有sudo的权限，所以就有很多文件无法进行读写操作，例如它无法查看 /root 目录
-1 2 sudo adduser demo sudo groupadd docker 1 2 3 demo@ubuntu-VirtualBox:/home$ sudo ls /root [sudo] password for demo: demo is not in the sudoers file. This incident will be reported. 但是这个用户在docker的group里，具有执行docker的权限
-1 2 3 4 5 6 demo@ubuntu-VirtualBox:/home$ groups demo docker demo@ubuntu-VirtualBox:/home$ docker images REPOSITORY TAG IMAGE ID CREATED SIZE busybox latest a416a98b71e2 3 weeks ago 4.26MB ubuntu 18.04 f9a80a55f492 2 months ago 63.]]></description>
 </item>
 </channel>
 </rss>

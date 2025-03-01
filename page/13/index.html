@@ -12,7 +12,7 @@
 <meta name="author-link" content="https://github.com/hellofinger">
 <meta name="description" content="" /><meta name="keywords" content='Finger, DevOps, Python, Go, Kubernetes, k8s' />
   <meta itemprop="name" content="Finger&#39;s Blog">
-  <meta itemprop="datePublished" content="2024-01-12T18:42:04+00:00">
+  <meta itemprop="datePublished" content="2024-07-11T20:30:04+00:00">
   <meta itemprop="dateModified" content="2024-08-26T00:38:55+08:00"><meta property="og:url" content="http://localhost:1313/">
   <meta property="og:site_name" content="Finger&#39;s Blog">
   <meta property="og:title" content="Finger&#39;s Blog">
@@ -164,6 +164,15 @@
     </a><a href="mailto:finger.zhou@gmail.com" title="Email"target="_blank" rel="external nofollow noopener noreferrer me"><i class="fa-regular fa-envelope fa-fw" aria-hidden="true"></i>
     </a><a href="/index.xml" title="RSS"target="_blank" rel="external nofollow noopener noreferrer me"><i class="fa-solid fa-rss fa-fw" aria-hidden="true"></i>
     </a></div></div>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2017/01/ubuntu-install-svn-simple-server/">Ubuntu 安装svn服务</a>
+  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span>&nbsp;<span class="post-publish" title='2017-01-27 20:56:00'>发布于 <time datetime="2017-01-27">2017-01-27</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/note/" class="post-category" title="分类 - Note"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Note</a></span></div><div class="content">一、安装Subversion Server1 apt-get install subversion 二、创建SVN版本库1 2 mkdir /srv/svn # 创建SVN根目录 svnadmin create test # 创建测试项目库 三、SVN配置主要包含以下三个配置文件：
+1. svnserve.conf服务配置：
+1 2 3 4 5 6 [general] anon-access = none # 匿名用户不可读 auth-access = write # 权限用户可写 password-db = passwd # 启用密码文件 authz-db = authz # 启用权限文件 realm = repos # 认证域名称 2. passwd账号配置：
+1 2 [user] finger = 123456 3. authz权限配置：
+1 2 3 4 5 6 [groups] admin = finger [/] @admin = rw # admin组拥有所有读写权限 * = r # 其他只有读权限 四、启动和停止1 2 3 4 5 6 7 启动： svnserve -d -r /srv/svn # -d 表示后台运行 -r 表示根目录 停止： ps -ef | grep svn # 查看svn进程ID kill -9 进程ID 五、测试1 svn co svn://127.</div><div class="post-footer">
+    <a href="/2017/01/ubuntu-install-svn-simple-server/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/svn/' class="post-tag">SVN</a><a href='/tags/ubuntu/' class="post-tag">Ubuntu</a></div></div>
+</article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2017/01/cocos2dx-upload-google-play/">Cocos2dx－上传Google Play遇到的问题</a>
   </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
     Finger</a></span>&nbsp;<span class="post-publish" title='2017-01-27 20:40:00'>发布于 <time datetime="2017-01-27">2017-01-27</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/note/" class="post-category" title="分类 - Note"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Note</a></span></div><div class="content">一、OpenSSL版本有多个安全漏洞，建议您尽快更新 OpenSSL因为项目使用的是cocos2d-x 3.3版本。因此cocos2d-x第三方库比较旧。上传Google Play 后台时被rejected。邮件原文如下：
@@ -232,7 +241,7 @@ Github配置： https://help.github.com/articles/generating-an-ssh-key/ https://
         </li></ul></div></main><footer class="footer">
     <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
         </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
-            <span itemprop="copyrightYear">2017 - 2024</span><span class="author" itemprop="copyrightHolder">
+            <span itemprop="copyrightYear">2017 - 2025</span><span class="author" itemprop="copyrightHolder">
               <a href="https://github.com/hellofinger"target="_blank" rel="external nofollow noopener noreferrer">Finger</a></span><span class="license footer-divider"><a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"></div><div class="footer-line visitor">
           <span id="busuanzi_container_site_uv" title='总访客数'><i class="fa-regular fa-user fa-fw me-1" aria-hidden="true"></i><span id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span></span><span id="busuanzi_container_site_pv" class="footer-divider" title='总访问量'><i class="fa-regular fa-eye fa-fw me-1" aria-hidden="true"></i><span id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span></span>
         </div></div>

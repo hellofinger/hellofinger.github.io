@@ -4,7 +4,16 @@
     <link>http://localhost:1313/tags/kubernetes/</link>
     <description>Kubernetes - 标签 | Finger&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
-      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Fri, 12 Jan 2024 18:42:04 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/kubernetes/" rel="self" type="application/rss+xml" /><item>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Thu, 11 Jul 2024 20:30:04 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/kubernetes/" rel="self" type="application/rss+xml" /><item>
+  <title>NFS最佳实践</title>
+  <link>http://localhost:1313/2024/07/nfs-best-practices/</link>
+  <pubDate>Thu, 11 Jul 2024 20:30:04 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>http://localhost:1313/2024/07/nfs-best-practices/</guid>
+  <description><![CDATA[本实践主要是在Ubuntu 24.04和kubernetes v1.29.6环境。内容主要包含两部分：在Ubuntu系统安装和配置NFS服务器和在Kubernetes集群配置NFS
+在Ubuntu上安装和配置NFS服务器端安装NFS服务器内核1 2 sudo apt-get update sudo apt-get install nfs-kernel-server -y 创建NFS导出(共享)目录1 2 3 4 5 6 # 创建共享目录 sudo mkdir -p /mnt/nfs_share # 允许所有客户端能访问共享目录 sudo chown -R nobody:nogroup /mnt/nfs_share/ # 给共享目录赋予权限 sudo chmod 777 /mnt/nfs_share/ 授予客户端共享目录访问权限1 2 3 4 sudo vim /etc/exports # 允许某个子网网段IP可以访问 /mnt/nfs_share 192.168.1.0/24(rw,sync,no_subtree_check) rw：代表读/写。 sync：要求在应用更改之前将其写入磁盘。 no_subtree_check：消除子树检查。 导出NFS共享目录1 2 3 4 sudo exports -a # 重启NFS服务 sudo systemctl restart nfs-kernel-server 允许某个子网网段IP通过防火墙访问NFS1 2 3 sudo ufw allow from 192.]]></description>
+</item>
+<item>
   <title>Testkube--创建自定义执行器</title>
   <link>http://localhost:1313/2024/01/testkube-custom-executor/</link>
   <pubDate>Fri, 12 Jan 2024 18:42:04 &#43;0000</pubDate>
