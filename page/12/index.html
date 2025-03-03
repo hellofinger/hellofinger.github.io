@@ -164,6 +164,14 @@
     </a><a href="mailto:finger.zhou@gmail.com" title="Email"target="_blank" rel="external nofollow noopener noreferrer me"><i class="fa-regular fa-envelope fa-fw" aria-hidden="true"></i>
     </a><a href="/index.xml" title="RSS"target="_blank" rel="external nofollow noopener noreferrer me"><i class="fa-solid fa-rss fa-fw" aria-hidden="true"></i>
     </a></div></div>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2017/08/elasticsearch-dsl-with-python-usage-2/">Python Elasticsearch DSL 使用笔记(二)</a>
+  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span>&nbsp;<span class="post-publish" title='2017-08-13 07:56:00'>发布于 <time datetime="2017-08-13">2017-08-13</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/elasticsearch/" class="post-category" title="分类 - ElasticSearch"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> ElasticSearch</a>&ensp;<a href="/categories/storage/" class="post-category" title="分类 - Storage"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a></span></div><div class="content">使用ElasticSearch DSL进行搜索Search主要包括：
+查询(queries) 过滤器(filters) 聚合(aggreations) 排序(sort) 分页(pagination) 额外的参数(additional parameters) 相关性(associated) 创建一个查询对象
+1 2 3 4 5 6 from elasticsearch import Elasticsearch from elasticsearch_dsl import Search client = Elasticsearch() s = Search(using=client) 初始化测试数据
+1 2 3 4 5 6 7 8 9 10 11 12 13 def add_article(id_, title, body, tags): article = Article(meta={&#39;id&#39;: id_}, title=title, tags=tags) article.body = body article.published_from = datetime.now() article.save() def init_test_data(): add_article(2, &#39;Python is good!&#39;, &#39;Python is good!</div><div class="post-footer">
+    <a href="/2017/08/elasticsearch-dsl-with-python-usage-2/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/python/' class="post-tag">Python</a><a href='/tags/elasticsearch/' class="post-tag">ElasticSearch</a><a href='/tags/searchengine/' class="post-tag">SearchEngine</a></div></div>
+</article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2017/08/elasticsearch-dsl-with-python-usage-1/">Python Elasticsearch DSL 使用笔记(一)</a>
   </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
     Finger</a></span>&nbsp;<span class="post-publish" title='2017-08-12 20:39:00'>发布于 <time datetime="2017-08-12">2017-08-12</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/elasticsearch/" class="post-category" title="分类 - ElasticSearch"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> ElasticSearch</a>&ensp;<a href="/categories/storage/" class="post-category" title="分类 - Storage"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Storage</a></span></div><div class="content">下载地址: https://www.elastic.co/downloads/elasticsearch
@@ -215,12 +223,6 @@ scrapy， scrapyd， scrapy-client， spiderkeeper
 一、新建Dockerfile文件1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 # Use an official Python runtime as a base image FROM python:2.7-slim # Set the working directory to /app WORKDIR /app # Copy the current directory contents into the container at /app ADD . /app # Install any needed packages specified in requirements.txt RUN pip install -r requirements.</div><div class="post-footer">
     <a href="/2017/06/docker-build-and-run-your-first-app/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/flask/' class="post-tag">Flask</a><a href='/tags/docker/' class="post-tag">Docker</a><a href='/tags/ubuntu/' class="post-tag">Ubuntu</a></div></div>
 </article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2017/06/supervisord-usage/">Supervisord 使用笔记</a>
-  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span>&nbsp;<span class="post-publish" title='2017-06-22 23:40:00'>发布于 <time datetime="2017-06-22">2017-06-22</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/python/" class="post-category" title="分类 - Python"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Python</a></span></div><div class="content">一、安装1 2 3 4 - pip install supervisor - echo_supervisord_conf #或者 - echo_supervisord_conf &gt; supervisord.conf - supervisord -c ./supervisord.conf 二、遇到错误1 2 3 [root@localhost ~]# supervisord -c ./supervisord.conf Error: .ini file does not include supervisord section For help, use /usr/bin/supervisord -h 错误原因是因为配置文件少了 [supervisrod] 配置项
-1 2 3 4 5 6 7 8 9 10 [program:djangotest] user=lzz command=/usr/bin/python /var/www/djangotest/manage.py runserver 0.0.0.0:8000 autostart=true autorestart=true stderr_logfile=/var/logs/err.log stdout_logfile=/var/logs/out.log stopsignal=INT [supervisord] 三、常用命令1 2 supervisord : supervisor的服务器端部分，用于supervisor启动 supervisorctl：启动supervisor的命令行窗口，在该命令行中可执行start、stop、status、reload等操作。 参考文献http://www.</div><div class="post-footer">
-    <a href="/2017/06/supervisord-usage/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/supervisord/' class="post-tag">Supervisord</a></div></div>
-</article>
 <ul class="pagination"><li class="page-item">
           <span class="page-link">
             <a href="/">1</a>
@@ -242,6 +244,10 @@ scrapy， scrapyd， scrapy-client， spiderkeeper
         </li><li class="page-item">
           <span class="page-link">
             <a href="/page/13/">13</a>
+          </span>
+        </li><li class="page-item">
+          <span class="page-link">
+            <a href="/page/14/">14</a>
           </span>
         </li></ul></div></main><footer class="footer">
     <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>

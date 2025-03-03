@@ -164,6 +164,14 @@
     </a><a href="mailto:finger.zhou@gmail.com" title="Email"target="_blank" rel="external nofollow noopener noreferrer me"><i class="fa-regular fa-envelope fa-fw" aria-hidden="true"></i>
     </a><a href="/index.xml" title="RSS"target="_blank" rel="external nofollow noopener noreferrer me"><i class="fa-solid fa-rss fa-fw" aria-hidden="true"></i>
     </a></div></div>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2019/07/python-notes-1/">Python 杂记(一)</a>
+  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span>&nbsp;<span class="post-publish" title='2019-07-11 07:31:00'>发布于 <time datetime="2019-07-11">2019-07-11</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/python/" class="post-category" title="分类 - Python"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Python</a></span></div><div class="content">使用 slots__slots__变量是用来限制class能添加的属性
+例如
+1 2 3 &gt;&gt;&gt; class Student(object): ... __slots__ = (&#39;name&#39;, &#39;age&#39;) # 用tuple定义允许绑定的属性名称 ... 1 2 3 4 5 6 7 &gt;&gt;&gt; s = Student() # 创建新的实例 &gt;&gt;&gt; s.name = &#39;Michael&#39; # 绑定属性&#39;name&#39; &gt;&gt;&gt; s.age = 25 # 绑定属性&#39;age&#39; &gt;&gt;&gt; s.score = 99 # 绑定属性&#39;score&#39; Traceback (most recent call last): File &#34;&lt;stdin&gt;&#34;, line 1, in &lt;module&gt; AttributeError: &#39;Student&#39; object has no attribute &#39;score&#39; 从上面代码示例我们可以看到由于score没有被放到__slots__中，所以不能绑定score属性，试图绑定score将得到AttributeError的错误。 使用__slots__要注意，__slots__定义的属性仅对当前类起作用，对继承的子类是不起作用的：
+1 2 3 4 5 &gt;&gt;&gt; class GraduateStudent(Student): .</div><div class="post-footer">
+    <a href="/2019/07/python-notes-1/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/python/' class="post-tag">Python</a></div></div>
+</article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2019/07/pycryptodome-usage/">使用PyCryptodome替代pyscrypto</a>
   </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
     Finger</a></span>&nbsp;<span class="post-publish" title='2019-07-04 07:11:00'>发布于 <time datetime="2019-07-04">2019-07-04</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/python/" class="post-category" title="分类 - Python"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Python</a></span></div><div class="content">pycrypto 在Windows系统上安装比较麻烦，会出现意想不到的各种问题。因为pycrypto-2.6.1 之后就不在维护。因此系统兼容性就不那么友好。推荐PyCryptodome作为替代工具包。官方地址为：https://www.pycryptodome.org/en/latest/
@@ -206,16 +214,6 @@ Run serverless applications and REST APIs using your existing Node.js applicatio
 1 2 3 4 5 6 7 &gt;&gt;&gt; data = {&#39;a&#39;:[1,2,3],&#39;b&#39;:[&#39;we&#39;,&#39;you&#39;,&#39;they&#39;],&#39;c&#39;:[&#39;btc&#39;,&#39;eos&#39;,&#39;ae&#39;]} &gt;&gt;&gt; df = DataFrame(data) &gt;&gt;&gt; df a b c 0 1 we btc 1 2 you eos 2 3 they ae DataFrame这种数据结构我们可以把它看作是一张二维表，DataFrame长得跟我们平时使用的Excel表格差不多，DataFrame的横行称为columns，竖列和Series一样称为index，DataFrame每一列可以是不同类型的值集合，所以DataFrame你也可以把它视为不同数据类型同一index的Series集合。</div><div class="post-footer">
     <a href="/2018/08/pandas-basis/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/python/' class="post-tag">Python</a><a href='/tags/pandas/' class="post-tag">Pandas</a></div></div>
 </article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2018/08/numpy-basis/">Numpy基础</a>
-  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span>&nbsp;<span class="post-publish" title='2018-08-23 22:19:00'>发布于 <time datetime="2018-08-23">2018-08-23</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/python/" class="post-category" title="分类 - Python"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Python</a></span></div><div class="content">原文地址：https://www.jiqizhixin.com/articles/2018-07-18-2
-介绍numpy是专门为科学计算设计的一个python扩展包，为python提供高效率的多维数组，也被称为面向阵列计算（array oriented computing），同时numpy也是github上的一个开源项目：numpy，numpy是基于c语言开发，所以这使得numpy的运行速度很快，高效率运行就是numpy的一大优势。
-用numpy生成一维数组
-1 2 3 4 &gt;&gt;&gt; import numpy as np &gt;&gt;&gt; a = np.array([[1,2,3]], dtype=np.int32) &gt;&gt;&gt; a array([[1, 2, 3]]) numpy中定义的最重要的数据结构是称为ndarray的n维数组类型，这个结构引用了两个对象，一块用于保存数据的存储区域和一个用于描述元素类型的dtype对象：
-性能二维数组的生成在python中我们还可以用到list列表，如果用list来表示[1,2,3]，由于list中的元素可以是任何对象，所以list中保存的是对象的指针，如果要保存[1,2,3]就需要三个指针和三个整数对象，是比较浪费内存资源和cpu计算时间的，而ndarray是一种保存单一数据类型的多维数组结构，在数据处理上比list列表要快上很多。
-使用生成一个3x3的矩阵1 2 3 4 5 6 7 8 9 10 11 12 13 &gt;&gt;&gt; import numpy as np &gt;&gt;&gt; data = np.array([[1,2,3],[4,5,6],[7,8,9]]) &gt;&gt;&gt; data array([[1, 2, 3], [4, 5, 6], [7, 8, 9]]) # 等价于data=np.arange(1，10).reshape(3,3) &gt;&gt;&gt; data = np.arange(1,10).reshape(3,3) &gt;&gt;&gt; data array([[1, 2, 3], [4, 5, 6], [7, 8, 9]]) 查看矩阵信息1 2 3 4 5 6 7 8 9 10 11 # 返回元组，表示n行n列 &gt;&gt;&gt; data.</div><div class="post-footer">
-    <a href="/2018/08/numpy-basis/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/python/' class="post-tag">Python</a><a href='/tags/numpy/' class="post-tag">Numpy</a></div></div>
-</article>
 <ul class="pagination"><li class="page-item">
           <span class="page-link">
             <a href="/">1</a>
@@ -246,7 +244,7 @@ Run serverless applications and REST APIs using your existing Node.js applicatio
           <span class="page-link" aria-hidden="true">&hellip;</span>
         </li><li class="page-item">
           <span class="page-link">
-            <a href="/page/13/">13</a>
+            <a href="/page/14/">14</a>
           </span>
         </li></ul></div></main><footer class="footer">
     <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
