@@ -170,6 +170,16 @@
 在Ubuntu上安装和配置NFS服务器端安装NFS服务器内核1 2 sudo apt-get update sudo apt-get install nfs-kernel-server -y 创建NFS导出(共享)目录1 2 3 4 5 6 # 创建共享目录 sudo mkdir -p /mnt/nfs_share # 允许所有客户端能访问共享目录 sudo chown -R nobody:nogroup /mnt/nfs_share/ # 给共享目录赋予权限 sudo chmod 777 /mnt/nfs_share/ 授予客户端共享目录访问权限1 2 3 4 sudo vim /etc/exports # 允许某个子网网段IP可以访问 /mnt/nfs_share 192.168.1.0/24(rw,sync,no_subtree_check) rw：代表读/写。 sync：要求在应用更改之前将其写入磁盘。 no_subtree_check：消除子树检查。 导出NFS共享目录1 2 3 4 sudo exports -a # 重启NFS服务 sudo systemctl restart nfs-kernel-server 允许某个子网网段IP通过防火墙访问NFS1 2 3 sudo ufw allow from 192.</div><div class="post-footer">
     <a href="/2024/07/nfs-best-practices/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/k8s/' class="post-tag">K8s</a><a href='/tags/kubernetes/' class="post-tag">Kubernetes</a><a href='/tags/nfs/' class="post-tag">NFS</a></div></div>
 </article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2024/04/install-kubernetes-using-kubespray/">使用Kubespray部署Kubernetes集群</a>
+  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span>&nbsp;<span class="post-publish" title='2024-04-11 20:30:04'>发布于 <time datetime="2024-04-11">2024-04-11</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/kubernetes/" class="post-category" title="分类 - Kubernetes"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Kubernetes</a>&ensp;<a href="/categories/cloudnative/" class="post-category" title="分类 - CloudNative"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> CloudNative</a></span></div><div class="content">环境准备一共4个节点，所有节点都使用ubuntu 24.04版本。
+Bastion (192.168.70.128) 堡垒机或者Ansbile操作节点，所有Kubernetes集群的操作都必须通过堡垒机。 Controller (192.168.70.129) 控制器节点 Node (192.168.70.130 &amp; 192.168.70.131) 工作节点 下载Kubespray将Kubespray代码克隆到本地，建议不要直接使用master分支，而是使用最近的release分支。
+1 2 3 git clone https://github.com/kubernetes-sigs/kubespray.git cd kubespray git checkout release-2.25 1 2 3 4 ubuntu@bastion:~/kubespray$ git branch -a master * release-2.25 remotes/origin/HEAD -&gt; origin/master 创建python虚拟环境，安装Ansible和其他依赖包
+1 2 3 4 python3 -m venv venv source venv/bin/activate pip install -r requirements.txt 验证Ansible版本
+1 2 (venv) ubuntu@bastion:~/kubespray$ ansible --version ansible [core 2.16.9] 创建集群修改配置配置Bastion到集群节点免密登录
+1 2 3 ssh-copy-id root@192.</div><div class="post-footer">
+    <a href="/2024/04/install-kubernetes-using-kubespray/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/k8s/' class="post-tag">K8s</a><a href='/tags/kubernetes/' class="post-tag">Kubernetes</a></div></div>
+</article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2024/01/testkube-custom-executor/">Testkube--创建自定义执行器</a>
   </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
     Finger</a></span>&nbsp;<span class="post-publish" title='2024-01-12 18:42:04'>发布于 <time datetime="2024-01-12">2024-01-12</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/kubernetes/" class="post-category" title="分类 - Kubernetes"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Kubernetes</a>&ensp;<a href="/categories/cloudnative/" class="post-category" title="分类 - CloudNative"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> CloudNative</a></span></div><div class="content">创建自定义执行器Testkube自定义执行器可以自己创建或者使用模板创建.
@@ -201,21 +211,6 @@ fiber 是一个基于Fasthttp（Go中最快的 HTTP 引擎）构建的 Go Web �
 1 2 3 4 # index.js module.exports.helloWorld = function() { console.</div><div class="post-footer">
     <a href="/2022/11/aws-code-artifact-best-practice/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/codeartifact/' class="post-tag">CodeArtifact</a><a href='/tags/aws/' class="post-tag">AWS</a></div></div>
 </article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2022/10/container-principle/">容器实现原理</a>
-  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span>&nbsp;<span class="post-publish" title='2022-10-12 20:14:52'>发布于 <time datetime="2022-10-12">2022-10-12</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/container/" class="post-category" title="分类 - Container"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Container</a></span></div><div class="content">容器实现原理容器到底是什么一回事？它有什么样的特性？又是如何运行起来的呢？下面我们简单介绍一下以Docker容器为主的Linux容器的实现原理。
-容器其实是一种沙盒技术。沙盒就是能够像集装箱一样把你的应用“装”起来。这样，应用与应用之间就有了边界而不至于互相干扰；同时也可以很方便地搬来搬去。
-而容器技术的核心功能，就是通过约束和修改进程的动态表现，从而为其创造一个“边界”。
-对于Docker等大多数Linux容器来说，Cgroups 技术是用来创造约束的主要手段，而 Namespace 技术则是用来修改进程视图的主要方法。
-创造约束，换一种说话就是限制资源的使用量，设置资源的配额上限。
-修改进程视图，换一种说话就是把进程隔离起来，让其他进程看不见。
-隔离技术（Namepsace）容器对资源的隔离主要是通过Namespace技术实现。Namespace是Linux Kernel提供的一种资源隔离方案，不同的Namespace下的资源是独立的，系统可以为容器进程分配不同的Namespace，从而保证各个进程之间对彼此是透明。
-听起来比较抽象，我们以进程资源举个例子，看Namespace是如何实现容器进程间PID的隔离。
-我们用Docker启动一个busybox容器并进入，运行ps指令：
-1 2 3 4 5 6 ~$ docker run -it busybox /bin/sh / # ps -ef PID USER TIME COMMAND 1 root 0:00 /bin/sh 6 root 0:00 ps -ef 我们再启动一个ubuntu容器并进入，运行ps指令：
-1 2 3 4 5 6 ~$ docker run -it ubuntu /bin/sh # ps -ef PID PPID C STIME TTY TIME CMD 1 0 0 10:19 pts/0 00:00:00 /bin/sh 6 1 0 10:19 pts/0 00:00:00 ps -ef 我们在宿主机上运行ps指令：</div><div class="post-footer">
-    <a href="/2022/10/container-principle/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/docker/' class="post-tag">Docker</a><a href='/tags/container/' class="post-tag">Container</a></div></div>
-</article>
 <ul class="pagination"><li class="page-item active">
           <span class="page-link">
             <a href="/">1</a>
@@ -232,7 +227,7 @@ fiber 是一个基于Fasthttp（Go中最快的 HTTP 引擎）构建的 Go Web �
           <span class="page-link" aria-hidden="true">&hellip;</span>
         </li><li class="page-item">
           <span class="page-link">
-            <a href="/page/13/">13</a>
+            <a href="/page/14/">14</a>
           </span>
         </li></ul></div></main><footer class="footer">
     <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
