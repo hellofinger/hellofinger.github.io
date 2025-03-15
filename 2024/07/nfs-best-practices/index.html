@@ -36,7 +36,7 @@
 <meta name="application-name" content="FixIt">
 <meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="http://localhost:1313/2024/07/nfs-best-practices/" /><link rel="prev" href="http://localhost:1313/2024/04/install-kubernetes-using-kubespray/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="http://localhost:1313/2024/07/nfs-best-practices/" /><link rel="prev" href="http://localhost:1313/2024/04/install-jenkins-ubuntu/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
   {
@@ -238,7 +238,7 @@
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">sudo apt-get update
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo apt-get update
 </span></span><span class="line"><span class="cl">sudo apt-get install nfs-kernel-server -y</span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="创建nfs导出共享目录" class="heading-element"><span>创建NFS导出(共享)目录</span>
@@ -255,12 +255,12 @@
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># 创建共享目录
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 创建共享目录</span>
 </span></span><span class="line"><span class="cl">sudo mkdir -p /mnt/nfs_share
-</span></span><span class="line"><span class="cl"># 允许所有客户端能访问共享目录
+</span></span><span class="line"><span class="cl"><span class="c1"># 允许所有客户端能访问共享目录</span>
 </span></span><span class="line"><span class="cl">sudo chown -R nobody:nogroup /mnt/nfs_share/
-</span></span><span class="line"><span class="cl"># 给共享目录赋予权限
-</span></span><span class="line"><span class="cl">sudo chmod 777 /mnt/nfs_share/</span></span></code></pre></td></tr></table>
+</span></span><span class="line"><span class="cl"><span class="c1"># 给共享目录赋予权限</span>
+</span></span><span class="line"><span class="cl">sudo chmod <span class="m">777</span> /mnt/nfs_share/</span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="授予客户端共享目录访问权限" class="heading-element"><span>授予客户端共享目录访问权限</span>
   <a href="#%e6%8e%88%e4%ba%88%e5%ae%a2%e6%88%b7%e7%ab%af%e5%85%b1%e4%ba%ab%e7%9b%ae%e5%bd%95%e8%ae%bf%e9%97%ae%e6%9d%83%e9%99%90" class="heading-mark">
@@ -274,10 +274,10 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">sudo</span> <span class="n">vim</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">exports</span>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo vim /etc/exports
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># 允许某个子网网段IP可以访问</span>
-</span></span><span class="line"><span class="cl"><span class="o">/</span><span class="n">mnt</span><span class="o">/</span><span class="n">nfs_share</span> <span class="mf">192.168</span><span class="o">.</span><span class="mf">1.0</span><span class="o">/</span><span class="mi">24</span><span class="p">(</span><span class="n">rw</span><span class="p">,</span><span class="n">sync</span><span class="p">,</span><span class="n">no_subtree_check</span><span class="p">)</span></span></span></code></pre></td></tr></table>
+</span></span><span class="line"><span class="cl">/mnt/nfs_share 192.168.1.0/24<span class="o">(</span>rw,sync,no_subtree_check<span class="o">)</span></span></span></code></pre></td></tr></table>
 </div>
 </div><ul>
 <li>rw：代表读/写。</li>
@@ -296,10 +296,10 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="n">sudo</span> <span class="n">exports</span> <span class="o">-</span><span class="n">a</span>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo exports -a
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># 重启NFS服务</span>
-</span></span><span class="line"><span class="cl"><span class="n">sudo</span> <span class="n">systemctl</span> <span class="n">restart</span> <span class="n">nfs</span><span class="o">-</span><span class="n">kernel</span><span class="o">-</span><span class="n">server</span></span></span></code></pre></td></tr></table>
+</span></span><span class="line"><span class="cl">sudo systemctl restart nfs-kernel-server</span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="允许某个子网网段ip通过防火墙访问nfs" class="heading-element"><span>允许某个子网网段IP通过防火墙访问NFS</span>
   <a href="#%e5%85%81%e8%ae%b8%e6%9f%90%e4%b8%aa%e5%ad%90%e7%bd%91%e7%bd%91%e6%ae%b5ip%e9%80%9a%e8%bf%87%e9%98%b2%e7%81%ab%e5%a2%99%e8%ae%bf%e9%97%aenfs" class="heading-mark">
@@ -312,8 +312,8 @@
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">sudo ufw allow from 192.168.1.0/24 to any port nfs
-</span></span><span class="line"><span class="cl">sudo ufw enable
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo ufw allow from 192.168.1.0/24 to any port nfs
+</span></span><span class="line"><span class="cl">sudo ufw <span class="nb">enable</span>
 </span></span><span class="line"><span class="cl">sudo ufw status</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="客户端" class="heading-element"><span>客户端</span>
@@ -330,7 +330,7 @@
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">sudo apt update
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo apt update
 </span></span><span class="line"><span class="cl">sudo apt install nfs-common -y</span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="在客户端创建nfs挂载点" class="heading-element"><span>在客户端创建NFS挂载点</span>
@@ -345,9 +345,9 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">sudo mkdir -p /mnt/nfs_clientshare
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo mkdir -p /mnt/nfs_clientshare
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"># 将NFS服务器共享目录挂在到客户端
+</span></span><span class="line"><span class="cl"><span class="c1"># 将NFS服务器共享目录挂在到客户端</span>
 </span></span><span class="line"><span class="cl">sudo mount &lt;nfs_server_ip&gt;:/mnt/nfs_share /mnt/nfs_clientshare</span></span></code></pre></td></tr></table>
 </div>
 </div><h4 id="测试nfs共享" class="heading-element"><span>测试NFS共享</span>
@@ -364,11 +364,11 @@
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># 登录到NFS服务器
-</span></span><span class="line"><span class="cl">cd /mnt/nfs_share
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 登录到NFS服务器</span>
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> /mnt/nfs_share
 </span></span><span class="line"><span class="cl">touch test1.txt test2.txt test3.txt
-</span></span><span class="line"><span class="cl"># 登录到NFS客户端
-</span></span><span class="line"><span class="cl">cd /mnt/nfs_clientshare
+</span></span><span class="line"><span class="cl"><span class="c1"># 登录到NFS客户端</span>
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> /mnt/nfs_clientshare
 </span></span><span class="line"><span class="cl">ls -l</span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="在kubernetes中配置nfs" class="heading-element"><span>在Kubernetes中配置NFS</span>
@@ -385,7 +385,7 @@
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">sudo apt update
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo apt update
 </span></span><span class="line"><span class="cl">sudo apt install nfs-common -y</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="使用helm安装和配置nfs-client-provisioner" class="heading-element"><span>使用Helm安装和配置NFS Client Provisioner</span>
@@ -402,12 +402,12 @@
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner \
-</span></span><span class="line"><span class="cl">    --set nfs.server=&lt;nfs_server_ip&gt; \
-</span></span><span class="line"><span class="cl">    --set nfs.path=/mnt/nfs_share \
-</span></span><span class="line"><span class="cl">	--set storageClass.onDelete=true</span></span></code></pre></td></tr></table>
+</span></span><span class="line"><span class="cl">helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    --set nfs.server<span class="o">=</span>&lt;nfs_server_ip&gt; <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    --set nfs.path<span class="o">=</span>/mnt/nfs_share <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>	--set storageClass.onDelete<span class="o">=</span>true</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="创建pvc-volume-测试" class="heading-element"><span>创建PVC Volume 测试</span>
   <a href="#%e5%88%9b%e5%bb%bapvc-volume-%e6%b5%8b%e8%af%95" class="heading-mark">
@@ -429,18 +429,18 @@
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># nfs-pvc.yaml
-</span></span><span class="line"><span class="cl">apiVersion: v1
-</span></span><span class="line"><span class="cl">kind: PersistentVolumeClaim
-</span></span><span class="line"><span class="cl">metadata:
-</span></span><span class="line"><span class="cl">  name: nfs-pvc
-</span></span><span class="line"><span class="cl">spec:
-</span></span><span class="line"><span class="cl">  accessModes:
-</span></span><span class="line"><span class="cl">    - ReadWriteOnce
-</span></span><span class="line"><span class="cl">  storageClassName: nfs-client
-</span></span><span class="line"><span class="cl">  resources:
-</span></span><span class="line"><span class="cl">    requests:
-</span></span><span class="line"><span class="cl">      storage: 5Gi</span></span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># nfs-pvc.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">PersistentVolumeClaim</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">nfs-pvc</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">accessModes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span>- <span class="l">ReadWriteOnce</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">storageClassName</span><span class="p">:</span><span class="w"> </span><span class="l">nfs-client</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">resources</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">requests</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">storage</span><span class="p">:</span><span class="w"> </span><span class="l">5Gi</span></span></span></code></pre></td></tr></table>
 </div>
 </div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -473,33 +473,33 @@
 </span><span class="lnt">27
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl"># deployment.yaml
-</span></span><span class="line"><span class="cl">apiVersion: apps/v1
-</span></span><span class="line"><span class="cl">kind: Deployment
-</span></span><span class="line"><span class="cl">metadata:
-</span></span><span class="line"><span class="cl">  labels:
-</span></span><span class="line"><span class="cl">    app: nginx
-</span></span><span class="line"><span class="cl">  name: nfs-nginx
-</span></span><span class="line"><span class="cl">spec:
-</span></span><span class="line"><span class="cl">  replicas: 1
-</span></span><span class="line"><span class="cl">  selector:
-</span></span><span class="line"><span class="cl">    matchLabels:
-</span></span><span class="line"><span class="cl">      app: nginx
-</span></span><span class="line"><span class="cl">  template:
-</span></span><span class="line"><span class="cl">    metadata:
-</span></span><span class="line"><span class="cl">      labels:
-</span></span><span class="line"><span class="cl">        app: nginx
-</span></span><span class="line"><span class="cl">    spec:
-</span></span><span class="line"><span class="cl">      volumes:
-</span></span><span class="line"><span class="cl">        - name: nfs-nginx
-</span></span><span class="line"><span class="cl">          persistentVolumeClaim:
-</span></span><span class="line"><span class="cl">            claimName: nfs-pvc
-</span></span><span class="line"><span class="cl">      containers:
-</span></span><span class="line"><span class="cl">        - image: nginx
-</span></span><span class="line"><span class="cl">          name: nginx
-</span></span><span class="line"><span class="cl">          volumeMounts:
-</span></span><span class="line"><span class="cl">            - name: nfs-nginx
-</span></span><span class="line"><span class="cl">              mountPath: /usr/share/nginx/html</span></span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># deployment.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">apps/v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Deployment</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">labels</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l">nginx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">nfs-nginx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">selector</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l">nginx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">template</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">labels</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l">nginx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">volumes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">nfs-nginx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">persistentVolumeClaim</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">claimName</span><span class="p">:</span><span class="w"> </span><span class="l">nfs-pvc</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">containers</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">nginx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">nginx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">volumeMounts</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">nfs-nginx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l">/usr/share/nginx/html</span></span></span></code></pre></td></tr></table>
 </div>
 </div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -507,7 +507,7 @@
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">kubectl apply -f nfs-pvc.yaml
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl apply -f nfs-pvc.yaml
 </span></span><span class="line"><span class="cl">kubectl apply -f deployment.yaml</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="登录到nfs服务器查看" class="heading-element"><span>登录到NFS服务器查看</span>
@@ -526,14 +526,14 @@
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">kubectl get po
-</span></span><span class="line"><span class="cl">kubectl exec -it nfs-nginx-xxx sh
-</span></span><span class="line"><span class="cl"># now we are into pod
-</span></span><span class="line"><span class="cl"># cd /usr/share/nginx/html
-</span></span><span class="line"><span class="cl"># ls -l
-</span></span><span class="line"><span class="cl"># echo &#34;hello world&#34; &gt;index.html
-</span></span><span class="line"><span class="cl"># ls -l
-</span></span><span class="line"><span class="cl"># exit</span></span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl get po
+</span></span><span class="line"><span class="cl">kubectl <span class="nb">exec</span> -it nfs-nginx-xxx sh
+</span></span><span class="line"><span class="cl"><span class="c1"># now we are into pod</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># cd /usr/share/nginx/html</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># ls -l</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># echo &#34;hello world&#34; &gt;index.html</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># ls -l</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># exit</span></span></span></code></pre></td></tr></table>
 </div>
 </div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -559,7 +559,7 @@
           <a href="/2024/01/testkube-custom-executor/" title="Testkube--创建自定义执行器">Testkube--创建自定义执行器</a></li><li>
           <a href="/2024/01/testkube-intro/" title="Testkube--介绍">Testkube--介绍</a></li><li>
           <a href="/2021/10/kube-scheduler-intro/" title="Kube-Scheduler介绍">Kube-Scheduler介绍</a></li><li>
-          <a href="/2023/02/go-using-redis-pub-sub/" title="Go Package--Goredis 在Go中使用 Redis Pub/Sub">Go Package--Goredis 在Go中使用 Redis Pub/Sub</a></li></ul><div class="post-footer" id="post-footer">
+          <a href="/2024/04/install-jenkins-ubuntu/" title="在Ubuntu安装Jenkins">在Ubuntu安装Jenkins</a></li></ul><div class="post-footer" id="post-footer">
   <div class="post-info">
     <div class="post-info-line">
       <div class="post-info-mod">
@@ -582,7 +582,7 @@
     <section>
       <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
     </section>
-  </div><div class="post-nav"><a href="/2024/04/install-kubernetes-using-kubespray/" class="post-nav-item" rel="prev" title="使用Kubespray部署Kubernetes集群"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>使用Kubespray部署Kubernetes集群</a></div>
+  </div><div class="post-nav"><a href="/2024/04/install-jenkins-ubuntu/" class="post-nav-item" rel="prev" title="在Ubuntu安装Jenkins"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>在Ubuntu安装Jenkins</a></div>
 </div>
 <div class="post-reward">
     <div class="comment">Buy me a coffee</div>

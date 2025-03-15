@@ -1,0 +1,17 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>DevOps - 标签 - Finger&#39;s Blog</title>
+    <link>http://localhost:1313/tags/devops/</link>
+    <description>DevOps - 标签 | Finger&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Fri, 12 Apr 2024 21:30:04 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/devops/" rel="self" type="application/rss+xml" /><item>
+  <title>在Ubuntu安装Jenkins最佳实践</title>
+  <link>http://localhost:1313/2024/04/install-jenkins-ubuntu/</link>
+  <pubDate>Fri, 12 Apr 2024 21:30:04 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>http://localhost:1313/2024/04/install-jenkins-ubuntu/</guid>
+  <description><![CDATA[测试环境：Ubuntu 24.04
+安装Java运行时1 2 3 sudo apt-get update sudo apt install openjdk-21-jdk -y java -version 安装Jenkins添加Jenkins Repository1 2 3 4 5 6 sudo wget -O /usr/share/keyrings/jenkins-keyring.asc \ https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key echo &#34;deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc]&#34; \ https://pkg.jenkins.io/debian-stable binary/ | sudo tee \ /etc/apt/sources.list.d/jenkins.list &gt; /dev/null 安装Jenkins1 2 sudo apt-get update sudo apt-get install jenkins 启动Jenkins服务1 2 3 4 5 # 启动jenkins服务 sudo systemctl start jenkins # 查看服务状态 sudo systemctl status jenkins 解锁Jenkins站点打开浏览器输入http://&lt;ip_address&gt;:8080，第一次打开会出现解锁Jenkins页面。]]></description>
+</item>
+</channel>
+</rss>
