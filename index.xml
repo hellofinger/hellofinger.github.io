@@ -16,6 +16,15 @@
 在Ubuntu上安装和配置NFS服务器端安装NFS服务器内核1 2 sudo apt-get update sudo apt-get install nfs-kernel-server -y 创建NFS导出(共享)目录1 2 3 4 5 6 # 创建共享目录 sudo mkdir -p /mnt/nfs_share # 允许所有客户端能访问共享目录 sudo chown -R nobody:nogroup /mnt/nfs_share/ # 给共享目录赋予权限 sudo chmod 777 /mnt/nfs_share/ 授予客户端共享目录访问权限1 2 3 4 sudo vim /etc/exports # 允许某个子网网段IP可以访问 /mnt/nfs_share 192.168.1.0/24(rw,sync,no_subtree_check) rw：代表读/写。 sync：要求在应用更改之前将其写入磁盘。 no_subtree_check：消除子树检查。 导出NFS共享目录1 2 3 4 sudo exports -a # 重启NFS服务 sudo systemctl restart nfs-kernel-server 允许某个子网网段IP通过防火墙访问NFS1 2 3 sudo ufw allow from 192.]]></description>
 </item>
 <item>
+  <title>在Ubuntu安装Jenkins</title>
+  <link>http://localhost:1313/2024/04/install-jenkins-ubuntu/</link>
+  <pubDate>Fri, 12 Apr 2024 21:30:04 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>http://localhost:1313/2024/04/install-jenkins-ubuntu/</guid>
+  <description><![CDATA[测试环境：Ubuntu 24.04
+安装Java运行时1 2 3 sudo apt-get update sudo apt install openjdk-21-jdk -y java -version 安装Jenkins添加Jenkins Repository1 2 3 4 5 6 sudo wget -O /usr/share/keyrings/jenkins-keyring.asc \ https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key echo &#34;deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc]&#34; \ https://pkg.jenkins.io/debian-stable binary/ | sudo tee \ /etc/apt/sources.list.d/jenkins.list &gt; /dev/null 安装Jenkins1 2 sudo apt-get update sudo apt-get install jenkins 启动Jenkins服务1 2 3 4 5 # 启动jenkins服务 sudo systemctl start jenkins # 查看服务状态 sudo systemctl status jenkins 解锁Jenkins站点打开浏览器输入http://&lt;ip_address&gt;:8080，第一次打开会出现解锁Jenkins页面。]]></description>
+</item>
+<item>
   <title>使用Kubespray部署Kubernetes集群</title>
   <link>http://localhost:1313/2024/04/install-kubernetes-using-kubespray/</link>
   <pubDate>Thu, 11 Apr 2024 20:30:04 &#43;0000</pubDate>
@@ -23,10 +32,8 @@
   <guid>http://localhost:1313/2024/04/install-kubernetes-using-kubespray/</guid>
   <description><![CDATA[环境准备一共4个节点，所有节点都使用ubuntu 24.04版本。
 Bastion (192.168.70.128) 堡垒机或者Ansbile操作节点，所有Kubernetes集群的操作都必须通过堡垒机。 Controller (192.168.70.129) 控制器节点 Node (192.168.70.130 &amp; 192.168.70.131) 工作节点 下载Kubespray将Kubespray代码克隆到本地，建议不要直接使用master分支，而是使用最近的release分支。
-1 2 3 git clone https://github.com/kubernetes-sigs/kubespray.git cd kubespray git checkout release-2.25 1 2 3 4 ubuntu@bastion:~/kubespray$ git branch -a master * release-2.25 remotes/origin/HEAD -&gt; origin/master 创建python虚拟环境，安装Ansible和其他依赖包
-1 2 3 4 python3 -m venv venv source venv/bin/activate pip install -r requirements.txt 验证Ansible版本
-1 2 (venv) ubuntu@bastion:~/kubespray$ ansible --version ansible [core 2.16.9] 创建集群修改配置配置Bastion到集群节点免密登录
-1 2 3 ssh-copy-id root@192.]]></description>
+1 2 3 git clone https://github.com/kubernetes-sigs/kubespray.git cd kubespray git checkout release-2.25 1 2 3 4 5 6 7 8 9 10 11 12 ubuntu@bastion:~/kubespray$ git branch -a master * release-2.25 remotes/origin/HEAD -&gt; origin/master ```shell 创建python虚拟环境，安装Ansible和其他依赖包 ```shell python3 -m venv venv source venv/bin/activate pip install -r requirements.txt 验证Ansible版本
+1 2 (venv) ubuntu@bastion:~/kubespray$ ansible --version ansible [core 2.]]></description>
 </item>
 <item>
   <title>Testkube--创建自定义执行器</title>
@@ -113,18 +120,6 @@ VPC对等连接，可以连接相同或不同AWS区域中的两个VPC。在连�
   <description><![CDATA[需求现有一个基础账号(111111111111)ECR存放所有的基础镜像和应用镜像，其他子账号(222222222222、333333333333、444444444444)的EKS集群需要拉取基础账号的ECR镜像。
 配置以下示例为AWS存储库跨账号访问策略.
 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 { &#34;Version&#34;: &#34;2012-10-17&#34;, &#34;Statement&#34;: [ { &#34;Sid&#34;: &#34;&lt;statement-name&gt;&#34;, &#34;Effect&#34;: &#34;Allow&#34;, &#34;Principal&#34;: { &#34;AWS&#34;: [ &#34;arn:aws:iam::222222222222:root&#34;, &#34;arn:aws:iam::333333333333:root&#34;, &#34;arn:aws:iam::444444444444:root&#34; ] }, &#34;Action&#34;: [ &#34;ecr:BatchGetImage&#34;, &#34;ecr:GetDownloadUrlForLayer&#34; ] } ] } 测试1 2 3 4 5 6 7 8 # 登录 222222222222、333333333333、444444444444 子账号的服务器 # 执行ECR登录命令 aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 111111111111.]]></description>
-</item>
-<item>
-  <title>CVE-2019-5736容器逃逸漏洞复现</title>
-  <link>http://localhost:1313/2022/08/docker-cve-2019-5736/</link>
-  <pubDate>Mon, 15 Aug 2022 20:14:52 &#43;0000</pubDate>
-  <author>Finger</author>
-  <guid>http://localhost:1313/2022/08/docker-cve-2019-5736/</guid>
-  <description><![CDATA[一、漏洞概述CVE-2019-5736漏洞是指通过从容器内覆盖并执行主机系统 runc 二进制文件，从而获取主机上的root执行权限。
-二、影响版本OS: Ubuntu 16.04
-Docker: 18.06.0-ce ( docker version &lt; 18.09.02 )
-Docker Runc: 1.0.0-rc5 ( runc version &lt; 1.0-rc6 )
-三、漏洞复现1 2 # 安装 Docker curl https://gist.githubusercontent.com/thinkycx/e2c9090f035d7b09156077903d6afa51/raw -o install.sh &amp;&amp; bash install.sh 1 2 3 4 5 6 7 8 9 10 # 卸载 Docker # Step1, 删除docker及安装时自动安装的所有包 sudo apt-get autoremove docker docker-ce docker-engine docker.io containerd runc # Step2, 查看docker是否卸载干净 sudo dpkg -l | grep docker sudo dpkg -l |grep ^rc|awk &#39;{print $2}&#39; |sudo xargs dpkg -P # 删除无用的相关的配置文件 # Step3, 删除没有删除的相关插件 sudo apt-get autoremove docker-ce-* 1 2 3 4 5 6 7 8 9 10 11 12 13 14 # 下载POC https://github.]]></description>
 </item>
 </channel>
 </rss>

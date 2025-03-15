@@ -21,10 +21,8 @@
   <guid>http://localhost:1313/2024/04/install-kubernetes-using-kubespray/</guid>
   <description><![CDATA[环境准备一共4个节点，所有节点都使用ubuntu 24.04版本。
 Bastion (192.168.70.128) 堡垒机或者Ansbile操作节点，所有Kubernetes集群的操作都必须通过堡垒机。 Controller (192.168.70.129) 控制器节点 Node (192.168.70.130 &amp; 192.168.70.131) 工作节点 下载Kubespray将Kubespray代码克隆到本地，建议不要直接使用master分支，而是使用最近的release分支。
-1 2 3 git clone https://github.com/kubernetes-sigs/kubespray.git cd kubespray git checkout release-2.25 1 2 3 4 ubuntu@bastion:~/kubespray$ git branch -a master * release-2.25 remotes/origin/HEAD -&gt; origin/master 创建python虚拟环境，安装Ansible和其他依赖包
-1 2 3 4 python3 -m venv venv source venv/bin/activate pip install -r requirements.txt 验证Ansible版本
-1 2 (venv) ubuntu@bastion:~/kubespray$ ansible --version ansible [core 2.16.9] 创建集群修改配置配置Bastion到集群节点免密登录
-1 2 3 ssh-copy-id root@192.]]></description>
+1 2 3 git clone https://github.com/kubernetes-sigs/kubespray.git cd kubespray git checkout release-2.25 1 2 3 4 5 6 7 8 9 10 11 12 ubuntu@bastion:~/kubespray$ git branch -a master * release-2.25 remotes/origin/HEAD -&gt; origin/master ```shell 创建python虚拟环境，安装Ansible和其他依赖包 ```shell python3 -m venv venv source venv/bin/activate pip install -r requirements.txt 验证Ansible版本
+1 2 (venv) ubuntu@bastion:~/kubespray$ ansible --version ansible [core 2.]]></description>
 </item>
 <item>
   <title>Testkube--创建自定义执行器</title>
