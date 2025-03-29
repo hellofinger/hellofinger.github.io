@@ -1,0 +1,20 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>Docker Network - 标签 - Finger&#39;s Blog</title>
+    <link>http://localhost:1313/tags/docker-network/</link>
+    <description>Docker Network - 标签 | Finger&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Fri, 11 Nov 2022 20:14:52 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/docker-network/" rel="self" type="application/rss+xml" /><item>
+  <title>Docker网络基础</title>
+  <link>http://localhost:1313/2022/11/docker-network-basic/</link>
+  <pubDate>Fri, 11 Nov 2022 20:14:52 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>http://localhost:1313/2022/11/docker-network-basic/</guid>
+  <description><![CDATA[Docker 网络架构Docker的网络功能主要封装在 libnetwork 组件。Docker daemon 通过调用 libnetwork api 完成网络的创建和管理等功能。
+libnetwork 主要使用CNM (Container Network Model)模型来构建容器虚拟化网络，同时提供可以开发多种网络驱动的标准化接口和组件。
+CNM主要包含以下3个组件：
+沙盒 (Sandbox)： 一个沙盒包含了一个容器网络栈的信息。沙盒对里边的接口等进行设置并管理。沙盒的实现可以是Linux network namespace或者类似的机制。一个沙盒可以有多个端点和多个网络。 端点 (Endpoint)：一个端点可以同时加入一个沙盒和一个网络。端点的实现可以是veth pair或者相似的设备。 网络 (Network)：一个网络是一组可以直接互相联通的端点。可以包含多个端点，网络的实现可以是Linux bridge、VLAN等。 libnetwork中内置了5种的驱动类型来提供不同的网络服务。
+驱动 简介 bridge 这是 docker 设置的默认驱动。当使用 bridge 驱动时，libnetwork 将创建出来的 docker 容器连接到 docker0 网桥上。对于单机模式，bridge 驱动已经可以满足基本的需求了。但是这种模式下容器使用 NAT 方式与外界通信，这就增加了通信的复杂性。 host 使用 host 驱动的时候，libnetwork 不会为容器创建网络协议栈，即不会创建独立的 network namespace。Docker 容器中的进程处于宿主机的网络环境中，相当于容器和宿主机共用同一个 network namespace，容器共享使用宿主机的网卡、IP 和端口等资源。Host 模式很好的解决了容器与外界通信的地址转换问题，可以直接使用宿主机的 IP 进行通信，不存在虚拟化网络带来的开销。但是 host 驱动也降低了容器与容器之间、容器与宿主机之间网络的隔离性，引起网络资源的竞争和冲突。因此可以认为 host 驱动适用于对容器集群规模不大的场景。 null 使用这种驱动的时候，docker 容器拥有字段的 network namespace，但是并不为 docker 容器进行任何网络配置。也就是说，这个容器除了 network namespace 自带的 loopback 网卡外，没有任何其它网卡、IP、路由等信息，需要用户为该容器添加网卡、配置 IP 等。这种模式如果不进行特定的配置是无法正常使用网络的，但是优点也非常明显，它给了用户最大的自由度来自定义容器的网络环境。 remote 这个驱动实际上并未做真正的网络服务实现，而是调用了用户自行实现的网络驱动插件，是 libnetwork 实现了驱动的插件化，更好地满足了用户的多样化需求。用户只要根据 libnetwork 提供的协议标准实现其接口并注册即可。 overlay overlay 驱动采用 IETF 标准的 VXLAN 方式，并且是 VXLAN 中被普遍认为最适合大规模的云计算虚拟化环境的 SDN controller 模式。在使用的过程中，还需要一个额外的配置存储服务，比如 Consul、etcd 或 ZooKeeper 等。并且在启动 docker daemon 的时候需要添加额外的参数来指定所使用的配置存储服务地址。 使用命令docker network ls查看网络]]></description>
+</item>
+</channel>
+</rss>
