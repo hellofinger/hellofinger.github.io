@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>Docker网络基础 - Finger&#39;s Blog</title><meta name="author" content="Finger">
+<meta name="author-link" content="https://github.com/hellofinger">
+<meta name="description" content="Docker 网络架构Docker的网络功能主要封装在 libnetwork 组件。Docker daemon 通过调用 libnetwork api 完成网络的创建和管理等功能。
+libnetwork 主要使用CNM (Container Network Model)模型来构建容器虚拟化网络，同时提供可以开发多种网络驱动的标准化接口和组件。
+CNM主要包含以下3个组件：
+沙盒 (Sandbox)： 一个沙盒包含了一个容器网络栈的信息。沙盒对里边的接口等进行设置并管理。沙盒的实现可以是Linux network namespace或者类似的机制。一个沙盒可以有多个端点和多个网络。 端点 (Endpoint)：一个端点可以同时加入一个沙盒和一个网络。端点的实现可以是veth pair或者相似的设备。 网络 (Network)：一个网络是一组可以直接互相联通的端点。可以包含多个端点，网络的实现可以是Linux bridge、VLAN等。 libnetwork中内置了5种的驱动类型来提供不同的网络服务。
+驱动 简介 bridge 这是 docker 设置的默认驱动。当使用 bridge 驱动时，libnetwork 将创建出来的 docker 容器连接到 docker0 网桥上。对于单机模式，bridge 驱动已经可以满足基本的需求了。但是这种模式下容器使用 NAT 方式与外界通信，这就增加了通信的复杂性。 host 使用 host 驱动的时候，libnetwork 不会为容器创建网络协议栈，即不会创建独立的 network namespace。Docker 容器中的进程处于宿主机的网络环境中，相当于容器和宿主机共用同一个 network namespace，容器共享使用宿主机的网卡、IP 和端口等资源。Host 模式很好的解决了容器与外界通信的地址转换问题，可以直接使用宿主机的 IP 进行通信，不存在虚拟化网络带来的开销。但是 host 驱动也降低了容器与容器之间、容器与宿主机之间网络的隔离性，引起网络资源的竞争和冲突。因此可以认为 host 驱动适用于对容器集群规模不大的场景。 null 使用这种驱动的时候，docker 容器拥有字段的 network namespace，但是并不为 docker 容器进行任何网络配置。也就是说，这个容器除了 network namespace 自带的 loopback 网卡外，没有任何其它网卡、IP、路由等信息，需要用户为该容器添加网卡、配置 IP 等。这种模式如果不进行特定的配置是无法正常使用网络的，但是优点也非常明显，它给了用户最大的自由度来自定义容器的网络环境。 remote 这个驱动实际上并未做真正的网络服务实现，而是调用了用户自行实现的网络驱动插件，是 libnetwork 实现了驱动的插件化，更好地满足了用户的多样化需求。用户只要根据 libnetwork 提供的协议标准实现其接口并注册即可。 overlay overlay 驱动采用 IETF 标准的 VXLAN 方式，并且是 VXLAN 中被普遍认为最适合大规模的云计算虚拟化环境的 SDN controller 模式。在使用的过程中，还需要一个额外的配置存储服务，比如 Consul、etcd 或 ZooKeeper 等。并且在启动 docker daemon 的时候需要添加额外的参数来指定所使用的配置存储服务地址。 使用命令docker network ls查看网络" /><meta name="keywords" content='Docker Network' />
+  <meta itemprop="name" content="Docker网络基础">
+  <meta itemprop="description" content="Docker 网络架构Docker的网络功能主要封装在 libnetwork 组件。Docker daemon 通过调用 libnetwork api 完成网络的创建和管理等功能。
+libnetwork 主要使用CNM (Container Network Model)模型来构建容器虚拟化网络，同时提供可以开发多种网络驱动的标准化接口和组件。
+CNM主要包含以下3个组件：
+沙盒 (Sandbox)： 一个沙盒包含了一个容器网络栈的信息。沙盒对里边的接口等进行设置并管理。沙盒的实现可以是Linux network namespace或者类似的机制。一个沙盒可以有多个端点和多个网络。 端点 (Endpoint)：一个端点可以同时加入一个沙盒和一个网络。端点的实现可以是veth pair或者相似的设备。 网络 (Network)：一个网络是一组可以直接互相联通的端点。可以包含多个端点，网络的实现可以是Linux bridge、VLAN等。 libnetwork中内置了5种的驱动类型来提供不同的网络服务。
+驱动 简介 bridge 这是 docker 设置的默认驱动。当使用 bridge 驱动时，libnetwork 将创建出来的 docker 容器连接到 docker0 网桥上。对于单机模式，bridge 驱动已经可以满足基本的需求了。但是这种模式下容器使用 NAT 方式与外界通信，这就增加了通信的复杂性。 host 使用 host 驱动的时候，libnetwork 不会为容器创建网络协议栈，即不会创建独立的 network namespace。Docker 容器中的进程处于宿主机的网络环境中，相当于容器和宿主机共用同一个 network namespace，容器共享使用宿主机的网卡、IP 和端口等资源。Host 模式很好的解决了容器与外界通信的地址转换问题，可以直接使用宿主机的 IP 进行通信，不存在虚拟化网络带来的开销。但是 host 驱动也降低了容器与容器之间、容器与宿主机之间网络的隔离性，引起网络资源的竞争和冲突。因此可以认为 host 驱动适用于对容器集群规模不大的场景。 null 使用这种驱动的时候，docker 容器拥有字段的 network namespace，但是并不为 docker 容器进行任何网络配置。也就是说，这个容器除了 network namespace 自带的 loopback 网卡外，没有任何其它网卡、IP、路由等信息，需要用户为该容器添加网卡、配置 IP 等。这种模式如果不进行特定的配置是无法正常使用网络的，但是优点也非常明显，它给了用户最大的自由度来自定义容器的网络环境。 remote 这个驱动实际上并未做真正的网络服务实现，而是调用了用户自行实现的网络驱动插件，是 libnetwork 实现了驱动的插件化，更好地满足了用户的多样化需求。用户只要根据 libnetwork 提供的协议标准实现其接口并注册即可。 overlay overlay 驱动采用 IETF 标准的 VXLAN 方式，并且是 VXLAN 中被普遍认为最适合大规模的云计算虚拟化环境的 SDN controller 模式。在使用的过程中，还需要一个额外的配置存储服务，比如 Consul、etcd 或 ZooKeeper 等。并且在启动 docker daemon 的时候需要添加额外的参数来指定所使用的配置存储服务地址。 使用命令docker network ls查看网络">
+  <meta itemprop="datePublished" content="2022-11-11T20:14:52+00:00">
+  <meta itemprop="dateModified" content="2022-11-11T20:14:52+00:00">
+  <meta itemprop="wordCount" content="246">
+  <meta itemprop="keywords" content="Docker Network"><meta property="og:url" content="http://localhost:1313/2022/11/docker-network-basic/">
+  <meta property="og:site_name" content="Finger&#39;s Blog">
+  <meta property="og:title" content="Docker网络基础">
+  <meta property="og:description" content="Docker 网络架构Docker的网络功能主要封装在 libnetwork 组件。Docker daemon 通过调用 libnetwork api 完成网络的创建和管理等功能。
+libnetwork 主要使用CNM (Container Network Model)模型来构建容器虚拟化网络，同时提供可以开发多种网络驱动的标准化接口和组件。
+CNM主要包含以下3个组件：
+沙盒 (Sandbox)： 一个沙盒包含了一个容器网络栈的信息。沙盒对里边的接口等进行设置并管理。沙盒的实现可以是Linux network namespace或者类似的机制。一个沙盒可以有多个端点和多个网络。 端点 (Endpoint)：一个端点可以同时加入一个沙盒和一个网络。端点的实现可以是veth pair或者相似的设备。 网络 (Network)：一个网络是一组可以直接互相联通的端点。可以包含多个端点，网络的实现可以是Linux bridge、VLAN等。 libnetwork中内置了5种的驱动类型来提供不同的网络服务。
+驱动 简介 bridge 这是 docker 设置的默认驱动。当使用 bridge 驱动时，libnetwork 将创建出来的 docker 容器连接到 docker0 网桥上。对于单机模式，bridge 驱动已经可以满足基本的需求了。但是这种模式下容器使用 NAT 方式与外界通信，这就增加了通信的复杂性。 host 使用 host 驱动的时候，libnetwork 不会为容器创建网络协议栈，即不会创建独立的 network namespace。Docker 容器中的进程处于宿主机的网络环境中，相当于容器和宿主机共用同一个 network namespace，容器共享使用宿主机的网卡、IP 和端口等资源。Host 模式很好的解决了容器与外界通信的地址转换问题，可以直接使用宿主机的 IP 进行通信，不存在虚拟化网络带来的开销。但是 host 驱动也降低了容器与容器之间、容器与宿主机之间网络的隔离性，引起网络资源的竞争和冲突。因此可以认为 host 驱动适用于对容器集群规模不大的场景。 null 使用这种驱动的时候，docker 容器拥有字段的 network namespace，但是并不为 docker 容器进行任何网络配置。也就是说，这个容器除了 network namespace 自带的 loopback 网卡外，没有任何其它网卡、IP、路由等信息，需要用户为该容器添加网卡、配置 IP 等。这种模式如果不进行特定的配置是无法正常使用网络的，但是优点也非常明显，它给了用户最大的自由度来自定义容器的网络环境。 remote 这个驱动实际上并未做真正的网络服务实现，而是调用了用户自行实现的网络驱动插件，是 libnetwork 实现了驱动的插件化，更好地满足了用户的多样化需求。用户只要根据 libnetwork 提供的协议标准实现其接口并注册即可。 overlay overlay 驱动采用 IETF 标准的 VXLAN 方式，并且是 VXLAN 中被普遍认为最适合大规模的云计算虚拟化环境的 SDN controller 模式。在使用的过程中，还需要一个额外的配置存储服务，比如 Consul、etcd 或 ZooKeeper 等。并且在启动 docker daemon 的时候需要添加额外的参数来指定所使用的配置存储服务地址。 使用命令docker network ls查看网络">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2022-11-11T20:14:52+00:00">
+    <meta property="article:modified_time" content="2022-11-11T20:14:52+00:00">
+    <meta property="article:tag" content="Docker Network">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Docker网络基础">
+  <meta name="twitter:description" content="Docker 网络架构Docker的网络功能主要封装在 libnetwork 组件。Docker daemon 通过调用 libnetwork api 完成网络的创建和管理等功能。
+libnetwork 主要使用CNM (Container Network Model)模型来构建容器虚拟化网络，同时提供可以开发多种网络驱动的标准化接口和组件。
+CNM主要包含以下3个组件：
+沙盒 (Sandbox)： 一个沙盒包含了一个容器网络栈的信息。沙盒对里边的接口等进行设置并管理。沙盒的实现可以是Linux network namespace或者类似的机制。一个沙盒可以有多个端点和多个网络。 端点 (Endpoint)：一个端点可以同时加入一个沙盒和一个网络。端点的实现可以是veth pair或者相似的设备。 网络 (Network)：一个网络是一组可以直接互相联通的端点。可以包含多个端点，网络的实现可以是Linux bridge、VLAN等。 libnetwork中内置了5种的驱动类型来提供不同的网络服务。
+驱动 简介 bridge 这是 docker 设置的默认驱动。当使用 bridge 驱动时，libnetwork 将创建出来的 docker 容器连接到 docker0 网桥上。对于单机模式，bridge 驱动已经可以满足基本的需求了。但是这种模式下容器使用 NAT 方式与外界通信，这就增加了通信的复杂性。 host 使用 host 驱动的时候，libnetwork 不会为容器创建网络协议栈，即不会创建独立的 network namespace。Docker 容器中的进程处于宿主机的网络环境中，相当于容器和宿主机共用同一个 network namespace，容器共享使用宿主机的网卡、IP 和端口等资源。Host 模式很好的解决了容器与外界通信的地址转换问题，可以直接使用宿主机的 IP 进行通信，不存在虚拟化网络带来的开销。但是 host 驱动也降低了容器与容器之间、容器与宿主机之间网络的隔离性，引起网络资源的竞争和冲突。因此可以认为 host 驱动适用于对容器集群规模不大的场景。 null 使用这种驱动的时候，docker 容器拥有字段的 network namespace，但是并不为 docker 容器进行任何网络配置。也就是说，这个容器除了 network namespace 自带的 loopback 网卡外，没有任何其它网卡、IP、路由等信息，需要用户为该容器添加网卡、配置 IP 等。这种模式如果不进行特定的配置是无法正常使用网络的，但是优点也非常明显，它给了用户最大的自由度来自定义容器的网络环境。 remote 这个驱动实际上并未做真正的网络服务实现，而是调用了用户自行实现的网络驱动插件，是 libnetwork 实现了驱动的插件化，更好地满足了用户的多样化需求。用户只要根据 libnetwork 提供的协议标准实现其接口并注册即可。 overlay overlay 驱动采用 IETF 标准的 VXLAN 方式，并且是 VXLAN 中被普遍认为最适合大规模的云计算虚拟化环境的 SDN controller 模式。在使用的过程中，还需要一个额外的配置存储服务，比如 Consul、etcd 或 ZooKeeper 等。并且在启动 docker daemon 的时候需要添加额外的参数来指定所使用的配置存储服务地址。 使用命令docker network ls查看网络">
+<meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="http://localhost:1313/2022/11/docker-network-basic/" /><link rel="prev" href="http://localhost:1313/2022/11/aws-code-artifact-best-practice/" /><link rel="next" href="http://localhost:1313/2023/02/go-using-redis-pub-sub/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Docker网络基础",
+    "inLanguage": "zh-CN",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "http:\/\/localhost:1313\/2022\/11\/docker-network-basic\/"
+    },"genre": "posts","keywords": "Docker Network","wordcount":  246 ,
+    "url": "http:\/\/localhost:1313\/2022\/11\/docker-network-basic\/","datePublished": "2022-11-11T20:14:52+00:00","dateModified": "2022-11-11T20:14:52+00:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "Finger"
+      },"description": ""
+  }
+  </script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><script>(window.localStorage?.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('data-theme', 'dark');</script><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper" data-github-corner="right">
+    <div class="header-title">
+      <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/"
+                
+                
+              ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/posts/"
+                
+                
+              ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/categories/"
+                
+                
+              ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/tags/"
+                
+                
+              ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li class="menu-item">
+              <a
+                class="menu-link"
+                href="/about/"
+                
+                
+              ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item delimiter"></li><li class="menu-item search" id="search-desktop">
+            <input type="text" placeholder="搜索文章标题或内容……" id="search-input-desktop">
+            <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+              <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+            </a>
+            <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+              <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+            </a>
+            <span class="search-button search-loading" id="search-loading-desktop">
+              <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+            </span>
+          </li><li class="menu-item theme-switch" title="切换主题">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="Finger&#39;s Blog"><span class="header-title-text">Finger&#39;s Blog</span></a><span class="header-subtitle"></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li class="search-wrapper">
+            <div class="search mobile" id="search-mobile">
+              <input type="text" placeholder="搜索文章标题或内容……" id="search-input-mobile">
+              <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                <i class="fa-solid fa-search fa-fw" aria-hidden="true"></i>
+              </a>
+              <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                <i class="fa-solid fa-times-circle fa-fw" aria-hidden="true"></i>
+              </a>
+              <span class="search-button search-loading" id="search-loading-mobile">
+                <i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+              </span>
+            </div>
+            <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+              取消
+            </a>
+          </li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/"
+                  
+                  
+                ><i class="fa-solid fa-home fa-fw fa-sm" aria-hidden="true"></i> 首页</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/posts/"
+                  
+                  
+                ><i class="fa-solid fa-feather fa-fw fa-sm" aria-hidden="true"></i> 文章</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/categories/"
+                  
+                  
+                ><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> 分类</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/tags/"
+                  
+                  
+                ><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> 标签</a></li><li
+              class="menu-item"
+            ><a
+                  class="menu-link"
+                  href="/about/"
+                  
+                  
+                ><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden="true"></i> 关于</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="切换主题"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+  </div>
+  <div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+  </div><nav aria-label="breadcrumb" class="breadcrumb-container">
+    <ol class="breadcrumb"><li class="breadcrumb-item"><a href="/posts/" title="Posts">文章</a></li><li class="breadcrumb-item active" aria-current="page">Docker网络基础</li>
+    </ol>
+  </nav><main class="container"><aside class="aside-collection animate__animated animate__fadeIn animate__faster" aria-label="合集"></aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>Docker网络基础</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/docker/" class="post-category" title="分类 - Docker"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Docker</a>&ensp;<a href="/categories/container/" class="post-category" title="分类 - Container"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Container</a></span></div><div class="post-meta-line"><span title="发布于 2022-11-11 20:14:52"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2022-11-11">2022-11-11</time></span>&nbsp;<span title="246 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 300 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 2 分钟</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>目录</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#docker-网络架构">Docker 网络架构</a></li>
+    <li><a href="#docker网络连通性示例">Docker网络连通性示例</a></li>
+    <li><a href="#常用命令">常用命令</a></li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><div class="details admonition warning open">
+      <div class="details-summary admonition-title">
+        <i class="icon fa-solid fa-exclamation-triangle fa-fw" aria-hidden="true"></i>警告<i class="details-icon fa-solid fa-angle-right fa-fw" aria-hidden="true"></i>
+      </div>
+      <div class="details-content">
+        <div class="admonition-content">本文最后更新于 2022-11-11，文中内容可能已过时。</div>
+      </div>
+    </div><h2 id="docker-网络架构" class="heading-element"><span>Docker 网络架构</span>
+  <a href="#docker-%e7%bd%91%e7%bb%9c%e6%9e%b6%e6%9e%84" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p><img loading="lazy" src="/2022/11/docker-network-basic/imgs/docker-network-architecture.png" alt="Dokcer Network Architecture" srcset="/2022/11/docker-network-basic/imgs/docker-network-architecture.png?size=small, /2022/11/docker-network-basic/imgs/docker-network-architecture.png?size=medium 1.5x, /2022/11/docker-network-basic/imgs/docker-network-architecture.png?size=large 2x" data-title="Dokcer Network Architecture" style="--width: 745px;--aspect-ratio: 745 / 401;background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p>Docker的网络功能主要封装在 <code>libnetwork</code> 组件。Docker daemon 通过调用 <code>libnetwork api</code> 完成网络的创建和管理等功能。</p>
+<p><code>libnetwork</code> 主要使用<code>CNM (Container Network Model)</code>模型来构建容器虚拟化网络，同时提供可以开发多种网络驱动的标准化接口和组件。</p>
+<p><code>CNM</code>主要包含以下3个组件：</p>
+<ul>
+<li>沙盒 (Sandbox)： 一个沙盒包含了一个容器网络栈的信息。沙盒对里边的接口等进行设置并管理。沙盒的实现可以是Linux network namespace或者类似的机制。一个沙盒可以有多个端点和多个网络。</li>
+<li>端点 (Endpoint)：一个端点可以同时加入一个沙盒和一个网络。端点的实现可以是veth pair或者相似的设备。</li>
+<li>网络 (Network)：一个网络是一组可以直接互相联通的端点。可以包含多个端点，网络的实现可以是Linux bridge、VLAN等。</li>
+</ul>
+<p><code>libnetwork</code>中内置了5种的驱动类型来提供不同的网络服务。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">驱动</th>
+<th>简介</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">bridge</td>
+<td>这是 docker 设置的默认驱动。当使用 bridge 驱动时，libnetwork 将创建出来的 docker 容器连接到 docker0 网桥上。对于单机模式，bridge 驱动已经可以满足基本的需求了。但是这种模式下容器使用 NAT 方式与外界通信，这就增加了通信的复杂性。</td>
+</tr>
+<tr>
+<td style="text-align:left">host</td>
+<td>使用 host 驱动的时候，libnetwork 不会为容器创建网络协议栈，即不会创建独立的 network namespace。Docker 容器中的进程处于宿主机的网络环境中，相当于容器和宿主机共用同一个 network namespace，容器共享使用宿主机的网卡、IP 和端口等资源。Host 模式很好的解决了容器与外界通信的地址转换问题，可以直接使用宿主机的 IP 进行通信，不存在虚拟化网络带来的开销。但是 host 驱动也降低了容器与容器之间、容器与宿主机之间网络的隔离性，引起网络资源的竞争和冲突。因此可以认为 host 驱动适用于对容器集群规模不大的场景。</td>
+</tr>
+<tr>
+<td style="text-align:left">null</td>
+<td>使用这种驱动的时候，docker 容器拥有字段的 network namespace，但是并不为 docker 容器进行任何网络配置。也就是说，这个容器除了 network namespace 自带的 loopback 网卡外，没有任何其它网卡、IP、路由等信息，需要用户为该容器添加网卡、配置 IP 等。这种模式如果不进行特定的配置是无法正常使用网络的，但是优点也非常明显，它给了用户最大的自由度来自定义容器的网络环境。</td>
+</tr>
+<tr>
+<td style="text-align:left">remote</td>
+<td>这个驱动实际上并未做真正的网络服务实现，而是调用了用户自行实现的网络驱动插件，是 libnetwork 实现了驱动的插件化，更好地满足了用户的多样化需求。用户只要根据 libnetwork 提供的协议标准实现其接口并注册即可。</td>
+</tr>
+<tr>
+<td style="text-align:left">overlay</td>
+<td>overlay 驱动采用 IETF 标准的 VXLAN 方式，并且是 VXLAN 中被普遍认为最适合大规模的云计算虚拟化环境的 SDN controller 模式。在使用的过程中，还需要一个额外的配置存储服务，比如 Consul、etcd 或 ZooKeeper 等。并且在启动 docker daemon 的时候需要添加额外的参数来指定所使用的配置存储服务地址。</td>
+</tr>
+</tbody>
+</table>
+<p>使用命令<code>docker network ls</code>查看网络</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">root@bastion:~# docker network ls
+</span></span><span class="line"><span class="cl">NETWORK ID     NAME      DRIVER    SCOPE
+</span></span><span class="line"><span class="cl">15ea2b3840bf   bridge    bridge    <span class="nb">local</span>
+</span></span><span class="line"><span class="cl">687d531459fb   host      host      <span class="nb">local</span>
+</span></span><span class="line"><span class="cl">a77ee2070478   none      null      local</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="docker网络连通性示例" class="heading-element"><span>Docker网络连通性示例</span>
+  <a href="#docker%e7%bd%91%e7%bb%9c%e8%bf%9e%e9%80%9a%e6%80%a7%e7%a4%ba%e4%be%8b" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>本示例创建了<code>backend</code>和<code>frontend</code>两个网络。两个网络互不连通。
+创建3个容器，其中container1和container3各有一个端点，并且分别连接在<code>backend</code>和<code>frontend</code>网络中。而container2有两个端点，同时连接到<code>backend</code>和<code>frontend</code>网络中</p>
+<p><img loading="lazy" src="/2022/11/docker-network-basic/imgs/docker-network-demo.png" alt="Dokcer Network Demo" srcset="/2022/11/docker-network-basic/imgs/docker-network-demo.png?size=small, /2022/11/docker-network-basic/imgs/docker-network-demo.png?size=medium 1.5x, /2022/11/docker-network-basic/imgs/docker-network-demo.png?size=large 2x" data-title="Dokcer Network Demo" style="--width: 2316px;--aspect-ratio: 2316 / 954;background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">docker network create backend
+</span></span><span class="line"><span class="cl">docker network create frontend
+</span></span><span class="line"><span class="cl">docker network ls</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img loading="lazy" src="/2022/11/docker-network-basic/imgs/create-network.png" alt="Dokcer Create Network " srcset="/2022/11/docker-network-basic/imgs/create-network.png?size=small, /2022/11/docker-network-basic/imgs/create-network.png?size=medium 1.5x, /2022/11/docker-network-basic/imgs/create-network.png?size=large 2x" data-title="Dokcer Create Network " style="--width: 629px;--aspect-ratio: 629 / 221;background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p>用busybox镜像分别创建3个容器container1, container2和container3。并且加入<code>backend</code>和<code>frontend</code>网络。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">docker run -it --name container1 --net backend busybox
+</span></span><span class="line"><span class="cl">docker run -it --name container2 --net backend busybox
+</span></span><span class="line"><span class="cl">docker run -it --name container3 --net frontend busybox</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img loading="lazy" src="/2022/11/docker-network-basic/imgs/container-list.png" alt="Dokcer Create Network " srcset="/2022/11/docker-network-basic/imgs/container-list.png?size=small, /2022/11/docker-network-basic/imgs/container-list.png?size=medium 1.5x, /2022/11/docker-network-basic/imgs/container-list.png?size=large 2x" data-title="Dokcer Create Network " style="--width: 814px;--aspect-ratio: 814 / 101;background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p>分别查询container1, container2和container3的IP。可以看到，此时容器中都只有一块<code>eth0</code>网卡。container1和container2属于同一个网段 <code>127.18.0.1/16</code>。container3属于网段<code>127.19.0.1/16</code>。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">ip addr
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># container1 127.18.0.2</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># container2 127.18.0.3</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># container3 127.19.0.2</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p><img loading="lazy" src="/2022/11/docker-network-basic/imgs/container1.png" alt="Dokcer Create Network " srcset="/2022/11/docker-network-basic/imgs/container1.png?size=small, /2022/11/docker-network-basic/imgs/container1.png?size=medium 1.5x, /2022/11/docker-network-basic/imgs/container1.png?size=large 2x" data-title="Dokcer Create Network " style="--width: 1804px;--aspect-ratio: 1804 / 424;background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p><img loading="lazy" src="/2022/11/docker-network-basic/imgs/container2.png" alt="Dokcer Create Network " srcset="/2022/11/docker-network-basic/imgs/container2.png?size=small, /2022/11/docker-network-basic/imgs/container2.png?size=medium 1.5x, /2022/11/docker-network-basic/imgs/container2.png?size=large 2x" data-title="Dokcer Create Network " style="--width: 1841px;--aspect-ratio: 1841 / 421;background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p><img loading="lazy" src="/2022/11/docker-network-basic/imgs/container3.png" alt="Dokcer Create Network " srcset="/2022/11/docker-network-basic/imgs/container3.png?size=small, /2022/11/docker-network-basic/imgs/container3.png?size=medium 1.5x, /2022/11/docker-network-basic/imgs/container3.png?size=large 2x" data-title="Dokcer Create Network " style="--width: 1859px;--aspect-ratio: 1859 / 426;background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p>在container2中分别测试ping container1和container3的IP。显然container2可以ping 通container1，无法ping通container3。</p>
+<p><strong>只有在同一个网络端点中的容器才能互相连接</strong></p>
+<p><img loading="lazy" src="/2022/11/docker-network-basic/imgs/container2-ping.png" alt="Dokcer Create Network " srcset="/2022/11/docker-network-basic/imgs/container2-ping.png?size=small, /2022/11/docker-network-basic/imgs/container2-ping.png?size=medium 1.5x, /2022/11/docker-network-basic/imgs/container2-ping.png?size=large 2x" data-title="Dokcer Create Network " style="--width: 1889px;--aspect-ratio: 1889 / 1059;background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p>将container2加入到frontend网络端点中。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">docker network connect frontend container2</span></span></code></pre></td></tr></table>
+</div>
+</div><p>再查看container2网络配置，发现有两个网卡eth0和eth1。分配了两个IP: <code>172.18.0.3</code>和<code>172.19.0.3</code>，用ping命令测试连接container3，此时可以连接成功。
+<img loading="lazy" src="/2022/11/docker-network-basic/imgs/container2-2.png" alt="Dokcer Create Network " srcset="/2022/11/docker-network-basic/imgs/container2-2.png?size=small, /2022/11/docker-network-basic/imgs/container2-2.png?size=medium 1.5x, /2022/11/docker-network-basic/imgs/container2-2.png?size=large 2x" data-title="Dokcer Create Network " style="--width: 1931px;--aspect-ratio: 1931 / 931;background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<h2 id="常用命令" class="heading-element"><span>常用命令</span>
+  <a href="#%e5%b8%b8%e7%94%a8%e5%91%bd%e4%bb%a4" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 创建网络</span>
+</span></span><span class="line"><span class="cl">docker network create &lt;网络名字&gt;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 将容器添加到网络</span>
+</span></span><span class="line"><span class="cl">docker network connect &lt;网络名字&gt; &lt;容器名字&gt;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 将容器移除网络</span>
+</span></span><span class="line"><span class="cl">docker network disconnect &lt;网络名字&gt; &lt;容器名字&gt;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 删除网络</span>
+</span></span><span class="line"><span class="cl">docker network rm &lt;网络名字&gt;</span></span></code></pre></td></tr></table>
+</div>
+</div></div><hr class="awesome-hr" />
+    <h2 id="see-also">相关内容</h2>
+    <ul><li>
+          <a href="/2017/01/hexo-usage/" title="Hexo使用笔记">Hexo使用笔记</a></li><li>
+          <a href="/2022/11/aws-code-artifact-best-practice/" title="AWS实践--使用CodeArtifact创建私有的NPM Package">AWS实践--使用CodeArtifact创建私有的NPM Package</a></li><li>
+          <a href="/2022/10/container-principle/" title="容器实现原理">容器实现原理</a></li><li>
+          <a href="/2022/09/aws-vpc-peering/" title="AWS实践--VPC对等连接(Peerning Connections)">AWS实践--VPC对等连接(Peerning Connections)</a></li><li>
+          <a href="/2022/09/aws-cross-account-access-ecr-repo/" title="AWS实践--跨账号访问ECR">AWS实践--跨账号访问ECR</a></li></ul><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod">
+        <span title="更新于 2022-11-11 20:14:52">更新于 2022-11-11&nbsp;</span>
+      </div><div class="post-info-license">
+            <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
+          </div></div><div class="post-info-line">
+        <div class="post-info-md"></div>
+        <div class="post-info-share">
+          <span><a href="javascript:void(0);" title="分享到 X" data-sharer="twitter" data-url="http://localhost:1313/2022/11/docker-network-basic/" data-title="Docker网络基础" data-hashtags="Docker Network"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="http://localhost:1313/2022/11/docker-network-basic/" data-hashtag="Docker Network"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="http://localhost:1313/2022/11/docker-network-basic/" data-title="Docker网络基础"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="分享到 百度" data-sharer="baidu" data-url="http://localhost:1313/2022/11/docker-network-basic/" data-title="Docker网络基础"><i data-svg-src="/lib/simple-icons/icons/baidu.min.svg" aria-hidden="true"></i></a>
+  </span>
+        </div>
+      </div></div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href="/tags/docker-network/" class="post-tag" title="标签 - Docker Network">Docker Network</a></section>
+    <section>
+      <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+    </section>
+  </div><div class="post-nav"><a href="/2022/11/aws-code-artifact-best-practice/" class="post-nav-item" rel="prev" title="AWS实践--使用CodeArtifact创建私有的NPM Package"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>AWS实践--使用CodeArtifact创建私有的NPM Package</a>
+      <a href="/2023/02/go-using-redis-pub-sub/" class="post-nav-item" rel="next" title="Go Package--Goredis 在Go中使用 Redis Pub/Sub">Go Package--Goredis 在Go中使用 Redis Pub/Sub<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+<div class="post-reward">
+    <div class="comment">Buy me a coffee</div>
+    <input type="checkbox" class="reward-input" name="reward" id="fi-reward" hidden />
+    <label class="reward-button" for="fi-reward"><i class="fa-solid fa-qrcode fa-fw" aria-hidden="true"></i>赞赏</label>
+    <div class="reward-ways" data-mode="static"><div><img loading="lazy" src="/images/alipay.jpg" alt="Finger 支付宝" data-title="Finger 支付宝" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/><span>支付宝</span>
+          </div><div><img loading="lazy" src="/images/wechatpay.jpg" alt="Finger 微信" data-title="Finger 微信" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/><span>微信</span>
+          </div></div>
+  </div></article>
+
+  <aside class="toc" id="toc-auto" aria-label="目录"><h2 class="toc-title">目录&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2017 - 2025</span><span class="author" itemprop="copyrightHolder">
+              <a href="https://github.com/hellofinger"target="_blank" rel="external nofollow noopener noreferrer">Finger</a></span><span class="license footer-divider"><a href='https://creativecommons.org/licenses/by-nc/4.0/'>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"></div><div class="footer-line visitor">
+          <span id="busuanzi_container_site_uv" title='总访客数'><i class="fa-regular fa-user fa-fw me-1" aria-hidden="true"></i><span id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span></span><span id="busuanzi_container_site_pv" class="footer-divider" title='总访问量'><i class="fa-regular fa-eye fa-fw me-1" aria-hidden="true"></i><span id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin fa-fw" aria-hidden="true"></i></span></span>
+        </div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="回到顶部"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric">0%</span>
+        </div></div><a href="https://github.com/hellofinger" title="View source on GitHub"target="_blank" rel="external nofollow" class="github-corner right d-none-mobile"><svg viewBox="0 0 250 250" aria-hidden="true" width="56" height="56"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><div id="mask"></div><div class="reading-progress-bar" style="left: 0;top: 0;"></div><noscript>
+    <div class="noscript-warning">该网站在启用 JavaScript 的情况下效果最佳。</div>
+  </noscript>
+</div><link rel="preload" href="/lib/katex/katex.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/katex/katex.min.css"></noscript><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script src="/lib/autocomplete/autocomplete.min.js" defer></script><script src="/lib/fuse/fuse.min.js" defer></script><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/katex/katex.min.js" defer></script><script src="/lib/katex/auto-render.min.js" defer></script><script src="/lib/katex/copy-tex.min.js" defer></script><script src="/lib/katex/mhchem.min.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="/js/flyfish.js" defer></script><script>window.config={"code":{"copyTitle":"复制到剪贴板","editLockTitle":"锁定可编辑代码块","editUnLockTitle":"解锁可编辑代码块","editable":true,"maxShownLines":10},"comment":{"enable":false},"cookieconsent":{"content":{"dismiss":"同意","link":"了解更多","message":"本网站使用 Cookies 来改善您的浏览体验。"},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"distance":100,"findAllMatches":false,"highlightTag":"em","ignoreFieldNorm":false,"ignoreLocation":false,"isCaseSensitive":false,"location":0,"maxResultLength":10,"minMatchCharLength":2,"noResultsFound":"没有找到结果","snippetLength":30,"threshold":0.3,"useExtendedSearch":false},"version":"v0.3.10-c936e541"};</script><script src="/js/theme.min.js" defer></script></body>
+</html>
