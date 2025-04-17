@@ -4,7 +4,25 @@
     <link>http://localhost:1313/tags/docker-network/</link>
     <description>Docker Network - 标签 | Finger&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
-      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Fri, 11 Nov 2022 20:14:52 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/docker-network/" rel="self" type="application/rss+xml" /><item>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Sun, 13 Nov 2022 21:14:52 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/docker-network/" rel="self" type="application/rss+xml" /><item>
+  <title>Docker网络之Bridge模式</title>
+  <link>http://localhost:1313/2022/11/docker-network-bridge/</link>
+  <pubDate>Sun, 13 Nov 2022 21:14:52 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>http://localhost:1313/2022/11/docker-network-bridge/</guid>
+  <description><![CDATA[基本原理Docker网络默认是Bridge驱动模式。当Docker启动时，它就会在Host上创建一个名为docker0的虚拟网桥。Host上所有的Docker容器都会连接docker0这个虚拟网桥。通过docker0虚拟网桥，该Host上的容器可以互相通信。这种工作方式类似于物理交换机，使局域网中的所有PC通过交换机连接到同一个网络互相可以访问。
+在Bridge驱动模式下，Docker会为每个容器创建独立的Network Namespace和IP等。每个容器会有一个虚拟网卡eth0。容器之间通过eth0和IP地址进行通信。docker0的默认IP为172.17.0.1/16，其他的容器则会在172.17.0.1/16这个IP范围内分配一个未使用的IP。并设置docker0的IP地址作为容器的默认网关。
+另外Docker创建容器的同时也会创建veth-pair(虚拟设备对)。veth-pair将容器与docker0连接起来。对于172.17.0.0/16网段的数据包，Docker会在Host上创建一条iptables NAT的规则将这个IP地址进行转换。然后通过Host的真实网络接口发送出去。
+Veth Pairveth pair 全称是：virtual ethernet pair 虚拟以太网设备对。是linux内核提供的一种虚拟化网络设备，通常用于连接不同网络命名空间(Network Namespace)，实现跨网络命名空间的通信。它的作用类似 于一根物理网线。veth-pair总是成对出现。例如veth-pair由两个虚拟网卡(veth0和veth1)组成，一端发送的数据会直接由另一端接受，类似于管道的两端。
+多个容器
+容器越多，veth-pair规模就越大，那么也就越来越复杂。不过有了docker0就变得简单了。最终Docker Bridge网络架构如下：
+测试容器网络连接1 2 # 查询本地IP ip addr 启动三个示例容器。
+1 2 3 docker run -it --name container1 busybox docker run -it --name container2 busybox docker run -it --name container3 busybox 容器启动后，我们看到多了三个veth虚拟设备。同时它们默认都连接到了docker0。
+在容器内查看容器的IP地址
+1 2 # 查看Container1 cat /etc/hosts 也可以通过 dokcer inspect命令查看
+1 sudo docker inspect bed4356096cd 1 2 3 4 # 三个容器的IP Container1 172.]]></description>
+</item>
+<item>
   <title>Docker网络基础</title>
   <link>http://localhost:1313/2022/11/docker-network-basic/</link>
   <pubDate>Fri, 11 Nov 2022 20:14:52 &#43;0000</pubDate>
