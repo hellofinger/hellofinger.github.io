@@ -68,6 +68,24 @@ cURL Cypress K6 Maven Postman Gradle Pytest Prebuild Executor Container Executor
 fiber 是一个基于Fasthttp（Go中最快的 HTTP 引擎）构建的 Go Web 框架。它旨在简化快速开发，无需分配内存，并且注重性能。用法和Nodejs Express类似。 go-redis Go 语言实现的Redis客户端 SDK。 1 2 go get github.com/gofiber/fiber/v3 go get github.com/redis/go-redis/v9 Pub1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 package main import ( &#34;context&#34; &#34;encoding/json&#34; &#34;github.]]></description>
 </item>
 <item>
+  <title>Docker网络之Bridge模式</title>
+  <link>http://localhost:1313/2022/11/docker-network-bridge/</link>
+  <pubDate>Sun, 13 Nov 2022 21:14:52 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>http://localhost:1313/2022/11/docker-network-bridge/</guid>
+  <description><![CDATA[基本原理Docker网络默认是Bridge驱动模式。当Docker启动时，它就会在Host上创建一个名为docker0的虚拟网桥。Host上所有的Docker容器都会连接docker0这个虚拟网桥。通过docker0虚拟网桥，该Host上的容器可以互相通信。这种工作方式类似于物理交换机，使局域网中的所有PC通过交换机连接到同一个网络互相可以访问。
+在Bridge驱动模式下，Docker会为每个容器创建独立的Network Namespace和IP等。每个容器会有一个虚拟网卡eth0。容器之间通过eth0和IP地址进行通信。docker0的默认IP为172.17.0.1/16，其他的容器则会在172.17.0.1/16这个IP范围内分配一个未使用的IP。并设置docker0的IP地址作为容器的默认网关。
+另外Docker创建容器的同时也会创建veth-pair(虚拟设备对)。veth-pair将容器与docker0连接起来。对于172.17.0.0/16网段的数据包，Docker会在Host上创建一条iptables NAT的规则将这个IP地址进行转换。然后通过Host的真实网络接口发送出去。
+Veth Pairveth pair 全称是：virtual ethernet pair 虚拟以太网设备对。是linux内核提供的一种虚拟化网络设备，通常用于连接不同网络命名空间(Network Namespace)，实现跨网络命名空间的通信。它的作用类似 于一根物理网线。veth-pair总是成对出现。例如veth-pair由两个虚拟网卡(veth0和veth1)组成，一端发送的数据会直接由另一端接受，类似于管道的两端。
+多个容器
+容器越多，veth-pair规模就越大，那么也就越来越复杂。不过有了docker0就变得简单了。最终Docker Bridge网络架构如下：
+测试容器网络连接1 2 # 查询本地IP ip addr 启动三个示例容器。
+1 2 3 docker run -it --name container1 busybox docker run -it --name container2 busybox docker run -it --name container3 busybox 容器启动后，我们看到多了三个veth虚拟设备。同时它们默认都连接到了docker0。
+在容器内查看容器的IP地址
+1 2 # 查看Container1 cat /etc/hosts 也可以通过 dokcer inspect命令查看
+1 sudo docker inspect bed4356096cd 1 2 3 4 # 三个容器的IP Container1 172.]]></description>
+</item>
+<item>
   <title>Docker网络基础</title>
   <link>http://localhost:1313/2022/11/docker-network-basic/</link>
   <pubDate>Fri, 11 Nov 2022 20:14:52 &#43;0000</pubDate>
@@ -105,21 +123,6 @@ CNM主要包含以下3个组件：
 我们用Docker启动一个busybox容器并进入，运行ps指令：
 1 2 3 4 5 6 ~$ docker run -it busybox /bin/sh / # ps -ef PID USER TIME COMMAND 1 root 0:00 /bin/sh 6 root 0:00 ps -ef 我们再启动一个ubuntu容器并进入，运行ps指令：
 1 2 3 4 5 6 ~$ docker run -it ubuntu /bin/sh # ps -ef PID PPID C STIME TTY TIME CMD 1 0 0 10:19 pts/0 00:00:00 /bin/sh 6 1 0 10:19 pts/0 00:00:00 ps -ef 我们在宿主机上运行ps指令：]]></description>
-</item>
-<item>
-  <title>AWS实践--VPC对等连接(Peerning connections)</title>
-  <link>http://localhost:1313/2022/09/aws-vpc-peering/</link>
-  <pubDate>Fri, 02 Sep 2022 21:12:52 &#43;0000</pubDate>
-  <author>Finger</author>
-  <guid>http://localhost:1313/2022/09/aws-vpc-peering/</guid>
-  <description><![CDATA[什么是VPC对等连接VPC对等连接是一项联网功能，支持AWS中两个VPC之间进行安全、直接的通信。这种私有连接使资源能够在对等VPC网络中相互交互，如同资源属于同一个网络一样，而无需遍历公网访问。
-VPC对等连接，可以连接相同或不同AWS区域中的两个VPC。在连接的VPC之间发送的流量不会通过互联网、VPC连接或AWS Direct Connect传输。
-对等连接主要限制两个 VPC 之间不能同时创建多个 VPC 对等连接 对等连接中 两个VPC 的 IPv4 CIDR 块不能重叠 VPC 对等连接是两个 VPC 之间的一对一关系, 多个 VPC 对等连接中不支持传递的对等关系 创建对等连接创建名称（可选）：VPC对等连接的名字。可以随时修改。 VPC ID(请求者)：需要用于创建VPC对等连接的源VPC Account(接受方)：目标AWS账号ID Region(接受方)：目标AWS区域 VPC ID(接受方)：用于创建VPC对等连接的目标VPC 接受创建完VPC对等连接后，状态会处于 pending-acceptance。必须等待接受者VPC的拥有者接受后才能激活。
-更新路由表要在对等 VPC 中的实例之间启用私有 IPv4 流量，必须向与两个实例的子网关联的路由表添加路由。路由目的地为对等 VPC 的 CIDR 块，目标为 VPC 对等连接的 ID。
-更新安全组允许流量流入和流出与对等的 VPC。需要在安全组的入站和出站规则中添加CIDR块。
-将 172.29.0.0/16 网段加入到目标VPC的安全组中
-测试对等网络ping 一下 172.29.x.x内外EC2的IP地址
-1 ping 172.29.154.173 参考[1] https://docs.aws.amazon.com/vpc/latest/peering/working-with-vpc-peering.html ]]></description>
 </item>
 </channel>
 </rss>
