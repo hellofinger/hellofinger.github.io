@@ -77,11 +77,11 @@
   <description><![CDATA[]]></description>
 </item>
 <item>
-  <title>Docker Network</title>
-  <link>http://localhost:1313/tags/docker-network/</link>
-  <pubDate>Sun, 13 Nov 2022 21:14:52 &#43;0000</pubDate>
+  <title>Kubernetes Network</title>
+  <link>http://localhost:1313/tags/kubernetes-network/</link>
+  <pubDate>Sun, 01 Jan 2023 21:14:52 &#43;0000</pubDate>
   <author>Finger</author>
-  <guid>http://localhost:1313/tags/docker-network/</guid>
+  <guid>http://localhost:1313/tags/kubernetes-network/</guid>
   <description><![CDATA[]]></description>
 </item>
 </channel>

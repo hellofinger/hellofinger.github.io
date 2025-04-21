@@ -164,6 +164,13 @@
     </a><a href="mailto:finger.zhou@gmail.com" title="Email"target="_blank" rel="external nofollow noopener noreferrer me"><i class="fa-regular fa-envelope fa-fw" aria-hidden="true"></i>
     </a><a href="/index.xml" title="RSS"target="_blank" rel="external nofollow noopener noreferrer me"><i class="fa-solid fa-rss fa-fw" aria-hidden="true"></i>
     </a></div></div>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2021/02/go-basic-context/">Go基础--Context</a>
+  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span>&nbsp;<span class="post-publish" title='2021-02-26 14:07:52'>发布于 <time datetime="2021-02-26">2021-02-26</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/go/" class="post-category" title="分类 - Go"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Go</a></span></div><div class="content">什么是 ContextContext 是 Go 并发编程中的一种编程模式。 主要指的是 goroutine的上下文，包含 goroutine 的运行状态，环境，现场等信息。 Context 主要用来在goroutine 之间传递上下文信息，包含：取消信号，超时时间，截止时间，k-v等。
+为什么需要 Context在并发程序中，由于超时，取消操作或者一些异常情况，往往需要进行抢占操作或者中断后续的操作。例如：主协程中有多个任务1,2，&hellip;m，主协程对这些任务有超时控制；而其中任务1又有多个子任务1,2，&hellip;n。任务1对这些子任务也有自己的超时控制，那么这些子任务既要感知主协程的取消信号，也需要感知任务1的取消信号。 因此我们需要解决以下问题： 1、上层任务取消后，所有的下层任务都会被取消 2、中间某一层的任务取消后，只会将当前任务的下层任务取消，而不会影响上层的任务以及同级任务。
+Context 的定义1 2 3 4 5 6 7 8 9 10 11 12 13 type Context interface { // 当 context 被取消或者到了 deadline，返回一个被关闭的 channel Done() &lt;-chan struct{} // 在 channel Done 关闭后，返回 context 取消原因 Err() error // 返回 context 是否会被取消以及自动取消时间（即 deadline） Deadline() (deadline time.Time, ok bool) // 获取 key 对应的 value Value(key interface{}) interface{} } Context 是一个接口，定义了4个方法，它们都是幂等的。也就是说连续多次调用同一个方法，得到的结果都是相同的。</div><div class="post-footer">
+    <a href="/2021/02/go-basic-context/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/go/' class="post-tag">Go</a></div></div>
+</article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2020/08/go-package-gokit/">Go Package--Gokit介绍</a>
   </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
     Finger</a></span>&nbsp;<span class="post-publish" title='2020-08-20 15:57:52'>发布于 <time datetime="2020-08-20">2020-08-20</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/go/" class="post-category" title="分类 - Go"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Go</a></span></div><div class="content">Go-kit介绍Go kit 是用于在 Go 中构建微服务的编程工具包。用来解决了分布式系统和应用程序体系结构中的常见问题，让使用者可以专注于交付业务价值。
@@ -384,16 +391,6 @@ make1 2 3 slice := make([]int, 0, 100) hash := make(map[int]bool, 10) ch := mak
 最后我们测试一下通过在提交和合并请求中使用触发词，直接关闭JIRA ISSUE。 目前支持三个触发词：
 Resolves PROJECT-1 Closes PROJECT-1 Fixes PROJECT-1 </div><div class="post-footer">
     <a href="/2020/02/gitlab-integrate-jira/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/gitlab/' class="post-tag">GitLab</a><a href='/tags/git/' class="post-tag">Git</a><a href='/tags/iac/' class="post-tag">IAC</a></div></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2020/02/gitlab-code-header-include-copyright/">GitLab最佳实践--强制代码包含版本信息</a>
-  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span>&nbsp;<span class="post-publish" title='2020-02-25 18:11:52'>发布于 <time datetime="2020-02-25">2020-02-25</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/iac/" class="post-category" title="分类 - IAC"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> IAC</a>&ensp;<a href="/categories/security/" class="post-category" title="分类 - Security"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Security</a></span></div><div class="content">需求概述要求开发人员上传的代码文件头部必须包含版权信息，否则阻止代码上传到Git仓库。
-解决方案还是基于Git Hooks的方式，在服务器端通过脚本控制Git Push的内容。
-具体思路1、获取到Git 提交的文件以及文件内容。
-2、过滤文件后缀，检索文件内容，匹配关键字信息(如 Copyright)。并获取到关键字所在的文件行数。
-3、具体逻辑判断，例如：Copyright必须在文件内容前10行以内。
-代码实现1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 exitcode=&#39;0&#39; FILES=`git diff --name-status $oldrev $newrev | awk &#39;{print $2}&#39;` # 遍历客户端Git Push的文件 for filepath in $FILES; do if [ &#34;$filepath&#34; = &#34;.gitallowed&#34; ]; then echo &#34;Skipping $filepath .</div><div class="post-footer">
-    <a href="/2020/02/gitlab-code-header-include-copyright/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/gitlab/' class="post-tag">GitLab</a><a href='/tags/git/' class="post-tag">Git</a><a href='/tags/iac/' class="post-tag">IAC</a></div></div>
 </article>
 <ul class="pagination"><li class="page-item">
           <span class="page-link">
