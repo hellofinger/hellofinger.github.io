@@ -164,6 +164,20 @@
     </a><a href="mailto:finger.zhou@gmail.com" title="Email"target="_blank" rel="external nofollow noopener noreferrer me"><i class="fa-regular fa-envelope fa-fw" aria-hidden="true"></i>
     </a><a href="/index.xml" title="RSS"target="_blank" rel="external nofollow noopener noreferrer me"><i class="fa-solid fa-rss fa-fw" aria-hidden="true"></i>
     </a></div></div>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2022/08/docker-remote-api-vulnerability-escape/">Dcoker Remote API未授权访问漏洞</a>
+  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span>&nbsp;<span class="post-publish" title='2022-08-12 18:14:52'>发布于 <time datetime="2022-08-12">2022-08-12</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/security/" class="post-category" title="分类 - Security"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Security</a>&ensp;<a href="/categories/container/" class="post-category" title="分类 - Container"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Container</a></span></div><div class="content">一、漏洞说明Docker守护进程监听IP为0.0.0.0，导致可以直接通过Docker Remote API操作Docker
+二、影响版本Docker version: 19.03.12 之前版本
+三、漏洞复现3.1、安装docker1 sudo apt-get update 3.2、备份docker服务文件1 cp /lib/systemd/system/docker.service /lib/systemd/system/docker.service.bak 3.3、修改服务文件，将docker监听IP改成0.0.0.01 vim /lib/systemd/system/docker.service	1 2 3 4 # 在文件末尾加上如下代码 [Service] ExecStart= ExecStart=/usr/bin/dockerd -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock 3.4、重启守护进程和docker服务1 2 3 sudo systemctl daemon-reload # 重载守护进程 sudo service docker restart # 重启docker服务 systemctl status docker.service # 查看docker运行情况 3.5、漏洞检测1 2 3 curl http://x.x.x.x:2375 docker -H tcp://x.x.x.x:2375 images 1 2 3 4 5 6 7 8 9 10 ┌──(kali㉿kali)-[~] └─$ docker -H tcp://10.</div><div class="post-footer">
+    <a href="/2022/08/docker-remote-api-vulnerability-escape/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/docker/' class="post-tag">Docker</a><a href='/tags/security/' class="post-tag">Security</a></div></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2022/08/docker-socket-mount-escape/">Docker Socket 挂载逃逸</a>
+  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span>&nbsp;<span class="post-publish" title='2022-08-12 18:14:52'>发布于 <time datetime="2022-08-12">2022-08-12</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/security/" class="post-category" title="分类 - Security"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Security</a>&ensp;<a href="/categories/container/" class="post-category" title="分类 - Container"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Container</a></span></div><div class="content">一、漏洞描述在启动docker容器时，将宿主机/var/run/docker.sock文件挂载到docker容器中，在docker容器中，也可以操作宿主机的docker
+二、环境搭建1 docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock ubuntu:16.04 /bin/bash 三、漏洞验证1 find / -name docker.sock 四、漏洞利用在docker容器中安装docker，利用docker.sock 访问宿主机资源
+1 docker -H unix://var/run/docker.sock images 1 2 3 4 5 6 7 8 9 root@99db92ade596:/# docker -H unix://var/run/docker.sock images REPOSITORY TAG IMAGE ID CREATED SIZE flaskapp-no-root latest 191c96d54d26 25 hours ago 126MB flaskapp-root latest 50d72e86aa68 25 hours ago 126MB alpine latest 7e01a0d0a1dc 3 days ago 7.34MB busybox latest a416a98b71e2 3 weeks ago 4.</div><div class="post-footer">
+    <a href="/2022/08/docker-socket-mount-escape/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/docker/' class="post-tag">Docker</a><a href='/tags/security/' class="post-tag">Security</a></div></div>
+</article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2022/08/container-securty/">容器安全</a>
   </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
     Finger</a></span>&nbsp;<span class="post-publish" title='2022-08-11 16:14:52'>发布于 <time datetime="2022-08-11">2022-08-11</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/security/" class="post-category" title="分类 - Security"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Security</a>&ensp;<a href="/categories/container/" class="post-category" title="分类 - Container"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Container</a></span></div><div class="content">一、 容器概述容器（Container）是一种虚拟化技术，用于在计算机上运行应用程序和服务。与传统的虚拟机不同，容器不需要为每个应用创建独立的操作系统实例。相反，容器共享主机操作系统的内核，但它们有自己的文件系统、进程空间和网络接口。这使得容器能够在一个主机上运行多个隔离的应用程序，并且每个容器之间互不干扰。
@@ -219,24 +233,6 @@ Panicpanic用于表示程序发生了严重错误，类似于其他语言中的
 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 package main import &#34;fmt&#34; func recoverTest() { defer func() { if r := recover(); r != nil { fmt.Println(&#34;Recovered from panic:&#34;, r) } }() // 引发panic panic(&#34;Oops! Panic occurs!&#34;) } func main() { fmt.Println(&#34;Start&#34;) recoverTest() fmt.Println(&#34;End&#34;) } </div><div class="post-footer">
     <a href="/2021/03/go-panic-and-recover/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/go/' class="post-tag">Go</a></div></div>
 </article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2021/03/go-defer/">Go基础--Defer关键字</a>
-  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span>&nbsp;<span class="post-publish" title='2021-03-01 20:24:00'>发布于 <time datetime="2021-03-01">2021-03-01</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/go/" class="post-category" title="分类 - Go"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Go</a></span></div><div class="content">概述在Go语言中，defer关键字用于延迟（defer）函数的执行，即在函数执行结束时再执行被延迟的函数。defer通常用于确保一些清理工作在函数执行完毕后被执行，无论函数是正常返回还是发生了panic。
-defer具有以下特点：
-在函数返回之前执行 可以放在函数中任意位置 可以同时执行多个defer函数，多个defer按栈(FILO)先进后出顺序执行 defer函数的传入参数在定义时就已经明确 可以修改函数返回值 用于文件IO、数据库连接等释放和关闭 在函数返回之前执行defer语句函数会在函数返回之前执行，下面程序将会依次输出B A：
-1 2 3 4 5 6 7 8 package main import &#34;fmt&#34; func main() { defer fmt.Println(&#34;A&#34;) fmt.Println(&#34;B&#34;) } 1 2 3 &gt;go run main.go B A defer可以放在函数中任意位置1 2 3 4 5 6 7 8 9 package main import &#34;fmt&#34; func main() { fmt.Println(&#34;A&#34;) defer fmt.Println(&#34;B&#34;) fmt.Println(&#34;C&#34;) } 1 2 3 4 &gt;go run main.go A C B 注意：</div><div class="post-footer">
-    <a href="/2021/03/go-defer/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/go/' class="post-tag">Go</a></div></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2021/02/go-basic-channel/">Go基础--管道Channel</a>
-  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span>&nbsp;<span class="post-publish" title='2021-02-26 17:27:52'>发布于 <time datetime="2021-02-26">2021-02-26</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/go/" class="post-category" title="分类 - Go"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Go</a></span></div><div class="content">ChannelChannel 是Goroutine之间的一种通信机制。这种通信机制有个专业名词叫CSP （ Communicating Sequential Process）即通信顺序进程，是一种并发编程模型。Goroutine 和 Channel 分别对应 CSP 中的实体和传递信息的媒介，Goroutine 之间会通过 Channel 传递数据。
-设计原理在很多主流的编程语言中，多个线程传递数据的方式一般都是共享内存，为了解决线程之间的资源竞争，我们需要限制同一时间能够获取资源的线程数量。
-在Go语言中则设计成：不通过共享内存的方式进行通信，而是通过通信的方式共享内存。
-上图中的两个 Goroutine，一个会向 Channel 中发送数据，另一个会从 Channel 中接收数据，它们两者能够独立运行并不存在直接关联，但是能通过 Channel 间接完成通信。
-声明1 2 3 4 ch := make(chan int) # 设置缓冲大小 ch := make(chan int, 100) 类型它包括三种类型的定义。可选的&lt;-代表channel的方向。如果没有指定方向，那么Channel就是双向的，既可以接收数据，也可以发送数据。
-1 2 3 4 5 ChannelType = ( &#34;chan&#34; | &#34;chan&#34; &#34;&lt;-&#34; | &#34;&lt;-&#34; &#34;chan&#34; ) chan T // 可以接收和发送类型为 T 的数据 chan&lt;- float64 // 只可以用来发送 float64 类型的数据 &lt;-chan int // 只可以用来接收 int 类型的数据 基本操作channel 存在3种状态：</div><div class="post-footer">
-    <a href="/2021/02/go-basic-channel/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/go/' class="post-tag">Go</a></div></div>
-</article>
 <ul class="pagination"><li class="page-item">
           <span class="page-link">
             <a href="/">1</a>
@@ -265,7 +261,7 @@ defer具有以下特点：
           <span class="page-link" aria-hidden="true">&hellip;</span>
         </li><li class="page-item">
           <span class="page-link">
-            <a href="/page/14/">14</a>
+            <a href="/page/15/">15</a>
           </span>
         </li></ul></div></main><footer class="footer">
     <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
