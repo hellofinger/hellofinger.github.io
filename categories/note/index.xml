@@ -4,7 +4,19 @@
     <link>http://localhost:1313/categories/note/</link>
     <description>Note - 分类 | Finger&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
-      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Fri, 27 Jan 2017 20:56:00 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/categories/note/" rel="self" type="application/rss+xml" /><item>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Wed, 01 May 2024 21:14:52 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/categories/note/" rel="self" type="application/rss+xml" /><item>
+  <title>VMware 扩展Ubuntu虚拟机硬盘大小</title>
+  <link>http://localhost:1313/2024/05/vmware-expand-virtual-disk-size/</link>
+  <pubDate>Wed, 01 May 2024 21:14:52 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>http://localhost:1313/2024/05/vmware-expand-virtual-disk-size/</guid>
+  <description><![CDATA[今天在创建Kubernetes Pods的时候发现调度失败，查看Pod Logs后发现是节点磁盘空间不足。
+1 kubectl describe pods &lt;pod-name&gt; -n &lt;namespace&gt; 1 2 node(s) had untolerated taint {node.kubernetes.io/disk-pressure: } 我的Kubernetes集群两个Work Node的硬盘设置为20G。需要扩容到40G。 以下为在VMware虚拟机中扩容硬盘完整步骤：
+Step1、在VMware中扩容虚拟硬盘首先需要关闭正在运行的虚拟机。然后选中虚拟机，右键选择设置 -&gt; 硬盘。 点击扩展（如果扩展按钮不能点击，检查是否有快照，一定要删除快照），输入目标大小(如20GB -&gt; 40GB) 最后，重启虚拟机。
+Step2、在Ubuntu中识别新空间查询磁盘信息
+1 2 # 查询硬盘使用率 df -h 1 2 3 4 5 6 7 ubuntu@node2:~$ df -h Filesystem Size Used Avail Use% Mounted on tmpfs 387M 2.3M 385M 1% /run /dev/mapper/ubuntu--vg-ubuntu--lv 9.8G 7.9G 1.4G 86% / tmpfs 1.9G 0 1.9G 0% /dev/shm tmpfs 5.]]></description>
+</item>
+<item>
   <title>Ubuntu 安装svn服务</title>
   <link>http://localhost:1313/2017/01/ubuntu-install-svn-simple-server/</link>
   <pubDate>Fri, 27 Jan 2017 20:56:00 &#43;0000</pubDate>

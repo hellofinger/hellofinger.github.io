@@ -16,6 +16,18 @@
 在Ubuntu上安装和配置NFS服务器端安装NFS服务器内核1 2 sudo apt-get update sudo apt-get install nfs-kernel-server -y 创建NFS导出(共享)目录1 2 3 4 5 6 # 创建共享目录 sudo mkdir -p /mnt/nfs_share # 允许所有客户端能访问共享目录 sudo chown -R nobody:nogroup /mnt/nfs_share/ # 给共享目录赋予权限 sudo chmod 777 /mnt/nfs_share/ 授予客户端共享目录访问权限1 2 3 4 sudo vim /etc/exports # 允许某个子网网段IP可以访问 /mnt/nfs_share 192.168.1.0/24(rw,sync,no_subtree_check) rw：代表读/写。 sync：要求在应用更改之前将其写入磁盘。 no_subtree_check：消除子树检查。 导出NFS共享目录1 2 3 4 sudo exports -a # 重启NFS服务 sudo systemctl restart nfs-kernel-server 允许某个子网网段IP通过防火墙访问NFS1 2 3 sudo ufw allow from 192.]]></description>
 </item>
 <item>
+  <title>VMware 扩展Ubuntu虚拟机硬盘大小</title>
+  <link>http://localhost:1313/2024/05/vmware-expand-virtual-disk-size/</link>
+  <pubDate>Wed, 01 May 2024 21:14:52 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>http://localhost:1313/2024/05/vmware-expand-virtual-disk-size/</guid>
+  <description><![CDATA[今天在创建Kubernetes Pods的时候发现调度失败，查看Pod Logs后发现是节点磁盘空间不足。
+1 kubectl describe pods &lt;pod-name&gt; -n &lt;namespace&gt; 1 2 node(s) had untolerated taint {node.kubernetes.io/disk-pressure: } 我的Kubernetes集群两个Work Node的硬盘设置为20G。需要扩容到40G。 以下为在VMware虚拟机中扩容硬盘完整步骤：
+Step1、在VMware中扩容虚拟硬盘首先需要关闭正在运行的虚拟机。然后选中虚拟机，右键选择设置 -&gt; 硬盘。 点击扩展（如果扩展按钮不能点击，检查是否有快照，一定要删除快照），输入目标大小(如20GB -&gt; 40GB) 最后，重启虚拟机。
+Step2、在Ubuntu中识别新空间查询磁盘信息
+1 2 # 查询硬盘使用率 df -h 1 2 3 4 5 6 7 ubuntu@node2:~$ df -h Filesystem Size Used Avail Use% Mounted on tmpfs 387M 2.3M 385M 1% /run /dev/mapper/ubuntu--vg-ubuntu--lv 9.8G 7.9G 1.4G 86% / tmpfs 1.9G 0 1.9G 0% /dev/shm tmpfs 5.]]></description>
+</item>
+<item>
   <title>在Ubuntu安装Jenkins</title>
   <link>http://localhost:1313/2024/04/install-jenkins-ubuntu/</link>
   <pubDate>Fri, 12 Apr 2024 21:30:04 &#43;0000</pubDate>
@@ -85,6 +97,23 @@ ADD &ndash; 将容器添加到网络 DEL &ndash; 从网络中删除容器 CHECK 
 Overlay 覆盖网络，指构建一个工作在真实底层网络之上的”逻辑网络“，把原始的Pod网络数据封包，再通过下层网络发送出去，到了目的地再拆包。因为这个特点，它对底层网络的要求低，适应性强，缺点就是有额外的传输成本，性能较低。（如：Flannel） Route 基于底层网络，但它没有封包和拆包，而是使用系统内置的路由功能来实现Pod 跨主机通信。它的好处是性能高，不过对底层网络的依赖性比较强，比如说要求底层网络有二层可达的一个能力。（如：Calico） Underlay 就是直接用底层网络来实现 CNI，也就是说 Pod 和宿主机都在一个网络里，Pod 和宿主机是平等的。它对底层的硬件和网络的依赖性是最强的，因而不够灵活，但性能最高。 CNI的工作流程简述创建Pod当一个新的 Pod 被创建时，kubelet 会调用 CNI 插件的 ADD 命令。CNI 插件会为 Pod 分配一个网络接口，并设置相关的网络配置，如 IP 地址和路由。这包括配置 Pod 的网络命名空间，使其能够与其他 Pod 进行通信。]]></description>
 </item>
 <item>
+  <title>Kubernetes网络--Pod(一)</title>
+  <link>http://localhost:1313/2023/01/kubernetes-network-pod-01/</link>
+  <pubDate>Sun, 01 Jan 2023 21:14:52 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>http://localhost:1313/2023/01/kubernetes-network-pod-01/</guid>
+  <description><![CDATA[Pod网络简介Pod是Kubernetes的最小调度单位。Pod是由一个或多个容器构成，它们彼此共享存储和网络，被共同调度，并在同一上下文里运行。位于同一个Pod里的这些容器，就好比是容器技术出现之前，运行在同一物理机上的多个彼此相关的应用程序。因为Pod里的容器是共享网络的。准确地说是共享同一个network namespace，所以对外只有一个IP地址；同时，彼此之间又可以访问。
+让我们创建一个多容器的Pod。它包含一个nginx容器和一个busybox容器。
+1 2 3 4 5 6 7 8 9 10 11 12 13 # multi-container-pod.yaml apiVersion: v1 kind: Pod metadata: name: multi-container-pod spec: containers: - name: container-1 image: busybox:latest command: [&#39;sh&#39;, &#39;-c&#39;, &#39;echo &#34;Busybox is running&#34; &amp;&amp; sleep 3600&#39;] - name: container-2 image: nginx:latest 1 2 # 执行命令，创建Pod kubectl apply -f multi-container-pod.yaml 创建Pod，将会发生以下事情：
+1、创建一个Pod时，容器运行时首先会为容器创建一个网络命名空间。
+2、然后，CNI接管并分配一个IP地址。
+3、最后，CNI将容器连接到其他虚拟网络设备（veth0、eth0等）。
+Pause容器如上图，我们发现除了nginx和busybox容器，还有一个pause容器。为什么会有pause容器，pause容器又是做什么的？
+之前我们提到，Pod中的容器是共享网络的，这个共享的网络实际上是pause容器所创建的。
+Pause容器有以下作用：
+创建network namespace, 并共享network namespace给pod中其他容器。 Pause容器是第一个创建的容器，因此它也是Pod的第1号进程（PID 1）。并负责处理僵尸进程的回收。 Pause容器负责维护Pod的IP地址。 Pause容器的生命周期和Pod一样。只有当Pod被删除，Pause容器才会被终止。 1 2 3 4 5 # 查询 pause进程 root@node2:/home/ubuntu# lsns -t net NS TYPE NPROCS PID USER NETNSID NSFS COMMAND 4026531840 net 257 1 root unassigned /sbin/init 4026532691 net 5 5314 65535 0 /run/netns/cni-1dd62c33-bfd9-568a-5e79-713082c16a0d /pause 为什么选择pause容器的网络作为Pod的共享网络呢？]]></description>
+</item>
+<item>
   <title>Docker网络之Bridge模式</title>
   <link>http://localhost:1313/2022/11/docker-network-bridge/</link>
   <pubDate>Sun, 13 Nov 2022 21:14:52 &#43;0000</pubDate>
@@ -101,27 +130,6 @@ Veth Pairveth pair 全称是：virtual ethernet pair 虚拟以太网设备对�
 在容器内查看容器的IP地址
 1 2 # 查看Container1 cat /etc/hosts 也可以通过 dokcer inspect命令查看
 1 sudo docker inspect bed4356096cd 1 2 3 4 # 三个容器的IP Container1 172.]]></description>
-</item>
-<item>
-  <title>Docker网络基础</title>
-  <link>http://localhost:1313/2022/11/docker-network-basic/</link>
-  <pubDate>Fri, 11 Nov 2022 20:14:52 &#43;0000</pubDate>
-  <author>Finger</author>
-  <guid>http://localhost:1313/2022/11/docker-network-basic/</guid>
-  <description><![CDATA[Docker 网络架构Docker的网络功能主要封装在 libnetwork 组件。Docker daemon 通过调用 libnetwork api 完成网络的创建和管理等功能。
-libnetwork 主要使用CNM (Container Network Model)模型来构建容器虚拟化网络，同时提供可以开发多种网络驱动的标准化接口和组件。
-CNM主要包含以下3个组件：
-沙盒 (Sandbox)： 一个沙盒包含了一个容器网络栈的信息。沙盒对里边的接口等进行设置并管理。沙盒的实现可以是Linux network namespace或者类似的机制。一个沙盒可以有多个端点和多个网络。 端点 (Endpoint)：一个端点可以同时加入一个沙盒和一个网络。端点的实现可以是veth pair或者相似的设备。 网络 (Network)：一个网络是一组可以直接互相联通的端点。可以包含多个端点，网络的实现可以是Linux bridge、VLAN等。 libnetwork中内置了5种的驱动类型来提供不同的网络服务。
-驱动 简介 bridge 这是 docker 设置的默认驱动。当使用 bridge 驱动时，libnetwork 将创建出来的 docker 容器连接到 docker0 网桥上。对于单机模式，bridge 驱动已经可以满足基本的需求了。但是这种模式下容器使用 NAT 方式与外界通信，这就增加了通信的复杂性。 host 使用 host 驱动的时候，libnetwork 不会为容器创建网络协议栈，即不会创建独立的 network namespace。Docker 容器中的进程处于宿主机的网络环境中，相当于容器和宿主机共用同一个 network namespace，容器共享使用宿主机的网卡、IP 和端口等资源。Host 模式很好的解决了容器与外界通信的地址转换问题，可以直接使用宿主机的 IP 进行通信，不存在虚拟化网络带来的开销。但是 host 驱动也降低了容器与容器之间、容器与宿主机之间网络的隔离性，引起网络资源的竞争和冲突。因此可以认为 host 驱动适用于对容器集群规模不大的场景。 null 使用这种驱动的时候，docker 容器拥有字段的 network namespace，但是并不为 docker 容器进行任何网络配置。也就是说，这个容器除了 network namespace 自带的 loopback 网卡外，没有任何其它网卡、IP、路由等信息，需要用户为该容器添加网卡、配置 IP 等。这种模式如果不进行特定的配置是无法正常使用网络的，但是优点也非常明显，它给了用户最大的自由度来自定义容器的网络环境。 remote 这个驱动实际上并未做真正的网络服务实现，而是调用了用户自行实现的网络驱动插件，是 libnetwork 实现了驱动的插件化，更好地满足了用户的多样化需求。用户只要根据 libnetwork 提供的协议标准实现其接口并注册即可。 overlay 上面的驱动模式主要解决同一个主机上容器与容器的网络通信，overlay 可以实现跨主机的网络通信，overlay驱动采用 IETF 标准的 VXLAN 方式，并且是 VXLAN 中被普遍认为最适合大规模的云计算虚拟化环境的 SDN controller 模式。在使用的过程中，还需要一个额外的配置存储服务，比如 Consul、etcd 或 ZooKeeper 等。并且在启动 docker daemon 的时候需要添加额外的参数来指定所使用的配置存储服务地址。 使用命令docker network ls查看网络]]></description>
-</item>
-<item>
-  <title>AWS实践--使用CodeArtifact创建私有的NPM package</title>
-  <link>http://localhost:1313/2022/11/aws-code-artifact-best-practice/</link>
-  <pubDate>Fri, 04 Nov 2022 11:12:52 &#43;0000</pubDate>
-  <author>Finger</author>
-  <guid>http://localhost:1313/2022/11/aws-code-artifact-best-practice/</guid>
-  <description><![CDATA[前提条件IAM具有CodeArtifact权限 安装了Node和NPM 1. 创建CodeArtifact的domain和repository2. 创建私有的npm package1 2 # 初始化一个npm package npm init --scode=@finger -y 1 2 3 4 5 6 7 8 9 10 11 12 13 # package.json { &#34;name&#34;: &#34;finger-package&#34;, &#34;version&#34;: &#34;1.0.0&#34;, &#34;description&#34;: &#34;&#34;, &#34;main&#34;: &#34;index.js&#34;, &#34;scripts&#34;: { &#34;test&#34;: &#34;echo \&#34;Error: no test specified\&#34; &amp;&amp; exit 1&#34; }, &#34;keywords&#34;: [], &#34;author&#34;: &#34;&#34;, &#34;license&#34;: &#34;ISC&#34; } 新建index.js文件。添加helloworld函数
-1 2 3 4 # index.js module.exports.helloWorld = function() { console.]]></description>
 </item>
 </channel>
 </rss>

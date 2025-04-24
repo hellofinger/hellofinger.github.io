@@ -12,6 +12,10 @@
       <loc>http://localhost:1313/2024/07/nfs-best-practices/</loc><lastmod>2024-07-11T20:30:04&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/posts/</loc><lastmod>2024-08-26T00:38:55&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/tags/</loc><lastmod>2024-08-26T00:38:55&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+      <loc>http://localhost:1313/categories/note/</loc><lastmod>2024-08-26T00:38:55&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+      <loc>http://localhost:1313/tags/ubuntu/</loc><lastmod>2024-08-26T00:38:55&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+      <loc>http://localhost:1313/tags/vmware/</loc><lastmod>2024-05-01T21:14:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+      <loc>http://localhost:1313/2024/05/vmware-expand-virtual-disk-size/</loc><lastmod>2024-05-01T21:14:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/tags/devops/</loc><lastmod>2024-04-12T21:30:04&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/categories/devops/</loc><lastmod>2024-04-12T21:30:04&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/tags/jenkins/</loc><lastmod>2024-04-12T21:30:04&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
@@ -27,6 +31,7 @@
       <loc>http://localhost:1313/tags/redis/</loc><lastmod>2023-02-03T10:24:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/tags/kubernetes-network/</loc><lastmod>2023-01-01T21:14:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/2023/01/kubernetes-network-cni/</loc><lastmod>2023-01-01T21:14:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+      <loc>http://localhost:1313/2023/01/kubernetes-network-pod-01/</loc><lastmod>2023-01-01T21:14:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/categories/container/</loc><lastmod>2022-11-13T21:14:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/categories/docker/</loc><lastmod>2022-11-13T21:14:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/tags/docker-network/</loc><lastmod>2022-11-13T21:14:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
@@ -139,10 +144,8 @@
       <loc>http://localhost:1313/tags/scrapyd/</loc><lastmod>2024-08-26T00:38:55&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/tags/spiderkeeper/</loc><lastmod>2024-08-26T00:38:55&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/2017/06/docker-build-and-run-your-first-app/</loc><lastmod>2024-08-26T00:38:55&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
-      <loc>http://localhost:1313/tags/ubuntu/</loc><lastmod>2024-08-26T00:38:55&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/tags/supervisord/</loc><lastmod>2024-08-26T00:38:55&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/2017/06/supervisord-usage/</loc><lastmod>2024-08-26T00:38:55&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
-      <loc>http://localhost:1313/categories/note/</loc><lastmod>2024-08-26T00:38:55&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/tags/svn/</loc><lastmod>2024-08-26T00:38:55&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/2017/01/ubuntu-install-svn-simple-server/</loc><lastmod>2024-08-26T00:38:55&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/tags/cocos2d-x/</loc><lastmod>2024-08-26T00:38:55&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>

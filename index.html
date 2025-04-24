@@ -170,6 +170,15 @@
 在Ubuntu上安装和配置NFS服务器端安装NFS服务器内核1 2 sudo apt-get update sudo apt-get install nfs-kernel-server -y 创建NFS导出(共享)目录1 2 3 4 5 6 # 创建共享目录 sudo mkdir -p /mnt/nfs_share # 允许所有客户端能访问共享目录 sudo chown -R nobody:nogroup /mnt/nfs_share/ # 给共享目录赋予权限 sudo chmod 777 /mnt/nfs_share/ 授予客户端共享目录访问权限1 2 3 4 sudo vim /etc/exports # 允许某个子网网段IP可以访问 /mnt/nfs_share 192.168.1.0/24(rw,sync,no_subtree_check) rw：代表读/写。 sync：要求在应用更改之前将其写入磁盘。 no_subtree_check：消除子树检查。 导出NFS共享目录1 2 3 4 sudo exports -a # 重启NFS服务 sudo systemctl restart nfs-kernel-server 允许某个子网网段IP通过防火墙访问NFS1 2 3 sudo ufw allow from 192.</div><div class="post-footer">
     <a href="/2024/07/nfs-best-practices/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/k8s/' class="post-tag">K8s</a><a href='/tags/kubernetes/' class="post-tag">Kubernetes</a><a href='/tags/nfs/' class="post-tag">NFS</a></div></div>
 </article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2024/05/vmware-expand-virtual-disk-size/">VMware 扩展Ubuntu虚拟机硬盘大小</a>
+  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span>&nbsp;<span class="post-publish" title='2024-05-01 21:14:52'>发布于 <time datetime="2024-05-01">2024-05-01</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/note/" class="post-category" title="分类 - Note"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Note</a></span></div><div class="content">今天在创建Kubernetes Pods的时候发现调度失败，查看Pod Logs后发现是节点磁盘空间不足。
+1 kubectl describe pods &lt;pod-name&gt; -n &lt;namespace&gt; 1 2 node(s) had untolerated taint {node.kubernetes.io/disk-pressure: } 我的Kubernetes集群两个Work Node的硬盘设置为20G。需要扩容到40G。 以下为在VMware虚拟机中扩容硬盘完整步骤：
+Step1、在VMware中扩容虚拟硬盘首先需要关闭正在运行的虚拟机。然后选中虚拟机，右键选择设置 -&gt; 硬盘。 点击扩展（如果扩展按钮不能点击，检查是否有快照，一定要删除快照），输入目标大小(如20GB -&gt; 40GB) 最后，重启虚拟机。
+Step2、在Ubuntu中识别新空间查询磁盘信息
+1 2 # 查询硬盘使用率 df -h 1 2 3 4 5 6 7 ubuntu@node2:~$ df -h Filesystem Size Used Avail Use% Mounted on tmpfs 387M 2.3M 385M 1% /run /dev/mapper/ubuntu--vg-ubuntu--lv 9.8G 7.9G 1.4G 86% / tmpfs 1.9G 0 1.9G 0% /dev/shm tmpfs 5.</div><div class="post-footer">
+    <a href="/2024/05/vmware-expand-virtual-disk-size/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/vmware/' class="post-tag">VMware</a><a href='/tags/ubuntu/' class="post-tag">Ubuntu</a></div></div>
+</article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2024/04/install-jenkins-ubuntu/">在Ubuntu安装Jenkins</a>
   </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
     Finger</a></span>&nbsp;<span class="post-publish" title='2024-04-12 21:30:04'>发布于 <time datetime="2024-04-12">2024-04-12</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/devops/" class="post-category" title="分类 - DevOps"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> DevOps</a></span></div><div class="content">测试环境：Ubuntu 24.04
@@ -201,14 +210,6 @@ cURL Cypress K6 Maven Postman Gradle Pytest Prebuild Executor Container Executor
 1 2 3 4 5 6 7 8 # Add the Kubeshop Helm repository. helm repo add kubeshop https://kubeshop.github.io/helm-charts # Install the testkube chart. helm install --create-namespace my-testkube kubeshop/testkube -n testkube 创建测试 (Tests)创建一个Curl测试1 2 Type: curl/test Source: String 1 2 3 4 5 6 7 8 9 { &#34;command&#34;: [ &#34;curl&#34;, &#34;https://&lt;your-domain&gt;&#34;, &#34;-H&#34;, &#34;&#39;Accept: application/json&#39;&#34; ], &#34;expected_status&#34;: &#34;200&#34; } 创建一个K6测试1 2 Type: k6/script Source: String 1 2 3 4 5 6 7 8 9 10 import http from &#39;k6/http&#39;; import { sleep } from &#39;k6&#39;; export const options = { vus: 10, duration: &#39;30s&#39;, }; export default function () { http.</div><div class="post-footer">
     <a href="/2024/01/testkube-intro/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/k8s/' class="post-tag">K8s</a><a href='/tags/kubernetes/' class="post-tag">Kubernetes</a><a href='/tags/testing/' class="post-tag">Testing</a><a href='/tags/testkube/' class="post-tag">Testkube</a></div></div>
 </article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2023/02/go-using-redis-pub-sub/">Go Package--Goredis 在Go中使用 Redis Pub/Sub</a>
-  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span>&nbsp;<span class="post-publish" title='2023-02-03 10:24:00'>发布于 <time datetime="2023-02-03">2023-02-03</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/go/" class="post-category" title="分类 - Go"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Go</a></span></div><div class="content">前言发布/订阅是一种消息模式，其中发布者无需将消息发送给特定的接收者。这些消息由发布者发送到特定的频道(Channel)，接收者可以订阅一个或多个频道来使用这些消息。
-今天我们用Go和Redis来实现Pub/Sub这样的消息模式。我们将创建两个服务。第一个服务是Pub，它是一个API，接受用户信息，并将用户信息发布到Redis。 第二个服务是Sub。它将订阅Redis的消息。并打印到控制台。
-编码主要使用到两个package
-fiber 是一个基于Fasthttp（Go中最快的 HTTP 引擎）构建的 Go Web 框架。它旨在简化快速开发，无需分配内存，并且注重性能。用法和Nodejs Express类似。 go-redis Go 语言实现的Redis客户端 SDK。 1 2 go get github.com/gofiber/fiber/v3 go get github.com/redis/go-redis/v9 Pub1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 package main import ( &#34;context&#34; &#34;encoding/json&#34; &#34;github.</div><div class="post-footer">
-    <a href="/2023/02/go-using-redis-pub-sub/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/redis/' class="post-tag">Redis</a><a href='/tags/go/' class="post-tag">Go</a></div></div>
-</article>
 <ul class="pagination"><li class="page-item active">
           <span class="page-link">
             <a href="/">1</a>
@@ -225,7 +226,7 @@ fiber 是一个基于Fasthttp（Go中最快的 HTTP 引擎）构建的 Go Web �
           <span class="page-link" aria-hidden="true">&hellip;</span>
         </li><li class="page-item">
           <span class="page-link">
-            <a href="/page/14/">14</a>
+            <a href="/page/15/">15</a>
           </span>
         </li></ul></div></main><footer class="footer">
     <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
