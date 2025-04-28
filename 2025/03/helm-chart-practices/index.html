@@ -14,7 +14,7 @@
 1 2 drink: {{ .Values.favorite.drink | quote }} food: {{ .">
   <meta itemprop="datePublished" content="2025-03-11T20:30:04+00:00">
   <meta itemprop="dateModified" content="2025-03-11T20:30:04+00:00">
-  <meta itemprop="wordCount" content="1442">
+  <meta itemprop="wordCount" content="1450">
   <meta itemprop="keywords" content="K8s,Kubernetes,Helm"><meta property="og:url" content="http://localhost:1313/2025/03/helm-chart-practices/">
   <meta property="og:site_name" content="Finger&#39;s Blog">
   <meta property="og:title" content="Helm Chart最佳实践">
@@ -47,7 +47,7 @@
     "mainEntityOfPage": {
       "@type": "WebPage",
       "@id": "http:\/\/localhost:1313\/2025\/03\/helm-chart-practices\/"
-    },"genre": "posts","keywords": "k8s, Kubernetes, Helm","wordcount":  1442 ,
+    },"genre": "posts","keywords": "k8s, Kubernetes, Helm","wordcount":  1450 ,
     "url": "http:\/\/localhost:1313\/2025\/03\/helm-chart-practices\/","datePublished": "2025-03-11T20:30:04+00:00","dateModified": "2025-03-11T20:30:04+00:00","publisher": {
       "@type": "Organization",
       "name": ""},"author": {
@@ -187,7 +187,7 @@
     <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>Helm Chart最佳实践</span>
       </h1></div><div class="post-meta">
       <div class="post-meta-line"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/kubernetes/" class="post-category" title="分类 - Kubernetes"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Kubernetes</a>&ensp;<a href="/categories/cloudnative/" class="post-category" title="分类 - CloudNative"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> CloudNative</a></span></div><div class="post-meta-line"><span title="发布于 2025-03-11 20:30:04"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2025-03-11">2025-03-11</time></span>&nbsp;<span title="1442 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 1500 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 7 分钟</span>&nbsp;</div>
+    Finger</a></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/kubernetes/" class="post-category" title="分类 - Kubernetes"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Kubernetes</a>&ensp;<a href="/categories/cloudnative/" class="post-category" title="分类 - CloudNative"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> CloudNative</a></span></div><div class="post-meta-line"><span title="发布于 2025-03-11 20:30:04"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2025-03-11">2025-03-11</time></span>&nbsp;<span title="1450 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 1500 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 7 分钟</span>&nbsp;</div>
     </div><div class="details toc" id="toc-static" data-kept="false">
         <div class="details-summary toc-title">
           <span>目录</span>
@@ -1056,9 +1056,13 @@ charts: 其他chart(子chart)</p>
 </span><span class="lnt">35
 </span><span class="lnt">36
 </span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># Default values for mychart.</span><span class="w">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># values.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># Default values for mychart.</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># This is a YAML-formatted file.</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># Declare variables to be passed into your templates.</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
@@ -1136,9 +1140,13 @@ charts: 其他chart(子chart)</p>
 </span><span class="lnt">35
 </span><span class="lnt">36
 </span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># Default values for mychart.</span><span class="w">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># Chart.yaml</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># Default values for mychart.</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># This is a YAML-formatted file.</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># Declare variables to be passed into your templates.</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
