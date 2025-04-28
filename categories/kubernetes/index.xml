@@ -57,14 +57,6 @@ cURL Cypress K6 Maven Postman Gradle Pytest Prebuild Executor Container Executor
 1 2 3 4 5 6 7 8 # Add the Kubeshop Helm repository. helm repo add kubeshop https://kubeshop.github.io/helm-charts # Install the testkube chart. helm install --create-namespace my-testkube kubeshop/testkube -n testkube 创建测试 (Tests)创建一个Curl测试1 2 Type: curl/test Source: String 1 2 3 4 5 6 7 8 9 { &#34;command&#34;: [ &#34;curl&#34;, &#34;https://&lt;your-domain&gt;&#34;, &#34;-H&#34;, &#34;&#39;Accept: application/json&#39;&#34; ], &#34;expected_status&#34;: &#34;200&#34; } 创建一个K6测试1 2 Type: k6/script Source: String 1 2 3 4 5 6 7 8 9 10 import http from &#39;k6/http&#39;; import { sleep } from &#39;k6&#39;; export const options = { vus: 10, duration: &#39;30s&#39;, }; export default function () { http.]]></description>
 </item>
 <item>
-  <title>Kubernetes网络--Pod(二)</title>
-  <link>http://localhost:1313/2023/01/kubernetes-network-pod-01/</link>
-  <pubDate>Tue, 03 Jan 2023 22:14:52 &#43;0000</pubDate>
-  <author>Finger</author>
-  <guid>http://localhost:1313/2023/01/kubernetes-network-pod-01/</guid>
-  <description><![CDATA[]]></description>
-</item>
-<item>
   <title>Kubernetes网络--Pod(一)</title>
   <link>http://localhost:1313/2023/01/kubernetes-network-pod-01/</link>
   <pubDate>Mon, 02 Jan 2023 20:14:52 &#43;0000</pubDate>

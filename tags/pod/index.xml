@@ -4,15 +4,7 @@
     <link>http://localhost:1313/tags/pod/</link>
     <description>Pod - 标签 | Finger&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
-      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Tue, 03 Jan 2023 22:14:52 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/pod/" rel="self" type="application/rss+xml" /><item>
-  <title>Kubernetes网络--Pod(二)</title>
-  <link>http://localhost:1313/2023/01/kubernetes-network-pod-01/</link>
-  <pubDate>Tue, 03 Jan 2023 22:14:52 &#43;0000</pubDate>
-  <author>Finger</author>
-  <guid>http://localhost:1313/2023/01/kubernetes-network-pod-01/</guid>
-  <description><![CDATA[]]></description>
-</item>
-<item>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Mon, 02 Jan 2023 20:14:52 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/tags/pod/" rel="self" type="application/rss+xml" /><item>
   <title>Kubernetes网络--Pod(一)</title>
   <link>http://localhost:1313/2023/01/kubernetes-network-pod-01/</link>
   <pubDate>Mon, 02 Jan 2023 20:14:52 &#43;0000</pubDate>
