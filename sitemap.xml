@@ -31,10 +31,9 @@
       <loc>http://localhost:1313/categories/go/</loc><lastmod>2023-02-03T10:24:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/2023/02/go-using-redis-pub-sub/</loc><lastmod>2023-02-03T10:24:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/tags/redis/</loc><lastmod>2023-02-03T10:24:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
-      <loc>http://localhost:1313/tags/kubernetes-network/</loc><lastmod>2023-01-03T22:14:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
-      <loc>http://localhost:1313/2023/01/kubernetes-network-pod-01/</loc><lastmod>2023-01-03T22:14:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
-      <loc>http://localhost:1313/tags/pod/</loc><lastmod>2023-01-03T22:14:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+      <loc>http://localhost:1313/tags/kubernetes-network/</loc><lastmod>2023-01-02T20:14:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/2023/01/kubernetes-network-pod-01/</loc><lastmod>2023-01-02T20:14:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+      <loc>http://localhost:1313/tags/pod/</loc><lastmod>2023-01-02T20:14:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/2023/01/kubernetes-network-cni/</loc><lastmod>2023-01-01T21:14:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/categories/container/</loc><lastmod>2022-11-13T21:14:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/categories/docker/</loc><lastmod>2022-11-13T21:14:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
