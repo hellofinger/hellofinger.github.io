@@ -4,7 +4,16 @@
     <link>http://localhost:1313/categories/cloudnative/</link>
     <description>CloudNative - 分类 | Finger&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>finger.zhou@gmail.com (Finger)</managingEditor>
-      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Thu, 11 Jul 2024 20:30:04 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/categories/cloudnative/" rel="self" type="application/rss+xml" /><item>
+      <webMaster>finger.zhou@gmail.com (Finger)</webMaster><lastBuildDate>Tue, 11 Mar 2025 20:30:04 &#43;0000</lastBuildDate><atom:link href="http://localhost:1313/categories/cloudnative/" rel="self" type="application/rss+xml" /><item>
+  <title>Helm Chart最佳实践</title>
+  <link>http://localhost:1313/2025/03/helm-chart-practices/</link>
+  <pubDate>Tue, 11 Mar 2025 20:30:04 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>http://localhost:1313/2025/03/helm-chart-practices/</guid>
+  <description><![CDATA[基本概念Chart: 一个Helm包，其中包含了运行一个应用所需要的镜像，依赖和资源定义等。 Release：在Kubernetes集群上运行的Chart的一个实例。在同一个集群上，一个Chart可以安装很多次。每次安装都会创建一个新的Release。 Repository：用于发布和存储Chart的存储库 常用命令1 2 3 4 5 6 7 8 9 helm repo add xxx 添加chart仓库 helm repo list 列出已添加的仓库 helm repo update xxx 从chart仓库中更新本地可用chart的信息 helm list 列出当前安装的chart helm install xxx 安装chart helm uninstall xxx 卸载chart helm search repo xxx 搜索chart helm fetch xxx 下载chart到本地 helm package &lt;path&gt; 打包chart 基本语法内置对象Release Values Chart Files Capabilities Template 管道符( | )管道符，可以将很多函数作用在一起
+1 2 drink: {{ .Values.favorite.drink | quote }} food: {{ .]]></description>
+</item>
+<item>
   <title>NFS最佳实践</title>
   <link>http://localhost:1313/2024/07/nfs-best-practices/</link>
   <pubDate>Thu, 11 Jul 2024 20:30:04 &#43;0000</pubDate>

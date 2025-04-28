@@ -12,8 +12,8 @@
 <meta name="author-link" content="https://github.com/hellofinger">
 <meta name="description" content="" /><meta name="keywords" content='Finger, DevOps, Python, Go, Kubernetes, k8s' />
   <meta itemprop="name" content="Finger&#39;s Blog">
-  <meta itemprop="datePublished" content="2024-07-11T20:30:04+00:00">
-  <meta itemprop="dateModified" content="2024-08-26T00:38:55+08:00"><meta property="og:url" content="http://localhost:1313/">
+  <meta itemprop="datePublished" content="2025-03-11T20:30:04+00:00">
+  <meta itemprop="dateModified" content="2025-03-11T20:30:04+00:00"><meta property="og:url" content="http://localhost:1313/">
   <meta property="og:site_name" content="Finger&#39;s Blog">
   <meta property="og:title" content="Finger&#39;s Blog">
   <meta property="og:locale" content="zh_CN">
@@ -164,6 +164,19 @@
     </a><a href="mailto:finger.zhou@gmail.com" title="Email"target="_blank" rel="external nofollow noopener noreferrer me"><i class="fa-regular fa-envelope fa-fw" aria-hidden="true"></i>
     </a><a href="/index.xml" title="RSS"target="_blank" rel="external nofollow noopener noreferrer me"><i class="fa-solid fa-rss fa-fw" aria-hidden="true"></i>
     </a></div></div>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2017/01/mysql-question/">Mysql遇到的问题笔记</a>
+  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span>&nbsp;<span class="post-publish" title='2017-01-03 10:43:00'>发布于 <time datetime="2017-01-03">2017-01-03</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/stroage/" class="post-category" title="分类 - Stroage"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Stroage</a>&ensp;<a href="/categories/database/" class="post-category" title="分类 - Database"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Database</a></span></div><div class="content">问题描述：mysql远程连接错误10038&ndash;navicat for mysql (10038)
+解决方案： 1、授权
+1 2 3 mysql&gt;grant all privileges on *.* to &#39;root&#39;@&#39;%&#39; identified by &#39;youpassword&#39; with grant option; mysql&gt;flush privileges; 2、修改 /etc/mysql/mysql.conf.d
+1 2 3 找到bind-address = 127.0.0.1这一行 改为bind-address = 0.0.0.0即可 如果还没解决可能是远程端口（3306）未对外开放。 需要修改安全组的入站规则。
+问题描述: ERROR 1030 (HY000): Got error 28 from storage engine.
+解决办法: 查了一下，数据库文件所在的盘应该没事，应该是数据库用的临时目录空间不够。或者将tmpdir指向一个硬盘空间很大的目录即可。
+问题描述: Can&rsquo;t open the mysql.plugin table. Please run mysql_upgrade to create it.
+解决办法：
+1 2 3 4 5 6 7 8 sudo vim /etc/apparmor.</div><div class="post-footer">
+    <a href="/2017/01/mysql-question/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/mysql/' class="post-tag">Mysql</a><a href='/tags/database/' class="post-tag">Database</a></div></div>
+</article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2017/01/python-different-directories-execute/">Python不同目录下的调用情况</a>
   </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
     Finger</a></span>&nbsp;<span class="post-publish" title='2017-01-02 10:40:00'>发布于 <time datetime="2017-01-02">2017-01-02</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/python/" class="post-category" title="分类 - Python"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Python</a></span></div><div class="content">Python包含子目录中的模块方法比较简单，关键是能够在sys.path里面找到通向模块文件的路径。

@@ -16,7 +16,7 @@
 Pause容器如上图，我们发现除了nginx和busybox容器，还有一个pause容器。为什么会有pause容器，pause容器又是做什么的？
 之前我们提到，Pod中的容器是共享网络的，这个共享的网络实际上是pause容器所创建的。
 Pause容器有以下作用：
-创建network namespace, 并共享network namespace给pod中其他容器。 Pause容器是第一个创建的容器，因此它也是Pod的第1号进程（PID 1）。并负责处理僵尸进程的回收。 Pause容器负责维护Pod的IP地址。 Pause容器的生命周期和Pod一样。只有当Pod被删除，Pause容器才会被终止。 1 2 3 4 5 # 查询 pause进程 root@node2:/home/ubuntu# lsns -t net NS TYPE NPROCS PID USER NETNSID NSFS COMMAND 4026531840 net 257 1 root unassigned /sbin/init 4026532691 net 5 5314 65535 0 /run/netns/cni-1dd62c33-bfd9-568a-5e79-713082c16a0d /pause 为什么选择pause容器的网络作为Pod的共享网络呢？" /><meta name="keywords" content='Kubernetes Network, Kubernetes' />
+创建network namespace, 并共享network namespace给pod中其他容器。 Pause容器是第一个创建的容器，因此它也是Pod的第1号进程（PID 1）。并负责处理僵尸进程的回收。 Pause容器负责维护Pod的IP地址。 Pause容器的生命周期和Pod一样。只有当Pod被删除，Pause容器才会被终止。 1 2 3 4 5 # 查询 pause进程 root@node2:/home/ubuntu# lsns -t net NS TYPE NPROCS PID USER NETNSID NSFS COMMAND 4026531840 net 257 1 root unassigned /sbin/init 4026532691 net 5 5314 65535 0 /run/netns/cni-1dd62c33-bfd9-568a-5e79-713082c16a0d /pause 为什么选择pause容器的网络作为Pod的共享网络呢？" /><meta name="keywords" content='Kubernetes Network, Kubernetes, Pod' />
   <meta itemprop="name" content="Kubernetes网络--Pod(一)">
   <meta itemprop="description" content="Pod网络简介Pod是Kubernetes的最小调度单位。Pod是由一个或多个容器构成，它们彼此共享存储和网络，被共同调度，并在同一上下文里运行。位于同一个Pod里的这些容器，就好比是容器技术出现之前，运行在同一物理机上的多个彼此相关的应用程序。因为Pod里的容器是共享网络的。准确地说是共享同一个network namespace，所以对外只有一个IP地址；同时，彼此之间又可以访问。
 让我们创建一个多容器的Pod。它包含一个nginx容器和一个busybox容器。
@@ -28,10 +28,10 @@ Pause容器如上图，我们发现除了nginx和busybox容器，还有一个pa
 之前我们提到，Pod中的容器是共享网络的，这个共享的网络实际上是pause容器所创建的。
 Pause容器有以下作用：
 创建network namespace, 并共享network namespace给pod中其他容器。 Pause容器是第一个创建的容器，因此它也是Pod的第1号进程（PID 1）。并负责处理僵尸进程的回收。 Pause容器负责维护Pod的IP地址。 Pause容器的生命周期和Pod一样。只有当Pod被删除，Pause容器才会被终止。 1 2 3 4 5 # 查询 pause进程 root@node2:/home/ubuntu# lsns -t net NS TYPE NPROCS PID USER NETNSID NSFS COMMAND 4026531840 net 257 1 root unassigned /sbin/init 4026532691 net 5 5314 65535 0 /run/netns/cni-1dd62c33-bfd9-568a-5e79-713082c16a0d /pause 为什么选择pause容器的网络作为Pod的共享网络呢？">
-  <meta itemprop="datePublished" content="2023-01-01T21:14:52+00:00">
-  <meta itemprop="dateModified" content="2023-01-01T21:14:52+00:00">
+  <meta itemprop="datePublished" content="2023-01-02T20:14:52+00:00">
+  <meta itemprop="dateModified" content="2023-01-02T20:14:52+00:00">
   <meta itemprop="wordCount" content="368">
-  <meta itemprop="keywords" content="Kubernetes Network,Kubernetes"><meta property="og:url" content="http://localhost:1313/2023/01/kubernetes-network-pod-01/">
+  <meta itemprop="keywords" content="Kubernetes Network,Kubernetes,Pod"><meta property="og:url" content="http://localhost:1313/2023/01/kubernetes-network-pod-01/">
   <meta property="og:site_name" content="Finger&#39;s Blog">
   <meta property="og:title" content="Kubernetes网络--Pod(一)">
   <meta property="og:description" content="Pod网络简介Pod是Kubernetes的最小调度单位。Pod是由一个或多个容器构成，它们彼此共享存储和网络，被共同调度，并在同一上下文里运行。位于同一个Pod里的这些容器，就好比是容器技术出现之前，运行在同一物理机上的多个彼此相关的应用程序。因为Pod里的容器是共享网络的。准确地说是共享同一个network namespace，所以对外只有一个IP地址；同时，彼此之间又可以访问。
@@ -47,10 +47,11 @@ Pause容器有以下作用：
   <meta property="og:locale" content="zh_CN">
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
-    <meta property="article:published_time" content="2023-01-01T21:14:52+00:00">
-    <meta property="article:modified_time" content="2023-01-01T21:14:52+00:00">
+    <meta property="article:published_time" content="2023-01-02T20:14:52+00:00">
+    <meta property="article:modified_time" content="2023-01-02T20:14:52+00:00">
     <meta property="article:tag" content="Kubernetes Network">
     <meta property="article:tag" content="Kubernetes">
+    <meta property="article:tag" content="Pod">
 
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Kubernetes网络--Pod(一)">
@@ -67,7 +68,7 @@ Pause容器有以下作用：
 <meta name="application-name" content="FixIt">
 <meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="http://localhost:1313/2023/01/kubernetes-network-pod-01/" /><link rel="prev" href="http://localhost:1313/2022/11/docker-network-bridge/" /><link rel="next" href="http://localhost:1313/2023/01/kubernetes-network-cni/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" href="http://localhost:1313/2023/01/kubernetes-network-pod-01/" /><link rel="prev" href="http://localhost:1313/2023/01/kubernetes-network-cni/" /><link rel="next" href="http://localhost:1313/2023/02/go-using-redis-pub-sub/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
   {
@@ -78,8 +79,8 @@ Pause容器有以下作用：
     "mainEntityOfPage": {
       "@type": "WebPage",
       "@id": "http:\/\/localhost:1313\/2023\/01\/kubernetes-network-pod-01\/"
-    },"genre": "posts","keywords": "Kubernetes Network, Kubernetes","wordcount":  368 ,
-    "url": "http:\/\/localhost:1313\/2023\/01\/kubernetes-network-pod-01\/","datePublished": "2023-01-01T21:14:52+00:00","dateModified": "2023-01-01T21:14:52+00:00","publisher": {
+    },"genre": "posts","keywords": "Kubernetes Network, Kubernetes, Pod","wordcount":  368 ,
+    "url": "http:\/\/localhost:1313\/2023\/01\/kubernetes-network-pod-01\/","datePublished": "2023-01-02T20:14:52+00:00","dateModified": "2023-01-02T20:14:52+00:00","publisher": {
       "@type": "Organization",
       "name": ""},"author": {
         "@type": "Person",
@@ -218,7 +219,7 @@ Pause容器有以下作用：
     <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>Kubernetes网络--Pod(一)</span>
       </h1></div><div class="post-meta">
       <div class="post-meta-line"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/kubernetes/" class="post-category" title="分类 - Kubernetes"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Kubernetes</a></span></div><div class="post-meta-line"><span title="发布于 2023-01-01 21:14:52"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2023-01-01">2023-01-01</time></span>&nbsp;<span title="368 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 400 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 2 分钟</span>&nbsp;</div>
+    Finger</a></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/kubernetes/" class="post-category" title="分类 - Kubernetes"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Kubernetes</a></span></div><div class="post-meta-line"><span title="发布于 2023-01-02 20:14:52"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2023-01-02">2023-01-02</time></span>&nbsp;<span title="368 字"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>约 400 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>预计阅读 2 分钟</span>&nbsp;</div>
     </div><div class="details toc" id="toc-static" data-kept="false">
         <div class="details-summary toc-title">
           <span>目录</span>
@@ -239,7 +240,7 @@ Pause容器有以下作用：
         <i class="icon fa-solid fa-exclamation-triangle fa-fw" aria-hidden="true"></i>警告<i class="details-icon fa-solid fa-angle-right fa-fw" aria-hidden="true"></i>
       </div>
       <div class="details-content">
-        <div class="admonition-content">本文最后更新于 2023-01-01，文中内容可能已过时。</div>
+        <div class="admonition-content">本文最后更新于 2023-01-02，文中内容可能已过时。</div>
       </div>
     </div><h3 id="pod网络简介" class="heading-element"><span>Pod网络简介</span>
   <a href="#pod%e7%bd%91%e7%bb%9c%e7%ae%80%e4%bb%8b" class="heading-mark">
@@ -289,11 +290,11 @@ Pause容器有以下作用：
 </div>
 </div><p>创建Pod，将会发生以下事情：</p>
 <p>1、创建一个Pod时，容器运行时首先会为容器创建一个网络命名空间。</p>
-<p><img loading="lazy" src="imgs/create-pod-1.png" alt="imgs/create-pod-1.png" srcset="imgs/create-pod-1.png?size=small, imgs/create-pod-1.png?size=medium 1.5x, imgs/create-pod-1.png?size=large 2x" data-title="imgs/create-pod-1.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p><img loading="lazy" src="/2023/01/kubernetes-network-pod-01/imgs/create-pod-1.png" alt="/2023/01/kubernetes-network-pod-01/imgs/create-pod-1.png" srcset="/2023/01/kubernetes-network-pod-01/imgs/create-pod-1.png?size=small, /2023/01/kubernetes-network-pod-01/imgs/create-pod-1.png?size=medium 1.5x, /2023/01/kubernetes-network-pod-01/imgs/create-pod-1.png?size=large 2x" data-title="/2023/01/kubernetes-network-pod-01/imgs/create-pod-1.png" style="--width: 591px;--aspect-ratio: 591 / 544;background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
 <p>2、然后，CNI接管并分配一个IP地址。</p>
-<p><img loading="lazy" src="imgs/create-pod-2.png" alt="imgs/create-pod-2.png" srcset="imgs/create-pod-2.png?size=small, imgs/create-pod-2.png?size=medium 1.5x, imgs/create-pod-2.png?size=large 2x" data-title="imgs/create-pod-2.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p><img loading="lazy" src="/2023/01/kubernetes-network-pod-01/imgs/create-pod-2.png" alt="/2023/01/kubernetes-network-pod-01/imgs/create-pod-2.png" srcset="/2023/01/kubernetes-network-pod-01/imgs/create-pod-2.png?size=small, /2023/01/kubernetes-network-pod-01/imgs/create-pod-2.png?size=medium 1.5x, /2023/01/kubernetes-network-pod-01/imgs/create-pod-2.png?size=large 2x" data-title="/2023/01/kubernetes-network-pod-01/imgs/create-pod-2.png" style="--width: 594px;--aspect-ratio: 594 / 539;background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
 <p>3、最后，CNI将容器连接到其他虚拟网络设备（veth0、eth0等）。</p>
-<p><img loading="lazy" src="imgs/create-pod-3.png" alt="imgs/create-pod-3.png" srcset="imgs/create-pod-3.png?size=small, imgs/create-pod-3.png?size=medium 1.5x, imgs/create-pod-3.png?size=large 2x" data-title="imgs/create-pod-3.png" style="background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
+<p><img loading="lazy" src="/2023/01/kubernetes-network-pod-01/imgs/create-pod-3.png" alt="/2023/01/kubernetes-network-pod-01/imgs/create-pod-3.png" srcset="/2023/01/kubernetes-network-pod-01/imgs/create-pod-3.png?size=small, /2023/01/kubernetes-network-pod-01/imgs/create-pod-3.png?size=medium 1.5x, /2023/01/kubernetes-network-pod-01/imgs/create-pod-3.png?size=large 2x" data-title="/2023/01/kubernetes-network-pod-01/imgs/create-pod-3.png" style="--width: 619px;--aspect-ratio: 619 / 529;background: url(/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></p>
 <h3 id="pause容器" class="heading-element"><span>Pause容器</span>
   <a href="#pause%e5%ae%b9%e5%99%a8" class="heading-mark">
     <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
@@ -440,20 +441,20 @@ Pause容器有以下作用：
     <h2 id="see-also">相关内容</h2>
     <ul><li>
           <a href="/2023/01/kubernetes-network-cni/" title="Kubernetes网络--CNI">Kubernetes网络--CNI</a></li><li>
+          <a href="/2025/03/helm-chart-practices/" title="Helm Chart最佳实践">Helm Chart最佳实践</a></li><li>
           <a href="/2024/07/nfs-best-practices/" title="NFS最佳实践">NFS最佳实践</a></li><li>
           <a href="/2024/04/install-kubernetes-using-kubespray/" title="使用Kubespray部署Kubernetes集群">使用Kubespray部署Kubernetes集群</a></li><li>
-          <a href="/2024/01/testkube-custom-executor/" title="Testkube--创建自定义执行器">Testkube--创建自定义执行器</a></li><li>
-          <a href="/2024/01/testkube-intro/" title="Testkube--介绍">Testkube--介绍</a></li></ul><div class="post-footer" id="post-footer">
+          <a href="/2024/01/testkube-custom-executor/" title="Testkube--创建自定义执行器">Testkube--创建自定义执行器</a></li></ul><div class="post-footer" id="post-footer">
   <div class="post-info">
     <div class="post-info-line">
       <div class="post-info-mod">
-        <span title="更新于 2023-01-01 21:14:52">更新于 2023-01-01&nbsp;</span>
+        <span title="更新于 2023-01-02 20:14:52">更新于 2023-01-02&nbsp;</span>
       </div><div class="post-info-license">
             <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
           </div></div><div class="post-info-line">
         <div class="post-info-md"></div>
         <div class="post-info-share">
-          <span><a href="javascript:void(0);" title="分享到 X" data-sharer="twitter" data-url="http://localhost:1313/2023/01/kubernetes-network-pod-01/" data-title="Kubernetes网络--Pod(一)" data-hashtags="Kubernetes Network,Kubernetes"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a>
+          <span><a href="javascript:void(0);" title="分享到 X" data-sharer="twitter" data-url="http://localhost:1313/2023/01/kubernetes-network-pod-01/" data-title="Kubernetes网络--Pod(一)" data-hashtags="Kubernetes Network,Kubernetes,Pod"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a>
   <a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="http://localhost:1313/2023/01/kubernetes-network-pod-01/" data-hashtag="Kubernetes Network"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
   <a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="http://localhost:1313/2023/01/kubernetes-network-pod-01/" data-title="Kubernetes网络--Pod(一)"><i class="fa-brands fa-weibo fa-fw" aria-hidden="true"></i></a>
   <a href="javascript:void(0);" title="分享到 百度" data-sharer="baidu" data-url="http://localhost:1313/2023/01/kubernetes-network-pod-01/" data-title="Kubernetes网络--Pod(一)"><i data-svg-src="/lib/simple-icons/icons/baidu.min.svg" aria-hidden="true"></i></a>
@@ -462,12 +463,12 @@ Pause容器有以下作用：
       </div></div>
 
   <div class="post-info-more">
-    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href="/tags/kubernetes-network/" class="post-tag" title="标签 - Kubernetes Network">Kubernetes Network</a><a href="/tags/kubernetes/" class="post-tag" title="标签 - Kubernetes">Kubernetes</a></section>
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href="/tags/kubernetes-network/" class="post-tag" title="标签 - Kubernetes Network">Kubernetes Network</a><a href="/tags/kubernetes/" class="post-tag" title="标签 - Kubernetes">Kubernetes</a><a href="/tags/pod/" class="post-tag" title="标签 - Pod">Pod</a></section>
     <section>
       <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
     </section>
-  </div><div class="post-nav"><a href="/2022/11/docker-network-bridge/" class="post-nav-item" rel="prev" title="Docker网络之Bridge模式"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>Docker网络之Bridge模式</a>
-      <a href="/2023/01/kubernetes-network-cni/" class="post-nav-item" rel="next" title="Kubernetes网络--CNI">Kubernetes网络--CNI<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+  </div><div class="post-nav"><a href="/2023/01/kubernetes-network-cni/" class="post-nav-item" rel="prev" title="Kubernetes网络--CNI"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>Kubernetes网络--CNI</a>
+      <a href="/2023/02/go-using-redis-pub-sub/" class="post-nav-item" rel="next" title="Go Package--Goredis 在Go中使用 Redis Pub/Sub">Go Package--Goredis 在Go中使用 Redis Pub/Sub<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
 </div>
 <div class="post-reward">
     <div class="comment">Buy me a coffee</div>

@@ -12,8 +12,8 @@
 <meta name="author-link" content="https://github.com/hellofinger">
 <meta name="description" content="" /><meta name="keywords" content='Finger, DevOps, Python, Go, Kubernetes, k8s' />
   <meta itemprop="name" content="Finger&#39;s Blog">
-  <meta itemprop="datePublished" content="2024-07-11T20:30:04+00:00">
-  <meta itemprop="dateModified" content="2024-08-26T00:38:55+08:00"><meta property="og:url" content="http://localhost:1313/">
+  <meta itemprop="datePublished" content="2025-03-11T20:30:04+00:00">
+  <meta itemprop="dateModified" content="2025-03-11T20:30:04+00:00"><meta property="og:url" content="http://localhost:1313/">
   <meta property="og:site_name" content="Finger&#39;s Blog">
   <meta property="og:title" content="Finger&#39;s Blog">
   <meta property="og:locale" content="zh_CN">
@@ -164,6 +164,13 @@
     </a><a href="mailto:finger.zhou@gmail.com" title="Email"target="_blank" rel="external nofollow noopener noreferrer me"><i class="fa-regular fa-envelope fa-fw" aria-hidden="true"></i>
     </a><a href="/index.xml" title="RSS"target="_blank" rel="external nofollow noopener noreferrer me"><i class="fa-solid fa-rss fa-fw" aria-hidden="true"></i>
     </a></div></div>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2021/03/go-panic-and-recover/">Go基础--异常处理Panic和Recover</a>
+  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span>&nbsp;<span class="post-publish" title='2021-03-03 10:24:00'>发布于 <time datetime="2021-03-03">2021-03-03</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/go/" class="post-category" title="分类 - Go"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Go</a></span></div><div class="content">概述在Go语言中，panic和recover是用于处理异常情况的机制，类似于其他编程语言中的异常和异常处理机制。
+Panicpanic用于表示程序发生了严重错误，类似于其他语言中的抛出异常。当程序遇到无法继续执行的致命错误时，可以调用panic函数来引发panic。 当程序发生panic时，当前goroutine的执行会被中止，但是deferred函数会继续执行，直到goroutine返回。然后程序会崩溃并打印panic信息，包括panic值和调用栈信息。 Recoverrecover用于在deferred函数中捕获和处理panic，防止panic继续向上传播导致程序崩溃。 当在deferred函数中调用recover时，如果当前goroutine发生了panic，recover会返回传递给panic函数的值，并且停止panic继续传播。这样可以恢复程序的控制流，使程序能够继续执行而不崩溃。 需要注意的是recover只有在defer才能生效，并且只能处理自己goroutine中的panic。在其他作用域中调用不会发挥作用。 总结一般来说，panic和recover应该被谨慎使用，因为过度使用它们会导致代码难以理解和维护。通常情况下，应该尽量避免使用panic，而是采取适当的错误处理策略。recover通常用于在必要时恢复程序的稳定性，确保程序在遇到意外情况时能够优雅地处理并继续执行。
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 package main import &#34;fmt&#34; func recoverTest() { defer func() { if r := recover(); r != nil { fmt.Println(&#34;Recovered from panic:&#34;, r) } }() // 引发panic panic(&#34;Oops! Panic occurs!&#34;) } func main() { fmt.Println(&#34;Start&#34;) recoverTest() fmt.Println(&#34;End&#34;) } </div><div class="post-footer">
+    <a href="/2021/03/go-panic-and-recover/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/go/' class="post-tag">Go</a></div></div>
+</article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2021/03/go-defer/">Go基础--Defer关键字</a>
   </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
     Finger</a></span>&nbsp;<span class="post-publish" title='2021-03-01 20:24:00'>发布于 <time datetime="2021-03-01">2021-03-01</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/go/" class="post-category" title="分类 - Go"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Go</a></span></div><div class="content">概述在Go语言中，defer关键字用于延迟（defer）函数的执行，即在函数执行结束时再执行被延迟的函数。defer通常用于确保一些清理工作在函数执行完毕后被执行，无论函数是正常返回还是发生了panic。
@@ -203,14 +210,6 @@ Service 服务功能具体实现，这样便于测试，只要 mock 传入的依
   </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
     Finger</a></span>&nbsp;<span class="post-publish" title='2020-07-22 10:14:52'>发布于 <time datetime="2020-07-22">2020-07-22</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/go/" class="post-category" title="分类 - Go"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Go</a></span></div><div class="content">三个点可变长的函数参数1 2 3 4 5 6 7 func Sum(nums ...int) int { cnt := 0 for _, n := range nums { cnt += n } return cnt } 调用可变长参数列表的函数1 2 3 primes := []int{2, 3, 5, 7} Sum(primes...) 两个切片合并1 2 3 4 5 6 7 8 9 10 11 12 13 14 var str_1 = []string{ &#34;a&#34;, &#34;b&#34;, &#34;c&#34;, } var str_2 = []string{ &#34;1&#34;, &#34;2&#34;, &#34;3&#34;, } str_1 = append(str_1, str_2.</div><div class="post-footer">
     <a href="/2020/07/go-basic-three-dot/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/go/' class="post-tag">Go</a></div></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2020/07/go-basic-make-and-new/">Go基础--Make和New</a>
-  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span>&nbsp;<span class="post-publish" title='2020-07-20 09:44:52'>发布于 <time datetime="2020-07-20">2020-07-20</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/go/" class="post-category" title="分类 - Go"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Go</a></span></div><div class="content">make 和 newmake和new都是用于初始化，但是二者有很大差异：
--make 的作用是初始化内置的数据结构，例如切片，哈希和Channel -new 的作用是根据传入的类型分配内存，并返回指向该内存的指针
-重点：make只用于map, slice, channel的内存分配，返回有初始值的类型本身，new用于所有类型的分配，new返回指针
-make1 2 3 slice := make([]int, 0, 100) hash := make(map[int]bool, 10) ch := make(chan int, 5) new1 2 3 4 5 6 i := new(int) # 等于 var v int i := &amp;v new 和 make 内存分配图：</div><div class="post-footer">
-    <a href="/2020/07/go-basic-make-and-new/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/go/' class="post-tag">Go</a></div></div>
 </article>
 <ul class="pagination"><li class="page-item">
           <span class="page-link">
