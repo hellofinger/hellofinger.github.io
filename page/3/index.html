@@ -12,8 +12,8 @@
 <meta name="author-link" content="https://github.com/hellofinger">
 <meta name="description" content="" /><meta name="keywords" content='Finger, DevOps, Python, Go, Kubernetes, k8s' />
   <meta itemprop="name" content="Finger&#39;s Blog">
-  <meta itemprop="datePublished" content="2024-07-11T20:30:04+00:00">
-  <meta itemprop="dateModified" content="2024-08-26T00:38:55+08:00"><meta property="og:url" content="http://localhost:1313/">
+  <meta itemprop="datePublished" content="2025-03-11T20:30:04+00:00">
+  <meta itemprop="dateModified" content="2025-03-11T20:30:04+00:00"><meta property="og:url" content="http://localhost:1313/">
   <meta property="og:site_name" content="Finger&#39;s Blog">
   <meta property="og:title" content="Finger&#39;s Blog">
   <meta property="og:locale" content="zh_CN">
@@ -164,6 +164,12 @@
     </a><a href="mailto:finger.zhou@gmail.com" title="Email"target="_blank" rel="external nofollow noopener noreferrer me"><i class="fa-regular fa-envelope fa-fw" aria-hidden="true"></i>
     </a><a href="/index.xml" title="RSS"target="_blank" rel="external nofollow noopener noreferrer me"><i class="fa-solid fa-rss fa-fw" aria-hidden="true"></i>
     </a></div></div>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2022/11/aws-code-artifact-best-practice/">AWS实践--使用CodeArtifact创建私有的NPM Package</a>
+  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span>&nbsp;<span class="post-publish" title='2022-11-04 11:12:52'>发布于 <time datetime="2022-11-04">2022-11-04</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/aws/" class="post-category" title="分类 - AWS"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> AWS</a></span></div><div class="content">前提条件IAM具有CodeArtifact权限 安装了Node和NPM 1. 创建CodeArtifact的domain和repository2. 创建私有的npm package1 2 # 初始化一个npm package npm init --scode=@finger -y 1 2 3 4 5 6 7 8 9 10 11 12 13 # package.json { &#34;name&#34;: &#34;finger-package&#34;, &#34;version&#34;: &#34;1.0.0&#34;, &#34;description&#34;: &#34;&#34;, &#34;main&#34;: &#34;index.js&#34;, &#34;scripts&#34;: { &#34;test&#34;: &#34;echo \&#34;Error: no test specified\&#34; &amp;&amp; exit 1&#34; }, &#34;keywords&#34;: [], &#34;author&#34;: &#34;&#34;, &#34;license&#34;: &#34;ISC&#34; } 新建index.js文件。添加helloworld函数
+1 2 3 4 # index.js module.exports.helloWorld = function() { console.</div><div class="post-footer">
+    <a href="/2022/11/aws-code-artifact-best-practice/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/codeartifact/' class="post-tag">CodeArtifact</a><a href='/tags/aws/' class="post-tag">AWS</a></div></div>
+</article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2022/10/container-principle/">容器实现原理</a>
   </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
     Finger</a></span>&nbsp;<span class="post-publish" title='2022-10-12 20:14:52'>发布于 <time datetime="2022-10-12">2022-10-12</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/container/" class="post-category" title="分类 - Container"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Container</a></span></div><div class="content">容器实现原理容器到底是什么一回事？它有什么样的特性？又是如何运行起来的呢？下面我们简单介绍一下以Docker容器为主的Linux容器的实现原理。
@@ -212,14 +218,6 @@ Docker Runc: 1.0.0-rc5 ( runc version &lt; 1.0-rc6 )
     Finger</a></span>&nbsp;<span class="post-publish" title='2022-08-12 20:14:52'>发布于 <time datetime="2022-08-12">2022-08-12</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/security/" class="post-category" title="分类 - Security"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Security</a>&ensp;<a href="/categories/container/" class="post-category" title="分类 - Container"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Container</a></span></div><div class="content">一、漏洞说明特权模式逃逸是一种最简单有效的逃逸方法，使用特权模式启动的容器时，docker管理员可通过mount命令将外部宿主机磁盘设备挂载进容器内部，获取对整个宿主机的文件读写权限，可直接通过chroot切换根目录、写ssh公钥和crontab计划任何等逃逸到宿主机。
 二、环境搭建1 2 // 使用特权模式运行容器 docker run -it --privileged ubuntu:18.04 三、漏洞验证1 2 3 // 如果是以特权模式启动，**CapEff** 对应的掩码值应该为: 0000003fffffffff root@43552e476ea7:/# cat /proc/self/status | grep CapEff CapEff: 0000003fffffffff 四、漏洞利用4.1、查看宿主机目录1 2 3 4 5 6 fdisk -l Device Boot Start End Sectors Size Id Type /dev/sda1 * 2048 48234495 48232448 23G 83 Linux /dev/sda2 48236542 52426751 4190210 2G 5 Extended /dev/sda5 48236544 52426751 4190208 2G 82 Linux swap / Solaris 4.</div><div class="post-footer">
     <a href="/2022/08/docker-privileged-escape/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/docker/' class="post-tag">Docker</a><a href='/tags/security/' class="post-tag">Security</a></div></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2022/08/docker-root-danger/">Docker中Root权限的危害性</a>
-  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span>&nbsp;<span class="post-publish" title='2022-08-12 20:14:52'>发布于 <time datetime="2022-08-12">2022-08-12</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/security/" class="post-category" title="分类 - Security"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Security</a>&ensp;<a href="/categories/container/" class="post-category" title="分类 - Container"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Container</a></span></div><div class="content">一、在docker使用root用户越权案例如果一个普通用户，并且这个用户在docker组，则这个用户已经是root了。
-方法一假如我们有一个用户demo，它本身不具有sudo的权限，所以就有很多文件无法进行读写操作，例如它无法查看 /root 目录
-1 2 sudo adduser demo sudo groupadd docker 1 2 3 demo@ubuntu-VirtualBox:/home$ sudo ls /root [sudo] password for demo: demo is not in the sudoers file. This incident will be reported. 但是这个用户在docker的group里，具有执行docker的权限
-1 2 3 4 5 6 demo@ubuntu-VirtualBox:/home$ groups demo docker demo@ubuntu-VirtualBox:/home$ docker images REPOSITORY TAG IMAGE ID CREATED SIZE busybox latest a416a98b71e2 3 weeks ago 4.26MB ubuntu 18.04 f9a80a55f492 2 months ago 63.</div><div class="post-footer">
-    <a href="/2022/08/docker-root-danger/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/docker/' class="post-tag">Docker</a><a href='/tags/security/' class="post-tag">Security</a></div></div>
 </article>
 <ul class="pagination"><li class="page-item">
           <span class="page-link">
