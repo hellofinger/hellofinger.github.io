@@ -89,6 +89,21 @@ ADD &ndash; 将容器添加到网络 DEL &ndash; 从网络中删除容器 CHECK 
 Overlay 覆盖网络，指构建一个工作在真实底层网络之上的”逻辑网络“，把原始的Pod网络数据封包，再通过下层网络发送出去，到了目的地再拆包。因为这个特点，它对底层网络的要求低，适应性强，缺点就是有额外的传输成本，性能较低。（如：Flannel） Route 基于底层网络，但它没有封包和拆包，而是使用系统内置的路由功能来实现Pod 跨主机通信。它的好处是性能高，不过对底层网络的依赖性比较强，比如说要求底层网络有二层可达的一个能力。（如：Calico） Underlay 就是直接用底层网络来实现 CNI，也就是说 Pod 和宿主机都在一个网络里，Pod 和宿主机是平等的。它对底层的硬件和网络的依赖性是最强的，因而不够灵活，但性能最高。 CNI的工作流程简述创建Pod当一个新的 Pod 被创建时，kubelet 会调用 CNI 插件的 ADD 命令。CNI 插件会为 Pod 分配一个网络接口，并设置相关的网络配置，如 IP 地址和路由。这包括配置 Pod 的网络命名空间，使其能够与其他 Pod 进行通信。]]></description>
 </item>
 <item>
+  <title>AWS实践--升级EKS k8s集群版本</title>
+  <link>http://localhost:1313/2022/09/aws-eks-cluster-upgrade-guide/</link>
+  <pubDate>Fri, 02 Sep 2022 11:12:52 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>http://localhost:1313/2022/09/aws-eks-cluster-upgrade-guide/</guid>
+  <description><![CDATA[由于 Amazon EKS 运行高度可用的控制平面，因此，一次操作只能升级一个次要版本，如需升级多个版本，请按版本顺序做多次升级操作。
+Amazon EKS集群升级操作：
+17 版本升级至1.18版本；
+18 版本升级至1.19版本；
+19 版本升级至1.20版本；
+本升级指南前置条件：
+使用terraform module( https://github.com/terraform-aws-modules/terraform-aws-eks )创建的EKS集群。
+1、升级集群版本1 2 3 4 5 6 7 8 9 10 module &#34;eks&#34; { source = &#34;terraform-aws-modules/eks/aws&#34; cluster_name = &#34;${var.cluster_name}&#34; # 1.17 =&gt; 1.18 cluster_version = &#34;1.18&#34; } # 修改terraform文件后，执行apply，等待集群更新完成 terraform apply 2、升级集群组件1 2 3 4 5 6 7 8 9 # Kube Proxy # https://docs.aws.amazon.com/zh_cn/eks/latest/userguide/managing-kube-proxy.html#updating-kube-proxy-add-on # 查询当前的版本 kubectl get daemonset kube-proxy --namespace kube-system -o=jsonpath=&#39;{$.]]></description>
+</item>
+<item>
   <title>kube-scheduler介绍</title>
   <link>http://localhost:1313/2021/10/kube-scheduler-intro/</link>
   <pubDate>Fri, 29 Oct 2021 17:13:00 &#43;0000</pubDate>
@@ -107,6 +122,14 @@ kube-scheduler 调度流程kube-scheduler 给一个 pod 做调度选择包含�
 以单个Pod为粒度 调度的最优性只存在于调度完成的那一刻，后续随着新的节点增加，新的Pod增加或减少，当初的调度决策可能已经不是最优。 对于第一点，这决定了默认的调度器无法满足大数据，AI等领域的要求。因而社区涌现了诸多专门用于任务类的调度器。比如 kube-batch
 参考[1] https://zhuanlan.zhihu.com/p/339762721
 [2] http://www.4k8k.xyz/article/u012798391/112414129]]></description>
+</item>
+<item>
+  <title>使用kops创建k8s集群</title>
+  <link>http://localhost:1313/2021/08/use-kops-create-k8s-cluster/</link>
+  <pubDate>Mon, 02 Aug 2021 19:20:04 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>http://localhost:1313/2021/08/use-kops-create-k8s-cluster/</guid>
+  <description><![CDATA[1、安装必要的工具包aws-cli kubectl kops 1 2 // install kubectl https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl-on-linux 2、 创建集群配置文件的存储桶1 2 aws s3 mb s3://k8s-clusters-ap-southeast-1.vpc export KOPS_STATE_STORE=s3://k8s-clusters-ap-southeast-1.vpc 3、创建域名1 2 3 4 5 6 7 8 9 10 // 定义集群域名 export NAME=example.k8s.vpc // 创建域名 ID=$(uuidgen) &amp;&amp; aws route53 create-hosted-zone $ID \ --name ${NAME} \ --caller-reference $ID // 测试域名 dig ns example.k8s.vpc 4、创建集群1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 // 查看可用的区域 aws ec2 describe-availability-zones --region ap-southeast-1 // 预览创建集群 kops create cluster --cloud=aws --zones=ap-southeast-1a --name=$NAME --dns-zone=$NAME --dns private --cloud	云服务器提供商 --zones 集群所在的区域，多个以逗号分隔 --name	集群名称 --state	集群状态的S3存储桶 --yes	立即创建集群 // 生成Terraform文件 kops create cluster --cloud=aws --zones=ap-southeast-1a --name=$NAME --dns-zone=$NAME --dns private --out=.]]></description>
 </item>
 </channel>
 </rss>
