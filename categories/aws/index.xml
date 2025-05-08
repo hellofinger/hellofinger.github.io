@@ -39,6 +39,21 @@ VPC对等连接，可以连接相同或不同AWS区域中的两个VPC。在连�
 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 { &#34;Version&#34;: &#34;2012-10-17&#34;, &#34;Statement&#34;: [ { &#34;Sid&#34;: &#34;&lt;statement-name&gt;&#34;, &#34;Effect&#34;: &#34;Allow&#34;, &#34;Principal&#34;: { &#34;AWS&#34;: [ &#34;arn:aws:iam::222222222222:root&#34;, &#34;arn:aws:iam::333333333333:root&#34;, &#34;arn:aws:iam::444444444444:root&#34; ] }, &#34;Action&#34;: [ &#34;ecr:BatchGetImage&#34;, &#34;ecr:GetDownloadUrlForLayer&#34; ] } ] } 测试1 2 3 4 5 6 7 8 # 登录 222222222222、333333333333、444444444444 子账号的服务器 # 执行ECR登录命令 aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 111111111111.]]></description>
 </item>
 <item>
+  <title>AWS实践--升级EKS k8s集群版本</title>
+  <link>http://localhost:1313/2022/09/aws-eks-cluster-upgrade-guide/</link>
+  <pubDate>Fri, 02 Sep 2022 11:12:52 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>http://localhost:1313/2022/09/aws-eks-cluster-upgrade-guide/</guid>
+  <description><![CDATA[由于 Amazon EKS 运行高度可用的控制平面，因此，一次操作只能升级一个次要版本，如需升级多个版本，请按版本顺序做多次升级操作。
+Amazon EKS集群升级操作：
+17 版本升级至1.18版本；
+18 版本升级至1.19版本；
+19 版本升级至1.20版本；
+本升级指南前置条件：
+使用terraform module( https://github.com/terraform-aws-modules/terraform-aws-eks )创建的EKS集群。
+1、升级集群版本1 2 3 4 5 6 7 8 9 10 module &#34;eks&#34; { source = &#34;terraform-aws-modules/eks/aws&#34; cluster_name = &#34;${var.cluster_name}&#34; # 1.17 =&gt; 1.18 cluster_version = &#34;1.18&#34; } # 修改terraform文件后，执行apply，等待集群更新完成 terraform apply 2、升级集群组件1 2 3 4 5 6 7 8 9 # Kube Proxy # https://docs.aws.amazon.com/zh_cn/eks/latest/userguide/managing-kube-proxy.html#updating-kube-proxy-add-on # 查询当前的版本 kubectl get daemonset kube-proxy --namespace kube-system -o=jsonpath=&#39;{$.]]></description>
+</item>
+<item>
   <title>AWS实战--配置ECR Replication</title>
   <link>http://localhost:1313/2022/01/aws-setting-ecr-replication/</link>
   <pubDate>Mon, 17 Jan 2022 10:51:00 &#43;0000</pubDate>
