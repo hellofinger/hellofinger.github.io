@@ -164,6 +164,30 @@
     </a><a href="mailto:finger.zhou@gmail.com" title="Email"target="_blank" rel="external nofollow noopener noreferrer me"><i class="fa-regular fa-envelope fa-fw" aria-hidden="true"></i>
     </a><a href="/index.xml" title="RSS"target="_blank" rel="external nofollow noopener noreferrer me"><i class="fa-solid fa-rss fa-fw" aria-hidden="true"></i>
     </a></div></div>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2022/11/docker-network-bridge/">Docker网络之Bridge模式</a>
+  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span>&nbsp;<span class="post-publish" title='2022-11-13 21:14:52'>发布于 <time datetime="2022-11-13">2022-11-13</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/docker/" class="post-category" title="分类 - Docker"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Docker</a>&ensp;<a href="/categories/container/" class="post-category" title="分类 - Container"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Container</a></span></div><div class="content">基本原理Docker网络默认是Bridge驱动模式。当Docker启动时，它就会在Host上创建一个名为docker0的虚拟网桥。Host上所有的Docker容器都会连接docker0这个虚拟网桥。通过docker0虚拟网桥，该Host上的容器可以互相通信。这种工作方式类似于物理交换机，使局域网中的所有PC通过交换机连接到同一个网络互相可以访问。
+在Bridge驱动模式下，Docker会为每个容器创建独立的Network Namespace和IP等。每个容器会有一个虚拟网卡eth0。容器之间通过eth0和IP地址进行通信。docker0的默认IP为172.17.0.1/16，其他的容器则会在172.17.0.1/16这个IP范围内分配一个未使用的IP。并设置docker0的IP地址作为容器的默认网关。
+另外Docker创建容器的同时也会创建veth-pair(虚拟设备对)。veth-pair将容器与docker0连接起来。对于172.17.0.0/16网段的数据包，Docker会在Host上创建一条iptables NAT的规则将这个IP地址进行转换。然后通过Host的真实网络接口发送出去。
+Veth Pairveth pair 全称是：virtual ethernet pair 虚拟以太网设备对。是linux内核提供的一种虚拟化网络设备，通常用于连接不同网络命名空间(Network Namespace)，实现跨网络命名空间的通信。它的作用类似 于一根物理网线。veth-pair总是成对出现。例如veth-pair由两个虚拟网卡(veth0和veth1)组成，一端发送的数据会直接由另一端接受，类似于管道的两端。
+多个容器
+容器越多，veth-pair规模就越大，那么也就越来越复杂。不过有了docker0就变得简单了。最终Docker Bridge网络架构如下：
+测试容器网络连接1 2 # 查询本地IP ip addr 启动三个示例容器。
+1 2 3 docker run -it --name container1 busybox docker run -it --name container2 busybox docker run -it --name container3 busybox 容器启动后，我们看到多了三个veth虚拟设备。同时它们默认都连接到了docker0。
+在容器内查看容器的IP地址
+1 2 # 查看Container1 cat /etc/hosts 也可以通过 dokcer inspect命令查看
+1 sudo docker inspect bed4356096cd 1 2 3 4 # 三个容器的IP Container1 172.</div><div class="post-footer">
+    <a href="/2022/11/docker-network-bridge/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/docker-network/' class="post-tag">Docker Network</a></div></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2022/11/docker-network-basic/">Docker网络基础</a>
+  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span>&nbsp;<span class="post-publish" title='2022-11-11 20:14:52'>发布于 <time datetime="2022-11-11">2022-11-11</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/docker/" class="post-category" title="分类 - Docker"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Docker</a>&ensp;<a href="/categories/container/" class="post-category" title="分类 - Container"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Container</a></span></div><div class="content">Docker 网络架构Docker的网络功能主要封装在 libnetwork 组件。Docker daemon 通过调用 libnetwork api 完成网络的创建和管理等功能。
+libnetwork 主要使用CNM (Container Network Model)模型来构建容器虚拟化网络，同时提供可以开发多种网络驱动的标准化接口和组件。
+CNM主要包含以下3个组件：
+沙盒 (Sandbox)： 一个沙盒包含了一个容器网络栈的信息。沙盒对里边的接口等进行设置并管理。沙盒的实现可以是Linux network namespace或者类似的机制。一个沙盒可以有多个端点和多个网络。 端点 (Endpoint)：一个端点可以同时加入一个沙盒和一个网络。端点的实现可以是veth pair或者相似的设备。 网络 (Network)：一个网络是一组可以直接互相联通的端点。可以包含多个端点，网络的实现可以是Linux bridge、VLAN等。 libnetwork中内置了5种的驱动类型来提供不同的网络服务。
+驱动 简介 bridge 这是 docker 设置的默认驱动。当使用 bridge 驱动时，libnetwork 将创建出来的 docker 容器连接到 docker0 网桥上。对于单机模式，bridge 驱动已经可以满足基本的需求了。但是这种模式下容器使用 NAT 方式与外界通信，这就增加了通信的复杂性。 host 使用 host 驱动的时候，libnetwork 不会为容器创建网络协议栈，即不会创建独立的 network namespace。Docker 容器中的进程处于宿主机的网络环境中，相当于容器和宿主机共用同一个 network namespace，容器共享使用宿主机的网卡、IP 和端口等资源。Host 模式很好的解决了容器与外界通信的地址转换问题，可以直接使用宿主机的 IP 进行通信，不存在虚拟化网络带来的开销。但是 host 驱动也降低了容器与容器之间、容器与宿主机之间网络的隔离性，引起网络资源的竞争和冲突。因此可以认为 host 驱动适用于对容器集群规模不大的场景。 null 使用这种驱动的时候，docker 容器拥有字段的 network namespace，但是并不为 docker 容器进行任何网络配置。也就是说，这个容器除了 network namespace 自带的 loopback 网卡外，没有任何其它网卡、IP、路由等信息，需要用户为该容器添加网卡、配置 IP 等。这种模式如果不进行特定的配置是无法正常使用网络的，但是优点也非常明显，它给了用户最大的自由度来自定义容器的网络环境。 remote 这个驱动实际上并未做真正的网络服务实现，而是调用了用户自行实现的网络驱动插件，是 libnetwork 实现了驱动的插件化，更好地满足了用户的多样化需求。用户只要根据 libnetwork 提供的协议标准实现其接口并注册即可。 overlay 上面的驱动模式主要解决同一个主机上容器与容器的网络通信，overlay 可以实现跨主机的网络通信，overlay驱动采用 IETF 标准的 VXLAN 方式，并且是 VXLAN 中被普遍认为最适合大规模的云计算虚拟化环境的 SDN controller 模式。在使用的过程中，还需要一个额外的配置存储服务，比如 Consul、etcd 或 ZooKeeper 等。并且在启动 docker daemon 的时候需要添加额外的参数来指定所使用的配置存储服务地址。 使用命令docker network ls查看网络</div><div class="post-footer">
+    <a href="/2022/11/docker-network-basic/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/docker-network/' class="post-tag">Docker Network</a></div></div>
+</article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2022/11/aws-code-artifact-best-practice/">AWS实践--使用CodeArtifact创建私有的NPM Package</a>
   </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
     Finger</a></span>&nbsp;<span class="post-publish" title='2022-11-04 11:12:52'>发布于 <time datetime="2022-11-04">2022-11-04</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/aws/" class="post-category" title="分类 - AWS"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> AWS</a></span></div><div class="content">前提条件IAM具有CodeArtifact权限 安装了Node和NPM 1. 创建CodeArtifact的domain和repository2. 创建私有的npm package1 2 # 初始化一个npm package npm init --scode=@finger -y 1 2 3 4 5 6 7 8 9 10 11 12 13 # package.json { &#34;name&#34;: &#34;finger-package&#34;, &#34;version&#34;: &#34;1.0.0&#34;, &#34;description&#34;: &#34;&#34;, &#34;main&#34;: &#34;index.js&#34;, &#34;scripts&#34;: { &#34;test&#34;: &#34;echo \&#34;Error: no test specified\&#34; &amp;&amp; exit 1&#34; }, &#34;keywords&#34;: [], &#34;author&#34;: &#34;&#34;, &#34;license&#34;: &#34;ISC&#34; } 新建index.js文件。添加helloworld函数
@@ -204,27 +228,6 @@ VPC对等连接，可以连接相同或不同AWS区域中的两个VPC。在连�
 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 { &#34;Version&#34;: &#34;2012-10-17&#34;, &#34;Statement&#34;: [ { &#34;Sid&#34;: &#34;&lt;statement-name&gt;&#34;, &#34;Effect&#34;: &#34;Allow&#34;, &#34;Principal&#34;: { &#34;AWS&#34;: [ &#34;arn:aws:iam::222222222222:root&#34;, &#34;arn:aws:iam::333333333333:root&#34;, &#34;arn:aws:iam::444444444444:root&#34; ] }, &#34;Action&#34;: [ &#34;ecr:BatchGetImage&#34;, &#34;ecr:GetDownloadUrlForLayer&#34; ] } ] } 测试1 2 3 4 5 6 7 8 # 登录 222222222222、333333333333、444444444444 子账号的服务器 # 执行ECR登录命令 aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 111111111111.</div><div class="post-footer">
     <a href="/2022/09/aws-cross-account-access-ecr-repo/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/ecr/' class="post-tag">ECR</a><a href='/tags/aws/' class="post-tag">AWS</a></div></div>
 </article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2022/09/aws-eks-cluster-upgrade-guide/">AWS实践--升级EKS K8s集群版本</a>
-  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span>&nbsp;<span class="post-publish" title='2022-09-02 11:12:52'>发布于 <time datetime="2022-09-02">2022-09-02</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/aws/" class="post-category" title="分类 - AWS"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> AWS</a></span></div><div class="content">由于 Amazon EKS 运行高度可用的控制平面，因此，一次操作只能升级一个次要版本，如需升级多个版本，请按版本顺序做多次升级操作。
-Amazon EKS集群升级操作：
-17 版本升级至1.18版本；
-18 版本升级至1.19版本；
-19 版本升级至1.20版本；
-本升级指南前置条件：
-使用terraform module( https://github.com/terraform-aws-modules/terraform-aws-eks )创建的EKS集群。
-1、升级集群版本1 2 3 4 5 6 7 8 9 10 module &#34;eks&#34; { source = &#34;terraform-aws-modules/eks/aws&#34; cluster_name = &#34;${var.cluster_name}&#34; # 1.17 =&gt; 1.18 cluster_version = &#34;1.18&#34; } # 修改terraform文件后，执行apply，等待集群更新完成 terraform apply 2、升级集群组件1 2 3 4 5 6 7 8 9 # Kube Proxy # https://docs.aws.amazon.com/zh_cn/eks/latest/userguide/managing-kube-proxy.html#updating-kube-proxy-add-on # 查询当前的版本 kubectl get daemonset kube-proxy --namespace kube-system -o=jsonpath=&#39;{$.</div><div class="post-footer">
-    <a href="/2022/09/aws-eks-cluster-upgrade-guide/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/eks/' class="post-tag">EKS</a><a href='/tags/aws/' class="post-tag">AWS</a><a href='/tags/kubernetes/' class="post-tag">Kubernetes</a><a href='/tags/k8s/' class="post-tag">K8s</a></div></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2022/08/docker-cve-2019-5736/">CVE-2019-5736容器逃逸漏洞复现</a>
-  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span>&nbsp;<span class="post-publish" title='2022-08-15 20:14:52'>发布于 <time datetime="2022-08-15">2022-08-15</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/security/" class="post-category" title="分类 - Security"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Security</a>&ensp;<a href="/categories/container/" class="post-category" title="分类 - Container"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Container</a></span></div><div class="content">一、漏洞概述CVE-2019-5736漏洞是指通过从容器内覆盖并执行主机系统 runc 二进制文件，从而获取主机上的root执行权限。
-二、影响版本OS: Ubuntu 16.04
-Docker: 18.06.0-ce ( docker version &lt; 18.09.02 )
-Docker Runc: 1.0.0-rc5 ( runc version &lt; 1.0-rc6 )
-三、漏洞复现1 2 # 安装 Docker curl https://gist.githubusercontent.com/thinkycx/e2c9090f035d7b09156077903d6afa51/raw -o install.sh &amp;&amp; bash install.sh 1 2 3 4 5 6 7 8 9 10 # 卸载 Docker # Step1, 删除docker及安装时自动安装的所有包 sudo apt-get autoremove docker docker-ce docker-engine docker.io containerd runc # Step2, 查看docker是否卸载干净 sudo dpkg -l | grep docker sudo dpkg -l |grep ^rc|awk &#39;{print $2}&#39; |sudo xargs dpkg -P # 删除无用的相关的配置文件 # Step3, 删除没有删除的相关插件 sudo apt-get autoremove docker-ce-* 1 2 3 4 5 6 7 8 9 10 11 12 13 14 # 下载POC https://github.</div><div class="post-footer">
-    <a href="/2022/08/docker-cve-2019-5736/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/docker/' class="post-tag">Docker</a><a href='/tags/security/' class="post-tag">Security</a></div></div>
-</article>
 <ul class="pagination"><li class="page-item">
           <span class="page-link">
             <a href="/">1</a>
@@ -249,7 +252,7 @@ Docker Runc: 1.0.0-rc5 ( runc version &lt; 1.0-rc6 )
           <span class="page-link" aria-hidden="true">&hellip;</span>
         </li><li class="page-item">
           <span class="page-link">
-            <a href="/page/15/">15</a>
+            <a href="/page/16/">16</a>
           </span>
         </li></ul></div></main><footer class="footer">
     <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
