@@ -23,6 +23,7 @@
       <loc>http://localhost:1313/tags/jenkins/</loc><lastmod>2024-04-12T21:30:04&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/2024/04/install-jenkins-ubuntu/</loc><lastmod>2024-04-12T21:30:04&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/2024/04/install-kubernetes-using-kubespray/</loc><lastmod>2024-04-11T20:30:04&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+      <loc>http://localhost:1313/2024/04/install-kubernetes-using-kubeone/</loc><lastmod>2024-04-01T20:30:04&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/tags/testing/</loc><lastmod>2024-01-12T18:42:04&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/tags/testkube/</loc><lastmod>2024-01-12T18:42:04&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/2024/01/testkube-custom-executor/</loc><lastmod>2024-01-12T18:42:04&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
@@ -31,6 +32,7 @@
       <loc>http://localhost:1313/categories/go/</loc><lastmod>2023-02-03T10:24:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/2023/02/go-using-redis-pub-sub/</loc><lastmod>2023-02-03T10:24:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/tags/redis/</loc><lastmod>2023-02-03T10:24:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+      <loc>http://localhost:1313/2023/01/how-to-configure-port-forwarding-on-bastion/</loc><lastmod>2023-01-27T20:56:00&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/tags/kubernetes-network/</loc><lastmod>2023-01-02T20:14:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/2023/01/kubernetes-network-pod-01/</loc><lastmod>2023-01-02T20:14:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/tags/pod/</loc><lastmod>2023-01-02T20:14:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>

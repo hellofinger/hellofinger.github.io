@@ -164,6 +164,37 @@
     </a><a href="mailto:finger.zhou@gmail.com" title="Email"target="_blank" rel="external nofollow noopener noreferrer me"><i class="fa-regular fa-envelope fa-fw" aria-hidden="true"></i>
     </a><a href="/index.xml" title="RSS"target="_blank" rel="external nofollow noopener noreferrer me"><i class="fa-solid fa-rss fa-fw" aria-hidden="true"></i>
     </a></div></div>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2022/08/container-securty/">容器安全</a>
+  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span>&nbsp;<span class="post-publish" title='2022-08-11 16:14:52'>发布于 <time datetime="2022-08-11">2022-08-11</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/security/" class="post-category" title="分类 - Security"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Security</a>&ensp;<a href="/categories/container/" class="post-category" title="分类 - Container"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Container</a></span></div><div class="content">一、 容器概述容器（Container）是一种虚拟化技术，用于在计算机上运行应用程序和服务。与传统的虚拟机不同，容器不需要为每个应用创建独立的操作系统实例。相反，容器共享主机操作系统的内核，但它们有自己的文件系统、进程空间和网络接口。这使得容器能够在一个主机上运行多个隔离的应用程序，并且每个容器之间互不干扰。
+1.1、容器架构容器的架构涉及多个组件和概念，它们共同协作来提供一个高效、隔离和可移植的应用程序运行环境。以下是容器架构的主要组成部分：
+主机操作系统 (Host Operating System) 容器引擎 (Container Engine) 容器镜像 (Container Image) 容器 (Container) 容器编排 (Container Orchestration) 网络 (Networking) 存储 (Storage) 1.2、容器的本质容器的本质是一个特殊的进程，它是由Namespaces，Cgroups和 rootfs 构成。我们可以将它一分为二来看待，Namespace和Cgroups为动态资源，rootfs 为静态资源。
+二、什么是容器安全?容器安全是指使用安全工具和策略来保护容器化应用程序的各个方面免受潜在风险的过程。容器化环境不仅包含容器和在其中运行的应用程序，还包括容器运行时、内核和主机操作系统等底层基础设施。
+三、容器安全架构组件编译流水线 (Build Pipeline)
+容器镜像 (Container images and registries)
+容器宿主机 (Container host machines)
+容器运行时 (Container runtime)，如 docker, containerd
+容器编排工具 Container platforms and orchestrations) 如 kubernetes
+应用程序(Applications)
+四、容器安全挑战4.1、容器配置错误暴露应用程序不需要或不安全端口
+泄露秘钥和凭据，例如密码和身份验证令牌
+过于宽容的容器运行时权限，例如以Root身份运行容器
+开启特权模式 (privileged)
+挂载宿主机目录
+4.2、容器基础设施中的漏洞容器通常由应用程序代码、配置、库和包组成，最后编译成镜像，通过容器运行时运行在宿主机操作系统内核中。容器生命周期的每个阶段都可能将安全漏洞引入到容器基础设施中，从而增加运行时可能被利用的攻击面。漏洞还可以从容器镜像内置的外部依赖项继承、甚至存在于堆栈内的主机和容器运行时中。
+作为应用程序的一部分，容器镜像还可以从开源库和包继承安全漏洞，从而使其容易受到攻击。开发人员可能会使用来自第三方容器注册表(Registry)的基础镜像来构建容器镜像，这些镜像可能无意中包含安全漏洞，或者可能已被黑客故意替换为受损的镜像。
+最后，容器和主机可能包含漏洞，当容器在宿主机操作系统内核上运行时，这些漏洞可通过网络、主机和端点被利用。特别是主机内核和容器运行时中的容器逃逸漏洞可能会为攻击媒介打开大门，利用本地权限升级来损害整个基础设施。e.g. CVE-2019-5736</div><div class="post-footer">
+    <a href="/2022/08/container-securty/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/docker/' class="post-tag">Docker</a><a href='/tags/security/' class="post-tag">Security</a></div></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2022/01/aws-setting-ecr-replication/">AWS实战--配置ECR Replication</a>
+  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
+    Finger</a></span>&nbsp;<span class="post-publish" title='2022-01-17 10:51:00'>发布于 <time datetime="2022-01-17">2022-01-17</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/aws/" class="post-category" title="分类 - AWS"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> AWS</a></span></div><div class="content">Amazon ECR 可以配置跨区域(region)或跨账号(account)复制。配置复制后，推送(Push)到源存储库的镜像会自动复制到目标存储库(ECR)。
+本例以跨区域复制为例：源ECR（ap-southeast-1）==&gt; 目标ECR （us-east-1）
+配置源 ECR登录到 AWS ap-southeast-1 region的ECR页面。选择 Private registry &ndash;&gt; Replication菜单。点击 Edit 按钮. 进入到Replication configuration页面后，点击 Add rule。 选择复制的目标类型，我们选择允许跨区域复制(Cross-region)，点击Next。 选择目标region(us-east-1)。添加镜像名字过滤条件(本例为hello前缀的镜像仓库)。默认为前缀匹配。最后Submit rule。
+配置完成后可以查看 JSON格式的内容
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 { &#34;rules&#34;: [ { &#34;destinations&#34;: [ { &#34;region&#34;: &#34;us-east-1&#34;, &#34;registryId&#34;: &#34;&lt;your-aws-account-id&gt;&#34; } ], &#34;repositoryFilters&#34;: [ { &#34;filter&#34;: &#34;hello&#34;, &#34;filterType&#34;: &#34;PREFIX_MATCH&#34; } ] } ] } 配置目标ECR创建一个和源名字一样的私有镜像仓库(本例为hello-app)</div><div class="post-footer">
+    <a href="/2022/01/aws-setting-ecr-replication/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/ecr/' class="post-tag">ECR</a><a href='/tags/aws/' class="post-tag">AWS</a></div></div>
+</article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2021/10/kube-scheduler-intro/">Kube-Scheduler介绍</a>
   </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
     Finger</a></span>&nbsp;<span class="post-publish" title='2021-10-29 17:13:00'>发布于 <time datetime="2021-10-29">2021-10-29</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/kubernetes/" class="post-category" title="分类 - Kubernetes"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Kubernetes</a></span></div><div class="content">kube-scheduler 工作原理scheduler工作流程基本上如下：
@@ -198,24 +229,6 @@ Panicpanic用于表示程序发生了严重错误，类似于其他语言中的
 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 package main import &#34;fmt&#34; func recoverTest() { defer func() { if r := recover(); r != nil { fmt.Println(&#34;Recovered from panic:&#34;, r) } }() // 引发panic panic(&#34;Oops! Panic occurs!&#34;) } func main() { fmt.Println(&#34;Start&#34;) recoverTest() fmt.Println(&#34;End&#34;) } </div><div class="post-footer">
     <a href="/2021/03/go-panic-and-recover/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/go/' class="post-tag">Go</a></div></div>
 </article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2021/03/go-defer/">Go基础--Defer关键字</a>
-  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span>&nbsp;<span class="post-publish" title='2021-03-01 20:24:00'>发布于 <time datetime="2021-03-01">2021-03-01</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/go/" class="post-category" title="分类 - Go"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Go</a></span></div><div class="content">概述在Go语言中，defer关键字用于延迟（defer）函数的执行，即在函数执行结束时再执行被延迟的函数。defer通常用于确保一些清理工作在函数执行完毕后被执行，无论函数是正常返回还是发生了panic。
-defer具有以下特点：
-在函数返回之前执行 可以放在函数中任意位置 可以同时执行多个defer函数，多个defer按栈(FILO)先进后出顺序执行 defer函数的传入参数在定义时就已经明确 可以修改函数返回值 用于文件IO、数据库连接等释放和关闭 在函数返回之前执行defer语句函数会在函数返回之前执行，下面程序将会依次输出B A：
-1 2 3 4 5 6 7 8 package main import &#34;fmt&#34; func main() { defer fmt.Println(&#34;A&#34;) fmt.Println(&#34;B&#34;) } 1 2 3 &gt;go run main.go B A defer可以放在函数中任意位置1 2 3 4 5 6 7 8 9 package main import &#34;fmt&#34; func main() { fmt.Println(&#34;A&#34;) defer fmt.Println(&#34;B&#34;) fmt.Println(&#34;C&#34;) } 1 2 3 4 &gt;go run main.go A C B 注意：</div><div class="post-footer">
-    <a href="/2021/03/go-defer/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/go/' class="post-tag">Go</a></div></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h2 class="single-title" itemprop="name headline"><a href="/2021/02/go-basic-channel/">Go基础--管道Channel</a>
-  </h2><div class="post-meta"><span class="post-author"><a href="https://github.com/hellofinger" title="作者"target="_blank" rel="external nofollow noopener noreferrer author" class="author"><i class="fa-solid fa-user-circle" aria-hidden="true"></i>
-    Finger</a></span>&nbsp;<span class="post-publish" title='2021-02-26 17:27:52'>发布于 <time datetime="2021-02-26">2021-02-26</time></span><span class="post-included-in">&nbsp;收录于 <a href="/categories/go/" class="post-category" title="分类 - Go"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Go</a></span></div><div class="content">ChannelChannel 是Goroutine之间的一种通信机制。这种通信机制有个专业名词叫CSP （ Communicating Sequential Process）即通信顺序进程，是一种并发编程模型。Goroutine 和 Channel 分别对应 CSP 中的实体和传递信息的媒介，Goroutine 之间会通过 Channel 传递数据。
-设计原理在很多主流的编程语言中，多个线程传递数据的方式一般都是共享内存，为了解决线程之间的资源竞争，我们需要限制同一时间能够获取资源的线程数量。
-在Go语言中则设计成：不通过共享内存的方式进行通信，而是通过通信的方式共享内存。
-上图中的两个 Goroutine，一个会向 Channel 中发送数据，另一个会从 Channel 中接收数据，它们两者能够独立运行并不存在直接关联，但是能通过 Channel 间接完成通信。
-声明1 2 3 4 ch := make(chan int) # 设置缓冲大小 ch := make(chan int, 100) 类型它包括三种类型的定义。可选的&lt;-代表channel的方向。如果没有指定方向，那么Channel就是双向的，既可以接收数据，也可以发送数据。
-1 2 3 4 5 ChannelType = ( &#34;chan&#34; | &#34;chan&#34; &#34;&lt;-&#34; | &#34;&lt;-&#34; &#34;chan&#34; ) chan T // 可以接收和发送类型为 T 的数据 chan&lt;- float64 // 只可以用来发送 float64 类型的数据 &lt;-chan int // 只可以用来接收 int 类型的数据 基本操作channel 存在3种状态：</div><div class="post-footer">
-    <a href="/2021/02/go-basic-channel/">阅读全文</a><div class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href='/tags/go/' class="post-tag">Go</a></div></div>
-</article>
 <ul class="pagination"><li class="page-item">
           <span class="page-link">
             <a href="/">1</a>
@@ -246,7 +259,7 @@ defer具有以下特点：
           <span class="page-link" aria-hidden="true">&hellip;</span>
         </li><li class="page-item">
           <span class="page-link">
-            <a href="/page/15/">15</a>
+            <a href="/page/16/">16</a>
           </span>
         </li></ul></div></main><footer class="footer">
     <div class="footer-container"><div class="footer-line powered">由 <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.133.0"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.3.10-c936e541"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
