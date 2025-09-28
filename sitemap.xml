@@ -12,6 +12,10 @@
       <loc>http://localhost:1313/categories/kubernetes/</loc><lastmod>2025-03-11T20:30:04&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/posts/</loc><lastmod>2025-03-11T20:30:04&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/tags/</loc><lastmod>2025-03-11T20:30:04&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+      <loc>http://localhost:1313/tags/ai/</loc><lastmod>2024-11-02T21:12:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+      <loc>http://localhost:1313/categories/ai/</loc><lastmod>2024-11-02T21:12:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+      <loc>http://localhost:1313/tags/rag/</loc><lastmod>2024-11-02T21:12:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
+      <loc>http://localhost:1313/2024/11/rag-intro/</loc><lastmod>2024-11-02T21:12:52&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/tags/nfs/</loc><lastmod>2024-07-11T20:30:04&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/2024/07/nfs-best-practices/</loc><lastmod>2024-07-11T20:30:04&#43;00:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>
       <loc>http://localhost:1313/categories/note/</loc><lastmod>2024-08-26T00:38:55&#43;08:00</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url><url>

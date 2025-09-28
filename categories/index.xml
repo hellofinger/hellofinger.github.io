@@ -21,6 +21,14 @@
   <description><![CDATA[]]></description>
 </item>
 <item>
+  <title>AI</title>
+  <link>http://localhost:1313/categories/ai/</link>
+  <pubDate>Sat, 02 Nov 2024 21:12:52 &#43;0000</pubDate>
+  <author>Finger</author>
+  <guid>http://localhost:1313/categories/ai/</guid>
+  <description><![CDATA[]]></description>
+</item>
+<item>
   <title>Note</title>
   <link>http://localhost:1313/categories/note/</link>
   <pubDate>Wed, 01 May 2024 21:14:52 &#43;0000</pubDate>
@@ -74,14 +82,6 @@
   <pubDate>Mon, 15 Aug 2022 20:14:52 &#43;0000</pubDate>
   <author>Finger</author>
   <guid>http://localhost:1313/categories/security/</guid>
-  <description><![CDATA[]]></description>
-</item>
-<item>
-  <title>Database</title>
-  <link>http://localhost:1313/categories/database/</link>
-  <pubDate>Tue, 16 Jun 2020 15:02:52 &#43;0800</pubDate>
-  <author>Finger</author>
-  <guid>http://localhost:1313/categories/database/</guid>
   <description><![CDATA[]]></description>
 </item>
 </channel>
